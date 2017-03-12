@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/main_menu_clear_data"
+        android:title="Очистить кеш" />
+    <item android:id="@+id/main_menu_repeat_download"
+        android:title="Повторить загрузку фото" />
+    <item android:id="@+id/main_menu_notifications"
+        android:checkable="true"
+        android:title="Вкл/выкл уведомления" />
+    <item android:id="@+id/main_menu_request_flow"
+        android:title="Обновить дерево каталогов" />
+    <item android:id="@+id/main_menu_log_out"
+        android:title="Выйти" />
+</menu>
