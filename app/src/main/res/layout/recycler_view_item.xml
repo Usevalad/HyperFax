@@ -27,6 +27,7 @@
                     android:id="@+id/photo"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     android:src="@drawable/test" />
             </LinearLayout>
@@ -43,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/icon_delivery"
                     android:clickable="false"
-                    android:src="@drawable/time_icon" />
+                    android:src="@drawable/ic_time" />
 
                 <ImageView
                     android:id="@+id/icon_delivery"
@@ -52,7 +53,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:clickable="false"
-                    android:src="@drawable/check_icon" />
+                    android:src="@drawable/ic_checked" />
 
             </RelativeLayout>
 
