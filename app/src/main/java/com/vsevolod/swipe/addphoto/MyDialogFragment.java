@@ -40,46 +40,46 @@ public class MyDialogFragment extends DialogFragment {
         context = getActivity().getApplicationContext();
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_add_new_card, null))
-                // Add action buttons
-                .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
-                        editTextPath = (EditText) MyDialogFragment.this.getDialog().findViewById(R.id.path_edit_text);
-                        editTextImageUrl = (EditText) MyDialogFragment.this.getDialog().findViewById(R.id.image_url_edit_text);
-                        String path = editTextPath.getText().toString();
-                        String url = editTextImageUrl.getText().toString();
-                        Calendar c = Calendar.getInstance();
-                        SimpleDateFormat df = new SimpleDateFormat("E HH:mm  dd.MM.yyyy");
-                        String formattedDate = df.format(c.getTime());
-
-//                        saveToRealm(formattedDate, path, url);
-                        MainActivity.data.add(new Model(formattedDate, path, MainActivity.byteArray));
-
-                        MainActivity.mRecyclerView.setAdapter(new MyRecyclerAdapter(getContext(), MainActivity.data));
-//                        saveToInternalFile(context, fileName, MainActivity.data);
-
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MyDialogFragment.this.getDialog().cancel();
-                    }
-                });
-        return builder.create();
-
-    }
+//    @NonNull
+//    @Override
+//    public Dialog onCreateDialog(Bundle savedInstanceState) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        // Get the layout inflater
+//        LayoutInflater inflater = getActivity().getLayoutInflater();
+//
+//
+//        // Inflate and set the layout for the dialog
+//        // Pass null as the parent view because its going in the dialog layout
+//        builder.setView(inflater.inflate(R.layout.dialog_add_new_card, null))
+//                // Add action buttons
+//                .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//
+//                        editTextPath = (EditText) MyDialogFragment.this.getDialog().findViewById(R.id.path_edit_text);
+//                        editTextImageUrl = (EditText) MyDialogFragment.this.getDialog().findViewById(R.id.image_url_edit_text);
+//                        String path = editTextPath.getText().toString();
+//                        String url = editTextImageUrl.getText().toString();
+//                        Calendar c = Calendar.getInstance();
+//                        SimpleDateFormat df = new SimpleDateFormat("E HH:mm  dd.MM.yyyy");
+//                        String formattedDate = df.format(c.getTime());
+//
+////                        saveToRealm(formattedDate, path, url);
+//                        MainActivity.data.add(new Model(formattedDate, path, MainActivity.byteArray));
+//
+//                        MainActivity.mRecyclerView.setAdapter(new MyRecyclerAdapter(getContext(), MainActivity.data));
+////                        saveToInternalFile(context, fileName, MainActivity.data);
+//
+//                    }
+//                })
+//                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        MyDialogFragment.this.getDialog().cancel();
+//                    }
+//                });
+//        return builder.create();
+//
+//    }
 
 //    private void saveToRealm(String date, String path, String photoLink) {
 //        Realm realm = Realm.getDefaultInstance();
