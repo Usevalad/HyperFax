@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,12 +25,12 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -46,11 +45,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String user;
     private boolean isChecked = false;
     private Realm realm;
-    static final int REQUEST_TAKE_PHOTO = 1;
-    String mCurrentPhotoPath;
-    //    public static byte[] byteArray;
-//    public static Bitmap imageBitmap;
     public static Context context;
+
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
+    Uri fileUri = null;
 
 
     @Override
@@ -175,101 +174,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab:
 //                DialogFragment newFragment = new MyDialogFragment();
 //                newFragment.show(getSupportFragmentManager(), "missiles");
+                Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                fileUri = Uri.fromFile(getOutputPhotoFile());
+                i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
 
-                dispatchTakePictureIntent();
+
                 break;
             default:
                 break;
         }
     }
-
-    private void dispatchTakePictureIntent() {
-        Log.d(TAG, "dispatchTakePictureIntent");
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.android.fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
-        Log.d(TAG, "onActivityResult");
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            galleryAddPic();
-            setPic();
-        } else if (resultCode == 0) {
-            Toast.makeText(this, "0", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    private void galleryAddPic() {
-        Log.d(TAG, "galleryAddPic");
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
-    private void setPic() {
-        Log.d(TAG, "setPic");
-
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        //to compress full size photo use commented strings below
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-        //compress thumbnail
-        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath),
-                THUMBSIZE, THUMBSIZE);
-        thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        int sasda = byteArray.length;
-        addNewDataItem(byteArray);
-
-
-    }
-
-
-    private File createImageFile() throws IOException {
-        Log.d(TAG, "createImageFile");
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
 
     private void addNewDataItem(@NonNull byte[] byteArray) {
         Log.d(TAG, "addNewDataItem");
@@ -332,4 +247,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private File getOutputPhotoFile() {
+
+        File directory = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), getPackageName());
+
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                Log.e(TAG, "Failed to create storage directory.");
+                return null;
+            }
+        }
+
+        String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
+
+        return new File(directory.getPath() + File.separator + "IMG_"
+                + timeStamp + ".jpg");
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
+            if (resultCode == RESULT_OK) {
+                Uri photoUri = null;
+                if (data == null) {
+                    // A known bug here! The image should have saved in fileUri
+                    Toast.makeText(this, "Image saved successfully",
+                            Toast.LENGTH_LONG).show();
+                    photoUri = fileUri;
+                } else {
+                    photoUri = data.getData();
+                    Toast.makeText(this, "Image saved successfully in: " + data.getData(),
+                            Toast.LENGTH_LONG).show();
+                }
+                setPic(photoUri.getPath());
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Callout for image capture failed!",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void setPic(String photoUri) {
+        Log.d(TAG, "setPic");
+
+        File imageFile = new File(photoUri);
+        if (imageFile.exists()) {
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            //to compress full size photo use commented strings below
+//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+            //compress thumbnail
+            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imageFile.getAbsolutePath()),
+                    THUMBSIZE, THUMBSIZE);
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+            int sasda = byteArray.length;
+            addNewDataItem(byteArray);
+        }
+    }
 }

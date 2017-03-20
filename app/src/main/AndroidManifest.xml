@@ -22,7 +22,7 @@
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+         />
 
     <meta-data
         android:name="com.google.android.gms.version"
