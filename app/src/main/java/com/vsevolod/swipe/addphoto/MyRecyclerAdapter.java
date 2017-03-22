@@ -9,10 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
+
+import it.sephiroth.android.library.picasso.Picasso;
 
 /**
  * Created by vsevolod on 13.03.17.
@@ -22,7 +22,7 @@ import java.util.List;
 public class MyRecyclerAdapter extends RecyclerView.Adapter {
     private final String TAG = "MyRecyclerAdapter";
     private Context context;
-    private List<Model> data;
+    static List<Model> data;
 
     public MyRecyclerAdapter(Context context, @NonNull List<Model> data) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
@@ -43,6 +43,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "onBindViewHolder");
         Bitmap bitmap = BitmapFactory.decodeByteArray(data.get(position).getPhoto(), 0, data.get(position)
                 .getPhoto().length);
+
         ((MyRecyclerViewHolder) holder).mImageView.setImageBitmap(bitmap);
         ((MyRecyclerViewHolder) holder).mDateTextView.setText(data.get(position).getDate());
         ((MyRecyclerViewHolder) holder).mPathTextView.setText(data.get(position).getPath());

@@ -9,6 +9,7 @@ import io.realm.RealmObject;
 public class Model extends RealmObject{
     String date;
     String path;
+    String photoURI;
     int deliveryCode = 0;
     int stateCode = 0;
     byte[] photo;
@@ -17,6 +18,13 @@ public class Model extends RealmObject{
     public Model(String date, String path, byte[] photo) {
         this.date = date;
         this.path = path;
+        this.photo = photo;
+    }
+
+    public Model(String date, String path, String photoURI, byte[] photo) {
+        this.date = date;
+        this.path = path;
+        this.photoURI = photoURI;
         this.photo = photo;
     }
 
@@ -61,5 +69,13 @@ public class Model extends RealmObject{
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
+    }
+
+    public String getPhotoURI() {
+        return photoURI;
+    }
+
+    public void setPhotoURI(String photoURI) {
+        this.photoURI = photoURI;
     }
 }

@@ -186,14 +186,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void addNewDataItem(@NonNull byte[] byteArray) {
+    private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("E HH:mm:ss  dd.MM.yyyy");
         String formattedDate = df.format(c.getTime());
 
 
-        Model model = new Model(formattedDate, "some path", byteArray);
+        Model model = new Model(formattedDate, "@2101", photoUri, byteArray);
         saveToRealm(model);
 //        data.add(model);
         setRecyclerViewAdapter();
@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         newModel.setDate(model.getDate());
         newModel.setPath(model.getPath());
         newModel.setPhoto(model.getPhoto());
+        newModel.setPhotoURI(model.getPhotoURI());
 
         realm.commitTransaction();
 
@@ -305,8 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     THUMBSIZE, THUMBSIZE);
             thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
-            int sasda = byteArray.length;
-            addNewDataItem(byteArray);
+            addNewDataItem(byteArray, photoUri);
         }
     }
 }
