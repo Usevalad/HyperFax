@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vsevolod.swipe.addphoto.Activity.FullscreenActivity;
+import com.vsevolod.swipe.addphoto.Activity.MainActivity;
+import com.vsevolod.swipe.addphoto.R;
+
 /**
  * Created by vsevolod on 13.03.17.
  */
@@ -16,7 +20,9 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
     private final String extra = "photo uri";
     TextView mDateTextView;
     TextView mPathTextView;
-    ImageView mImageView;
+    ImageView mPhotoImageView;
+    ImageView mStateIconImageView;
+    ImageView mDeliveryIconImageView;
     CardView mCardView;
     Context context;
 
@@ -25,8 +31,10 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
         this.context = context;
         mCardView = (CardView) itemView.findViewById(R.id.my_card_view);
         mCardView.setOnCreateContextMenuListener((MainActivity) context);
-        mImageView = (ImageView) itemView.findViewById(R.id.photo);
-        mImageView.setOnClickListener(this);
+        mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo);
+        mPhotoImageView.setOnClickListener(this);
+        mDeliveryIconImageView = (ImageView) itemView.findViewById(R.id.icon_delivery);
+        mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state);
         mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
         mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
     }

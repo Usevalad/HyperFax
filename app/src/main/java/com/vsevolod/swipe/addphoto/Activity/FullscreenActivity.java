@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.Activity;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.vsevolod.swipe.addphoto.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

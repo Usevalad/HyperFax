@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.Activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
+
+import com.vsevolod.swipe.addphoto.Model;
+import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

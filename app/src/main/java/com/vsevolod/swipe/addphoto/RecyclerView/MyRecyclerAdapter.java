@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.RecyclerView;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,9 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
+import com.vsevolod.swipe.addphoto.Model;
+import com.vsevolod.swipe.addphoto.R;
 
-import it.sephiroth.android.library.picasso.Picasso;
+import java.util.List;
 
 /**
  * Created by vsevolod on 13.03.17.
@@ -41,12 +42,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder");
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data.get(position).getPhoto(), 0, data.get(position)
-                .getPhoto().length);
+        Model model = data.get(position);
+        byte[] photoByteArray = model.getPhoto();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
 
-        ((MyRecyclerViewHolder) holder).mImageView.setImageBitmap(bitmap);
-        ((MyRecyclerViewHolder) holder).mDateTextView.setText(data.get(position).getDate());
-        ((MyRecyclerViewHolder) holder).mPathTextView.setText(data.get(position).getPath());
+        ((MyRecyclerViewHolder) holder).mPhotoImageView.setImageBitmap(bitmap);
+        ((MyRecyclerViewHolder) holder).mStateIconImageView.setImageResource(model.getStateIconImage());
+        ((MyRecyclerViewHolder) holder).mDeliveryIconImageView.setImageResource(model.getDeliveryIconImage());
+        ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getDate());
+        ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getPath());
     }
 
     @Override
@@ -54,6 +58,5 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "getItemCount");
         return data.size();
     }
-
 
 }

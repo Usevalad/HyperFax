@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.Activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -30,6 +30,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.vsevolod.swipe.addphoto.R;
 
 import java.util.ArrayList;
 import java.util.List;
