@@ -5,8 +5,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.Model;
-import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
-import com.vsevolod.swipe.addphoto.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,7 @@ public class RealmHelper {
     public List<Model> data = new ArrayList<>();
 
     public RealmHelper(Context context) {
+        Log.d(TAG, "Realm constructor");
         this.realm = Realm.getDefaultInstance();
         this.context = context;
         initRealmData();
@@ -50,10 +49,6 @@ public class RealmHelper {
         results.deleteAllFromRealm();
         this.realm.commitTransaction();
 
-        if (data != null) {
-            MainActivity.mRecyclerView.setAdapter(new MyRecyclerAdapter(this.context, this.data));
-        }
-
         Toast.makeText(this.context, "Данные удалены", Toast.LENGTH_SHORT).show();
     }
 
@@ -71,9 +66,6 @@ public class RealmHelper {
         newModel.setPhotoURI(model.getPhotoURI());
 
         this.realm.commitTransaction();
-        if (this.data != null) {
-            MainActivity.mRecyclerView.setAdapter(new MyRecyclerAdapter(this.context, this.data));
-        }
     }
 
     public List<Model> getData() {

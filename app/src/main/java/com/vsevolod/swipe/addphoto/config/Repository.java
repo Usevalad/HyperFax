@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.config;
 
 import java.util.ArrayList;
 import java.util.List;

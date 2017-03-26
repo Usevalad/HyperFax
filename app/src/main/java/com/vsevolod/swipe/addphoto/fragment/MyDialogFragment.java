@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto;
+package com.vsevolod.swipe.addphoto.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
+import com.vsevolod.swipe.addphoto.Model;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

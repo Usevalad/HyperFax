@@ -19,7 +19,7 @@ import it.sephiroth.android.library.picasso.Picasso;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener{
+public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener {
     private final String extra = "photo uri";
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -125,10 +125,14 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     private void setImageFromStorage(String path) {
         File imageFile = new File(path);
-
-        Picasso.with(this)
-                .load(imageFile)
-                .into(mContentView);
+        if (imageFile.exists()) {
+            Picasso.with(this)
+                    .load(imageFile)
+                    .into(mContentView);
+        } else {
+            // TODO: 26.03.17 add "no such image" image to drawable
+            mContentView.setImageResource(R.drawable.test);
+        }
     }
 
     @Override
@@ -183,7 +187,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.dummy_button:
                 finish();
                 break;

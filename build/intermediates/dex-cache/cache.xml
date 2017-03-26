@@ -39,6 +39,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/c1485eb3ab8d46783732e3e2b4bd4fa35b046fed/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f91fda9bdd268cd21a0ef9d8f40154ded0bd4c53">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_4817c7ab7c1f002cc5ca688e2e3857c1827e5912.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/home/vsevolod/.android/build-cache/ff518cae5493becae324e5662d9441a1b0e5236c/output/jars/classes.jar"
         jumboMode="false"
         optimize="true"

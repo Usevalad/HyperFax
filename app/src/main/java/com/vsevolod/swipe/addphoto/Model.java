@@ -83,15 +83,15 @@ public class Model extends RealmObject {
 //        if (deliveryCode == 0) {
 //            return 666; // TODO: 24.03.17 if delivery code is not ok - don't set any image
 //        } else {
-            switch (stateCode) {
-                case 0:
-                    return R.drawable.ic_time;
-                case 1:
-                    return R.drawable.ic_all_checked;
-                case 2:
-                    return R.drawable.ic_cancel;
-                default:
-                    return R.drawable.ic_bomb; //if something wrong you'll see bomb
+        switch (stateCode) {
+            case 0:
+                return R.drawable.ic_time;
+            case 1:
+                return R.drawable.ic_all_checked;
+            case 2:
+                return R.drawable.ic_cancel;
+            default:
+                return R.drawable.ic_bomb; //if something wrong you'll see bomb
 //            }
         }
     }
