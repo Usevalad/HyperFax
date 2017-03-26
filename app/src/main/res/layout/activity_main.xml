@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:layout_margin="0dp"
-    tools:context="com.vsevolod.swipe.addphoto.Activity.MainActivity">
+    tools:context="com.vsevolod.swipe.addphoto.activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

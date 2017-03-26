@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vsevolod.swipe.addphoto.Activity.FullscreenActivity;
-import com.vsevolod.swipe.addphoto.Activity.MainActivity;
+import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
+import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.R;
 
 /**

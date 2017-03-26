@@ -80,9 +80,9 @@ public class Model extends RealmObject {
     }
 
     public int getStateIconImage() {
-        if (deliveryCode == 0) {
-            return 666; // TODO: 24.03.17 if delivery code is not ok - don't set any image
-        } else {
+//        if (deliveryCode == 0) {
+//            return 666; // TODO: 24.03.17 if delivery code is not ok - don't set any image
+//        } else {
             switch (stateCode) {
                 case 0:
                     return R.drawable.ic_time;
@@ -92,7 +92,7 @@ public class Model extends RealmObject {
                     return R.drawable.ic_cancel;
                 default:
                     return R.drawable.ic_bomb; //if something wrong you'll see bomb
-            }
+//            }
         }
     }
 
@@ -101,11 +101,11 @@ public class Model extends RealmObject {
             case 0:
                 return R.drawable.ic_time;
             case 1:
-                if (stateCode == 1 || stateCode == 2) {
-                    return 666; // TODO: 24.03.17 if stateCode = 1 or 2 - don't set any image
-                } else {
-                    return R.drawable.ic_checked;
-                }
+//                if (stateCode == 1 || stateCode == 2) {
+//                    return 666; // TODO: 24.03.17 if stateCode = 1 or 2 - don't set any image
+//                } else {
+                return R.drawable.ic_checked;
+//                }
             default:
                 return R.drawable.ic_bomb; //if something wrong you'll see bomb
         }

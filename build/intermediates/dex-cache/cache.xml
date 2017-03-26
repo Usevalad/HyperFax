@@ -2,22 +2,121 @@
 <items version="2" >
 
     <item
-        is-multidex="true"
-        jar="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/c4c3eac2dcce6532fb158986d53622938239d7f2/output/jars/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="c82741bc129dd5f99f11a4ab8666ae24262053b6">
-        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_da9b612e69c83f5bff2e1ad5d886ed2000058766/classes.dex" />
+        sha1="fa0446a14ed5dd3725047d6399ffea771a564b30">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_d37bd78f6d0ec7df617bc632ed2e6342eba4ff4b.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/6616ad70d06af92f2736f7da24df21ab0fa6dc2c/output/jars/classes.jar"
+        jumboMode="false"
         optimize="true"
         revision="25.0.2"
-        sha1="10f92c744389551b7396a958f49ac3930ace86b0">
-        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_ca34467ef5a02e2533c1d6f3a610d36ceb5a482f/classes.dex" />
+        sha1="8fe8a8f77d651982ce5e18f6187dc4daf914ac57">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_b0afd409e0112446b36470a6586155c6553e3111.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/79196b2d2e8c3e192fff479ca29e4e6db30c178b/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="cb454b52545859ed2f24a6c01366805b0fa04b22">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_e8972ec6c03f9b128d9d14492eb87253aa840819.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/56de34be85bd5c99afcfe21ee3c9b5c04cafc750/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="152de8da301561dcb0946471697a420d8f7a68c5">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_45ac9cf56beb9f90dc7aa424e6b5f2dcc0ae6b9e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/ff518cae5493becae324e5662d9441a1b0e5236c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ee394a892dd21c03a528139c1e8d4e0e1264ac84">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_d6e631776e6f7618b7289774f99cf7f916e9f9a1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/f1d043d96322af4e1f2209b646d31096016ff74c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_871fc8f995b8c9b1fe1c29aceea996611a54bb30.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/b89c987b3bd28f571e24e668c46505eeb91676fe/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ea6a989b83d19b1b461281e0475a6cd6514897f8">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_4a3d47fd0e42babeff7256c012aa6965b57d6569.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/281c6bf08e1672e7f91eb2b0019c372bd80d5d28/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e820b7be8c035dd522da4bc822e8a76c8e27921a">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_6537a70a5e0416e851a76b02daaa433b6867afed.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/2da5474dfeddb65625ff212286a25dfa6eb304a1/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e51c2f662bb72419632af5192553c37e33890a99">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_fdc8fa3e46550f7a2e920d39f528393644bba433.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/a27eb1e3b177cb477de7730befcc2ee6589575e9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="810f41e5b7fd99f196ebeabe865ba2c54e7e76dc">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_9f960cd263b8de118e8798da3465ac4c48dc6131.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/4e1b76f9fa4203fa806a15cb363e6b6ac23b3877/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="67eb33110dbacb46a48175b08ae0c96761d2c17d">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_9c28981381ba796ab4b4527c79744db801941647.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/48db4f01b22bef0042cf195bba7d72fefef4f4df/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="30a4938ea5235ccf532b3e9f04200e68547e36ad">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_06e6ab958db93125d2e4c2b643c191dd3d2809ed.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/vsevolod/.android/build-cache/81cf1a39dfaf9fcac29da243599ade1d2609d279/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="702d339bc0a81d21354cd7e2cf2b67225fa4a16c">
+        <dex dex="/home/vsevolod/Descktop/hyperFax demos/AddPhoto/app/build/intermediates/pre-dexed/debug/classes_e64a8b9af6ac2a374cb861af99a1dd0cc3fe9ee6.jar" />
     </item>
 
 </items>

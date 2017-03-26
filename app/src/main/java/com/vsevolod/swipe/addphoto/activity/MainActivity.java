@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.Activity;
+package com.vsevolod.swipe.addphoto.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,22 +24,19 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.Model;
-import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.config.RealmHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import io.realm.Realm;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
-import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -48,28 +45,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static List<Model> data;
     public static String user;
     private boolean isChecked = false;
-    private Realm realm;
     public static Context context;
 
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
     Uri fileUri = null;
+    private RealmHelper realmHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-//to start login activity
+        //to start login activity
 //        if (user == null) {
 //            Intent intent = new Intent(this, LoginActivity.class);
 //            startActivity(intent);
 //        }
-        data = new ArrayList<>();
-        realm = Realm.getDefaultInstance();
 
-        initRealmData();
-
+        realmHelper = new RealmHelper(this);
+        data = realmHelper.getData();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -81,16 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         context = getApplicationContext();
         setRecyclerViewAdapter();
-    }
-
-
-    private void initRealmData() {
-        Log.d(TAG, "initRealmData");
-        //db
-        RealmQuery query = realm.where(Model.class);
-        RealmResults<Model> results = query.findAllSorted("date", Sort.DESCENDING);
-        data = results;
-//        int size = data.size();
     }
 
     @Override
@@ -113,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
-                dropRealm();
+                realmHelper.dropRealm();
                 break;
             case R.id.main_menu_repeat_download:
                 Toast.makeText(this, "Идет загрузка", Toast.LENGTH_SHORT).show();
@@ -143,25 +128,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         return super.onOptionsItemSelected(item);
-
     }
 
-    private void dropRealm() {
-        Log.d(TAG, "dropRealm");
-
-        RealmResults<Model> results = realm.where(Model.class).findAll();
-
-        // All changes to data must happen in a transaction
-        realm.beginTransaction();
-        // Delete all matches
-        results.deleteAllFromRealm();
-        realm.commitTransaction();
-        setRecyclerViewAdapter();
-        Toast.makeText(this, "Данные удалены", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void setRecyclerViewAdapter() {
+    public void setRecyclerViewAdapter() {
         Log.d(TAG, "setRecyclerViewAdapter");
         int i = data.size();
         if (data != null) {
@@ -182,8 +151,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 fileUri = Uri.fromFile(getOutputPhotoFile());
                 i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
-
-
                 break;
             default:
                 break;
@@ -196,13 +163,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SimpleDateFormat df = new SimpleDateFormat("E HH:mm:ss  dd.MM.yyyy");
         String formattedDate = df.format(c.getTime());
 
-
         Model model = new Model(formattedDate, "@2101", photoUri, byteArray);
-        saveToRealm(model);
-//        data.add(model);
-        setRecyclerViewAdapter();
+        realmHelper.saveToRealm(model);
     }
-
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -230,26 +193,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "deleteItem");
         Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show();
 //        long i =  info.id; // nullPointerException
-    }
-
-
-    private void saveToRealm(Model model) {
-        Log.d(TAG, "saveToRealm");
-        Realm realm = Realm.getDefaultInstance();
-
-        realm.beginTransaction();
-
-        // Create an object
-        Model newModel = realm.createObject(Model.class);
-
-        // Set its fields
-        newModel.setDate(model.getDate());
-        newModel.setPath(model.getPath());
-        newModel.setPhoto(model.getPhoto());
-        newModel.setPhotoURI(model.getPhotoURI());
-
-        realm.commitTransaction();
-
     }
 
     private File getOutputPhotoFile() {

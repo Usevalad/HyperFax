@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.Activity;
+package com.vsevolod.swipe.addphoto.activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

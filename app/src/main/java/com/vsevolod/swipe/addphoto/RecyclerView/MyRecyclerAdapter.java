@@ -29,6 +29,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
+        Log.e(TAG, "MyRecyclerAdapter: wtf");
     }
 
     @Override
