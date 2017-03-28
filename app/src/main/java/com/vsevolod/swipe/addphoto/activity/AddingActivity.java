@@ -72,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("E HH:mm:ss  dd.MM.yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         String formattedDate = df.format(c.getTime());
         String photoTag = new StringBuilder()
                 .append("@")

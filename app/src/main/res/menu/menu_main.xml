@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/main_menu_clear_data"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appcompat="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/main_menu_clear_data"
         android:title="Очистить кеш" />
-    <item android:id="@+id/main_menu_repeat_download"
+    <item
+        android:id="@+id/main_menu_repeat_download"
         android:title="Повторить загрузку фото" />
-    <item android:id="@+id/main_menu_notifications"
+    <item
+        android:id="@+id/main_menu_notifications"
         android:checkable="true"
         android:title="Вкл/выкл уведомления" />
-    <item android:id="@+id/main_menu_request_flow"
+    <item
+        android:id="@+id/main_menu_request_flow"
         android:title="Обновить дерево каталогов" />
-    <item android:id="@+id/main_menu_log_out"
+    <item
+        android:id="@+id/main_menu_log_out"
         android:title="Выйти" />
+    <item
+        android:id="@+id/menu_search"
+        appcompat:actionViewClass="android.support.v7.widget.SearchView"
+        appcompat:showAsAction="always"
+        android:title="search" />
 </menu>
