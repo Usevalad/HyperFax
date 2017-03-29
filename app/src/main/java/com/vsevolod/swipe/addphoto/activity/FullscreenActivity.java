@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.TouchImageView;
 
 import java.io.File;
 
@@ -39,7 +40,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
      */
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private ImageView mContentView;
+    private TouchImageView mContentView;
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
         @Override
@@ -99,7 +100,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.dummy_button).setOnClickListener(this);
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
-        mContentView = (ImageView) findViewById(R.id.fullscreen_content);
+        mContentView = (TouchImageView) findViewById(R.id.fullscreen_content);
         String photoURI = getIntent().getStringExtra(extra);
         mContentView.setImageResource(R.drawable.test);
         setImageFromStorage(photoURI);

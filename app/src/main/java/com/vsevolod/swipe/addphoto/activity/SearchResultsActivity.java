@@ -7,28 +7,51 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 
+import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.config.RealmHelper;
+
+import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
+    private final String TAG = "SearchResultsActivity";
+    private RecyclerView mRecyclerView;
+    private RealmHelper mRealmHelper;
+    private List<Model> data;
+    public Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+        mRealmHelper = new RealmHelper(this);
+        handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        handleIntent(getIntent());
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+        mContext = getApplicationContext();
+//        setRecyclerViewAdapter();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu");
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         SearchManager searchManager =
@@ -43,6 +66,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
@@ -55,16 +79,16 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "onNewIntent");
         handleIntent(intent);
     }
 
     private void handleIntent(Intent intent) {
+        Log.d(TAG, "handleIntent");
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            TextView textView = (TextView) findViewById(R.id.result);
-            textView.setText(query);
-            //use the query to search
+            data = mRealmHelper.getSearchResults(query);
         }
     }
 }

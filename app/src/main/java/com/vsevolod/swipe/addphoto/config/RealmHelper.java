@@ -9,6 +9,7 @@ import com.vsevolod.swipe.addphoto.Model;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -71,5 +72,32 @@ public class RealmHelper {
     public List<Model> getData() {
         Log.d(TAG, "getData");
         return this.data;
+    }
+
+    public List<String> getAllDates() {
+        Log.d(TAG, "getAllDates");
+        List<String> dates = new ArrayList<>();
+        for (int i = 0; i < this.data.size(); i++) {
+            dates.add(data.get(i).getDate());
+        }
+        return dates;
+    }
+
+    public List<String> getAllPaths() {
+        Log.d(TAG, "getAllPaths");
+        List<String> paths = new ArrayList<>();
+        for (int i = 0; i < this.data.size(); i++) {
+            paths.add(data.get(i).getPath());
+        }
+        return paths;
+    }
+
+    public List<Model> getSearchResults(String queryString) {
+        RealmQuery query = this.realm.where(Model.class);
+        query.contains("date", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.or().contains("path", queryString);
+        RealmResults<Model> results = query.findAll();
+
+        return results;
     }
 }

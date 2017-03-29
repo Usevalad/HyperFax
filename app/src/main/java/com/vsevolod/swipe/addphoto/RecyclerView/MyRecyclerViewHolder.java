@@ -30,7 +30,7 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
         super(itemView);
         this.context = context;
         mCardView = (CardView) itemView.findViewById(R.id.my_card_view);
-        mCardView.setOnCreateContextMenuListener((MainActivity) context);
+//        mCardView.setOnCreateContextMenuListener((MainActivity) context);
         mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo);
         mPhotoImageView.setOnClickListener(this);
         mDeliveryIconImageView = (ImageView) itemView.findViewById(R.id.icon_delivery);
@@ -45,6 +45,5 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
         Intent intent = new Intent(context, FullscreenActivity.class);
         intent.putExtra(extra, photoUri);
         context.startActivity(intent);
-
     }
 }
