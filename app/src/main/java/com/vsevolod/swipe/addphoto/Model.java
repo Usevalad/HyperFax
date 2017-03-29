@@ -7,18 +7,12 @@ import io.realm.RealmObject;
  */
 
 public class Model extends RealmObject {
-    String date;
-    String path;
-    String photoURI;
-    int deliveryCode = 0;
-    int stateCode = 0;
-    byte[] photo;
-
-    public Model(String date, String path, byte[] photo) {
-        this.date = date;
-        this.path = path;
-        this.photo = photo;
-    }
+    private String date;
+    private String path;
+    private String photoURI;
+    private int deliveryCode = 0;
+    private int stateCode = 0;
+    private byte[] photo;
 
     public Model(String date, String path, String photoURI, byte[] photo) {
         this.date = date;
@@ -28,7 +22,7 @@ public class Model extends RealmObject {
     }
 
     public Model() {
-        //realm need to add empty constructor instead of this one
+        //realm need to add empty constructor
     }
 
     public String getDate() {

@@ -24,8 +24,8 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.RecyclerView.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -40,12 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static List<Model> data;
     public static String user;
     public static Context context;
+    private FloatingActionButton mFAB;
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper realmHelper;
-
-    private static final String[] COUNTRIES = new String[]{"Belgium",
-            "France", "France_", "Italy", "Germany", "Spain"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +62,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        findViewById(R.id.fab).setOnClickListener(this);
+        mFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mFAB.setOnClickListener(this);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         context = getApplicationContext();
         setRecyclerViewAdapter();
+        setFabHidingAbility();
 
 //        FragmentManager fragmentManager = getSupportFragmentManager();
 //        FragmentTransaction fragmentTransaction =
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
@@ -164,13 +163,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
-    }
-
-    private void startCameraActivity() {
-        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = Uri.fromFile(getOutputPhotoFile());
-        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
     }
 
     @Override
@@ -187,18 +179,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.delete:
-                deleteItem(info);
+                // TODO: 29.03.17 handle this
                 return true;
             default:
                 return super.onContextItemSelected(item);
         }
-    }
-
-    // TODO: 08.03.17 handle this method
-    private void deleteItem(AdapterView.AdapterContextMenuInfo info) {
-        Log.d(TAG, "deleteItem");
-        Toast.makeText(this, "delete", Toast.LENGTH_SHORT).show();
-//        long i =  info.id; // nullPointerException
     }
 
     private File getOutputPhotoFile() {
@@ -248,4 +233,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    private void startCameraActivity() {
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = Uri.fromFile(getOutputPhotoFile());
+        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
+    }
+
+    private void setFabHidingAbility() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                if (dy > 0) {
+                    // Scroll Down
+                    if (mFAB.isShown()) {
+                        mFAB.hide();
+                    }
+                } else if (dy < 0) {
+                    // Scroll Up
+                    if (!mFAB.isShown()) {
+                        mFAB.show();
+                    }
+                }
+            }
+        });
+    }
 }

@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.RecyclerView;
+package com.vsevolod.swipe.addphoto.recyclerView;
 
 import android.content.Context;
 import android.graphics.Bitmap;

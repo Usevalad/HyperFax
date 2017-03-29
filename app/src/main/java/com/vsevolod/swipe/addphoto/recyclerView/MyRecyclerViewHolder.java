@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.RecyclerView;
+package com.vsevolod.swipe.addphoto.recyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
-import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.R;
 
 /**
