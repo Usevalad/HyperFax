@@ -21,22 +21,15 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:elevation="4dp"
             android:titleTextAppearance="@android:color/black"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:subtitleTextColor="@android:color/black"
-            app:titleTextColor="@android:color/black"
-            android:elevation="4dp"
-            >
+            app:titleTextColor="@android:color/black">
 
         </android.support.v7.widget.Toolbar>
         <!--TODO:include divider-->
-        <View
-            android:id="@+id/divider"
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:layout_below="@+id/icons_container"
-            android:background="#FF0000"
-            android:clickable="false" />
+        <include layout="@layout/divider" />
 
     </android.support.design.widget.AppBarLayout>
 

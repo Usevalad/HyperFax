@@ -4,11 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.vsevolod.swipe.addphoto.Model;
@@ -29,6 +31,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private AutoCompleteTextView mAutoCompleteTextView;
     private ImageView mImageView;
     private String path;
+    private Button mSendButton;
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +46,12 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         mAutoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.model_adding_auto_complete_text_view);
         mAutoCompleteTextView.requestFocus();
         mImageView = (ImageView) findViewById(R.id.model_adding_image_view);
-        findViewById(R.id.send_button).setOnClickListener(this); // Button
+        mSendButton = (Button) findViewById(R.id.send_button);
+        mSendButton.setOnClickListener(this);
 
         Picasso.with(this)
                 .load(path)
                 .into(mImageView);
-
-
     }
 
     private void addImage(String path) {
@@ -90,6 +93,10 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.send_button:
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
                 addImage(path);
                 break;
             default:

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +17,8 @@ import android.view.MenuItem;
 
 import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.util.List;
 
@@ -36,17 +36,17 @@ public class SearchResultsActivity extends AppCompatActivity {
         mRealmHelper = new RealmHelper(this);
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
+        toolbar.setLogo(R.drawable.logo);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
         mContext = getApplicationContext();
-//        setRecyclerViewAdapter();
-
     }
 
     @Override

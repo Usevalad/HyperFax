@@ -37,7 +37,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 0;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     public static RecyclerView mRecyclerView;
     public static List<Model> data;
     public static String user;
@@ -70,19 +70,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.logo);
-//        getSupportActionBar().setIcon(R.drawable.logo);
         setSupportActionBar(toolbar);
 
-        mFAB = (FloatingActionButton) findViewById(R.id.fab);
-        mFABCamera = (FloatingActionButton) findViewById(R.id.fab_camera);
-        mFABGallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
-        mFAB.setOnClickListener(this);
-        mFABCamera.setOnClickListener(this);
-        mFABGallery.setOnClickListener(this);
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
+        setFABAnimation();
+
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
@@ -98,9 +89,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //
     }
 
+    private void setFABAnimation() {
+        mFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mFABCamera = (FloatingActionButton) findViewById(R.id.fab_camera);
+        mFABGallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
+        mFAB.setOnClickListener(this);
+        mFABCamera.setOnClickListener(this);
+        mFABGallery.setOnClickListener(this);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume");
+        isFabOpen = true;
+        mFABCamera.setClickable(true);
+        mFABGallery.setClickable(true);
+        animateFAB();
         setRecyclerViewAdapter();
     }
 
@@ -160,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -168,7 +176,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "setRecyclerViewAdapter");
         if (data != null) {
             Log.d(TAG, "setRecyclerViewAdapter: true");
-            mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+            try {
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -180,9 +192,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 animateFAB();
                 break;
             case R.id.fab_camera:
+                mFABCamera.setClickable(false);
+                mFABGallery.setClickable(false);
                 startCameraActivity();
                 break;
             case R.id.fab_gallery:
+                mFABCamera.setClickable(false);
+                mFABGallery.setClickable(false);
                 Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
                 break;
             default:
@@ -212,17 +228,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private File getOutputPhotoFile() {
-
         File directory = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getPackageName());
-
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
                 Log.e(TAG, "Failed to create storage directory.");
                 return null;
             }
         }
-
         String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
 
         return new File(directory.getPath() + File.separator + "IMG_"
@@ -230,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-            if (resultCode == RESULT_OK) {
+        if (resultCode != RESULT_CANCELED) {
+            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
                 Uri photoUri = null;
                 if (data == null) {
                     // A known bug here! The image should have saved in fileUri
@@ -270,7 +283,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 if (dy > 0) {
                     // Scroll Down
                     if (mFAB.isShown()) {
@@ -290,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void animateFAB() {
-
         if (isFabOpen) {
             mFAB.startAnimation(rotate_backward);
             mFABCamera.startAnimation(fab_close);
@@ -309,5 +320,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(TAG, "animateFAB: open");
         }
     }
-
 }
