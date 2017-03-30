@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String user;
     public static Context context;
     private FloatingActionButton mFAB;
+    private FloatingActionButton mFABCamera;
+    private FloatingActionButton mFABGallery;
+    private Animation fab_open;
+    private Animation fab_close;
+    private Animation rotate_forward;
+    private Animation rotate_backward;
+    private Boolean isFabOpen = false;
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper realmHelper;
@@ -60,10 +69,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setLogo(R.drawable.logo);
+//        getSupportActionBar().setIcon(R.drawable.logo);
         setSupportActionBar(toolbar);
 
         mFAB = (FloatingActionButton) findViewById(R.id.fab);
+        mFABCamera = (FloatingActionButton) findViewById(R.id.fab_camera);
+        mFABGallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
         mFAB.setOnClickListener(this);
+        mFABCamera.setOnClickListener(this);
+        mFABGallery.setOnClickListener(this);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
@@ -158,7 +177,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onClick");
         switch (v.getId()) {
             case R.id.fab:
+                animateFAB();
+                break;
+            case R.id.fab_camera:
                 startCameraActivity();
+                break;
+            case R.id.fab_gallery:
+                Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
@@ -249,6 +274,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (dy > 0) {
                     // Scroll Down
                     if (mFAB.isShown()) {
+                        if (isFabOpen) {
+                            animateFAB();
+                        }
                         mFAB.hide();
                     }
                 } else if (dy < 0) {
@@ -260,4 +288,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
     }
+
+    public void animateFAB() {
+
+        if (isFabOpen) {
+            mFAB.startAnimation(rotate_backward);
+            mFABCamera.startAnimation(fab_close);
+            mFABGallery.startAnimation(fab_close);
+            mFABCamera.setClickable(false);
+            mFABGallery.setClickable(false);
+            isFabOpen = false;
+            Log.d(TAG, "animateFAB: close");
+        } else {
+            mFAB.startAnimation(rotate_forward);
+            mFABCamera.startAnimation(fab_open);
+            mFABGallery.startAnimation(fab_open);
+            mFABCamera.setClickable(true);
+            mFABGallery.setClickable(true);
+            isFabOpen = true;
+            Log.d(TAG, "animateFAB: open");
+        }
+    }
+
 }

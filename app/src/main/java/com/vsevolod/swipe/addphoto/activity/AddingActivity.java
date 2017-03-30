@@ -72,14 +72,16 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
-        String formattedDate = df.format(c.getTime());
+        SimpleDateFormat simpleDateFormatTV = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
+        String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
+        String formattedDateDB = simpleDateFormatDB.format(c.getTime());
         String photoTag = new StringBuilder()
                 .append("@")
                 .append(mAutoCompleteTextView.getText().toString())
                 .toString();
 
-        Model model = new Model(formattedDate, photoTag, photoUri, byteArray);
+        Model model = new Model(formattedDateDB, photoTag, photoUri, byteArray);
         mRealmHelper.saveToRealm(model);
         finish();
     }

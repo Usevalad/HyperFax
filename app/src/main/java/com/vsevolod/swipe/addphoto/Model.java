@@ -83,7 +83,7 @@ public class Model extends RealmObject {
             case 1:
                 return R.drawable.ic_all_checked;
             case 2:
-                return R.drawable.ic_cancel;
+                return R.drawable.ic_canceled;
             default:
                 return R.drawable.ic_bomb; //if something wrong you'll see bomb
 //            }

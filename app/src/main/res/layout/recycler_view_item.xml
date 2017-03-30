@@ -59,7 +59,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="10dp"
-                android:background="#e9eaec"
+                android:background="#FF0000"
                 android:clickable="false" />
 
             <LinearLayout
