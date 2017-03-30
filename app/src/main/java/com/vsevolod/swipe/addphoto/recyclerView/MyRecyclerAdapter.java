@@ -49,7 +49,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
 
         ((MyRecyclerViewHolder) holder).mPhotoImageView.setImageBitmap(bitmap);
         ((MyRecyclerViewHolder) holder).mStateIconImageView.setImageResource(model.getStateIconImage());
-        ((MyRecyclerViewHolder) holder).mDeliveryIconImageView.setImageResource(model.getDeliveryIconImage());
         ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getDate());
         ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getPath());
     }

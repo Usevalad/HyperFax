@@ -21,7 +21,6 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
     TextView mPathTextView;
     ImageView mPhotoImageView;
     ImageView mStateIconImageView;
-    ImageView mDeliveryIconImageView;
     CardView mCardView;
     Context context;
 
@@ -32,7 +31,6 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
 //        mCardView.setOnCreateContextMenuListener((MainActivity) context);
         mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo);
         mPhotoImageView.setOnClickListener(this);
-        mDeliveryIconImageView = (ImageView) itemView.findViewById(R.id.icon_delivery);
         mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state);
         mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
         mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);

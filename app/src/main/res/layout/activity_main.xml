@@ -28,7 +28,7 @@
             app:titleTextColor="@android:color/black">
 
         </android.support.v7.widget.Toolbar>
-        <!--TODO:include divider-->
+
         <include layout="@layout/divider" />
 
     </android.support.design.widget.AppBarLayout>
