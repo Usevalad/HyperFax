@@ -3,6 +3,7 @@ package com.vsevolod.swipe.addphoto.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,6 +39,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
+    private static final int SELECT_PICTURE = 12;
     public static RecyclerView mRecyclerView;
     public static List<Model> data;
     public static String user;
@@ -200,6 +202,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mFABCamera.setClickable(false);
                 mFABGallery.setClickable(false);
                 Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        "Select Picture"), SELECT_PICTURE);
                 break;
             default:
                 break;
@@ -244,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_CANCELED) {
+            Uri photoUri = null;
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-                Uri photoUri = null;
                 if (data == null) {
                     // A known bug here! The image should have saved in fileUri
                     photoUri = fileUri;
@@ -256,13 +264,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 startAddingActivity(photoUri.getPath());
 
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();
+            } else if (requestCode == SELECT_PICTURE) {
+                photoUri = data.getData();
+                String path = getPath(photoUri);
+                Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+//                startAddingActivity(getPath(photoUri));
             } else {
                 Toast.makeText(this, "Call out for image capture failed!",
                         Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public String getPath(Uri uri) {
+        // TODO: 31.03.17 out of memory
+        // just some safety built in
+        if (uri == null) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            cursor = null;
+            return path;
+        }
+        // this is our fallback here
+        return uri.getPath();
     }
 
     private void startAddingActivity(String path) {
