@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mPhoneNumberView;
+    private EditText mPhoneNumberView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String phoneNumber = getPhoneNUmber();
 
 
-        mPhoneNumberView = (AutoCompleteTextView) findViewById(R.id.phone_number);
+        mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
         mPhoneNumberView.setText(phoneNumber);
         populateAutoComplete();
 
@@ -306,7 +306,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mPhoneNumberView.setAdapter(adapter);
+//        mPhoneNumberView.setAdapter(adapter);
     }
 
 

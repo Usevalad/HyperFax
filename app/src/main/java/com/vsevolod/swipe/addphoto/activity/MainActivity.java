@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        //to start login activity
+//        to start login activity
 //        if (user == null) {
 //            Intent intent = new Intent(this, LoginActivity.class);
 //            startActivity(intent);

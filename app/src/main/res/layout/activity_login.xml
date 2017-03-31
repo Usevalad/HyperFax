@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_activity_background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -20,13 +21,12 @@
         android:visibility="gone" />
 
     <ScrollView
-        android:layout_marginTop="100dp"
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        >
+        android:layout_marginTop="100dp">
 
         <LinearLayout
             android:id="@+id/email_login_form"
@@ -38,14 +38,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <AutoCompleteTextView
+                <EditText
                     android:id="@+id/phone_number"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@drawable/rounded_input_shape"
                     android:hint="+380111111111"
                     android:inputType="phone"
                     android:maxLines="1"
+                    android:padding="5dp"
                     android:singleLine="true" />
+
 
             </android.support.design.widget.TextInputLayout>
 
@@ -56,7 +59,8 @@
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@drawable/rounded_input_shape"
                     android:hint="Пароль"
                     android:imeActionId="@+id/login"
                     android:imeActionLabel="@string/action_sign_in_short"
@@ -64,21 +68,20 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:visibility="gone"/>
+                    android:visibility="visible" />
 
             </android.support.design.widget.TextInputLayout>
 
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-
+                android:background="@drawable/rounded_input_shape"
                 android:text="Войти"
-                android:textStyle="bold"
-                android:layout_gravity="center"/>
-
+                android:textStyle="bold" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

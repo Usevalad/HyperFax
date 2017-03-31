@@ -44,7 +44,7 @@
         android:layout_marginRight="@dimen/fab_margin"
         android:src="@android:drawable/ic_menu_gallery"
         android:visibility="invisible"
-        app:backgroundTint="@android:color/black"
+        app:backgroundTint="@android:color/white"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp" />
 
