@@ -12,9 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -40,7 +41,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private RealmHelper mRealmHelper;
     private ImageView mImageView;
     private String path;
-    private Button mSendButton;
     private String prefix = null;
     private long mLastClickTime = 0;
 
@@ -69,8 +69,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         mImageView = (ImageView) findViewById(R.id.model_adding_image_view);
-        mSendButton = (Button) findViewById(R.id.send_button);
-        mSendButton.setOnClickListener(this);
 
         Picasso.with(this)
                 .load(path)
@@ -133,9 +131,24 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.send_button:
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_adding, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.send:
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return;
+                    break;
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 addImage(path);
@@ -143,6 +156,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private TreeNode.TreeNodeClickListener nodeClickListener = new TreeNode.TreeNodeClickListener() {
