@@ -151,13 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
-                String turnOn;
-                if (isChecked) {
-                    turnOn = "Вкл";
-                } else {
-                    turnOn = "Выкл";
-                }
-                Toast.makeText(this, turnOn, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.main_menu_request_flow:
                 Toast.makeText(this, "Обновлено", Toast.LENGTH_SHORT).show();

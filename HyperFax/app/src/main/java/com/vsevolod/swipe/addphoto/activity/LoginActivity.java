@@ -74,8 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
 
         String phoneNumber = getPhoneNUmber();
-
-
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
         mPhoneNumberView.setText(phoneNumber);
         populateAutoComplete();

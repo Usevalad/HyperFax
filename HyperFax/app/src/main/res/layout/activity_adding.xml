@@ -1,33 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF"
     tools:context="com.vsevolod.swipe.addphoto.activity.AddingActivity">
 
-    <ImageView
-        android:id="@+id/model_adding_image_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent">
 
-    <AutoCompleteTextView
-        android:id="@+id/model_adding_auto_complete_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/model_adding_image_view"
-        android:windowSoftInputMode="stateVisible|adjustPan"
-        android:inputType="number"
-        android:maxLength="4"/>
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/adding_appbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/send_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/model_adding_auto_complete_text_view"
-        android:layout_alignParentEnd="true"
-        android:text="send" />
-</RelativeLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/adding_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp"
+                android:titleTextAppearance="@android:color/black"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:subtitleTextColor="@android:color/black"
+                app:titleTextColor="@android:color/black">
+
+                <Button
+                    android:id="@+id/send_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/model_adding_image_view"
+                    android:text="send" />
+
+            </android.support.v7.widget.Toolbar>
+
+            <include layout="@layout/divider" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <ImageView
+            android:id="@+id/model_adding_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/adding_appbar_layout"
+            android:scaleType="centerCrop"
+            android:src="@drawable/login_background" />
+
+        <ScrollView
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/model_adding_image_view" />
+
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
 
 
