@@ -12,14 +12,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.unnamed.b.atv.model.TreeNode;
 import com.unnamed.b.atv.sample.ModelList;
 import com.unnamed.b.atv.sample.MyApplication;
+import com.unnamed.b.atv.sample.PostModel;
 import com.unnamed.b.atv.sample.R;
 import com.unnamed.b.atv.sample.holder.IconTreeItemHolder;
 import com.unnamed.b.atv.view.AndroidTreeView;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +42,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.fragment_default);
 //        mTextView = (TextView) findViewById(R.id.text);
 
-        MyApplication.getApi().getData("21605da16ca43db7f8f2ff6ede1129ea").enqueue(new Callback<ModelList>() {
+
+        MyApplication.getApi().getData(new PostModel("21605da16ca43db7f8f2ff6ede1129ea"))
+                .enqueue(new Callback<ModelList>() {
             @Override
             public void onResponse(Call<ModelList> call, Response<ModelList> response) {
                 //Данные успешно пришли, но надо проверить response.body() на null
