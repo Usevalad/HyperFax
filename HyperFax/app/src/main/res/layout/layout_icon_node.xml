@@ -6,16 +6,16 @@
     android:background="?android:attr/selectableItemBackground"
     android:minHeight="48dp">
 
-    <com.github.johnkil.print.PrintView
+    <ImageView
         android:id="@+id/arrow_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        app:iconColor="#2b2b2b"
-        app:iconSize="20dp"
-        app:iconText="@string/ic_keyboard_arrow_right" />
+        android:src="@drawable/ic_arrow_right"
+        />
+
 
     <TextView
         android:id="@+id/node_value"

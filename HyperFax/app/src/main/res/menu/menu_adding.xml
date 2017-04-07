@@ -4,8 +4,17 @@
     xmlns:appcompat="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/send"
+        android:icon="@drawable/ic_send"
         android:orderInCategory="300"
         android:title="send"
-        android:icon="@drawable/ic_send"
         appcompat:showAsAction="always" />
+
+    <!--<item-->
+        <!--android:id="@+id/expandAll"-->
+        <!--android:title="ExpandAll"-->
+        <!--app:showAsAction="never" />-->
+    <!--<item-->
+        <!--android:id="@+id/collapseAll"-->
+        <!--android:title="CollapseAll"-->
+        <!--app:showAsAction="never" />-->
 </menu>
