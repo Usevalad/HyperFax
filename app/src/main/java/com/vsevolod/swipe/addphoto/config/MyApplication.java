@@ -1,13 +1,16 @@
 package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
-import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.answer.UserModel;
+import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -46,8 +49,14 @@ public class MyApplication extends Application {
                 .baseUrl("http://crm.myaso.net.ua/ext/") //Базовая часть адреса
                 .build();
 
-        myasoApi = retrofit.create(MyasoApi.class); //Создаем объект, при помощи которого будем выполнять запросы
+        //Создаем объект, при помощи которого будем выполнять запросы
+        myasoApi = retrofit.create(MyasoApi.class);
 
+        getServerAccess();
+
+    }
+
+    private void getServerAccess() {
         myasoApi.authenticate(new AuthModel("+380506361408", "admin"))
                 .enqueue(new Callback<UserModel>() {
                     @Override
@@ -64,6 +73,12 @@ public class MyApplication extends Application {
                             Log.e(TAG, user.getStatus());
                             Log.e(TAG, user.getToken());
                         }
+
+//                        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = sharedPref.edit();
+//                        editor.putInt(getString(R.string.saved_high_score), newHighScore);
+//                        editor.commit();
+
                     }
 
                     @Override
@@ -72,7 +87,6 @@ public class MyApplication extends Application {
                         //Произошла ошибка
                     }
                 });
-
     }
 
 

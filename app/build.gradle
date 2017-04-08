@@ -26,6 +26,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
+    compile project(path: ':flowstreelibrary')
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.google.android.gms:play-services-drive:10.2.0'
     compile 'com.android.support:design:25.2.0'
@@ -36,9 +37,8 @@ dependencies {
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
-    testCompile 'junit:junit:4.12'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile  'com.squareup.retrofit2:converter-scalars:2.1.0'
-    compile project(path: ':flowstreelibrary')
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    testCompile 'junit:junit:4.12'
 }

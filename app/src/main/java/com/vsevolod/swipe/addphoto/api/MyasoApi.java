@@ -1,5 +1,6 @@
 package com.vsevolod.swipe.addphoto.api;
 
+import com.vsevolod.swipe.addphoto.model.answer.UserInfoModel;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.answer.CheckedInfo;
 import com.vsevolod.swipe.addphoto.model.answer.FlowsTreeModel;
@@ -23,7 +24,7 @@ public interface MyasoApi {
     Call<UserModel> authenticate(@Body AuthModel user);
 
     @POST("api/auth")
-    Call<UserModel.UserAnswerInfoModel> authenticate(@Body SimpleAuthModel user);
+    Call<UserInfoModel> authenticate(@Body SimpleAuthModel user);
 
     @POST("api/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
