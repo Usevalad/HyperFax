@@ -3,6 +3,7 @@ package com.vsevolod.swipe.addphoto.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +28,11 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.model.answer.FlowsTreeModel;
+import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.io.File;
@@ -35,6 +40,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -44,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static List<Model> data;
     public static String user;
     public static Context context;
+    private PreferenceHelper mPreferenceHelper;
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
@@ -67,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 
         realmHelper = new RealmHelper(this);
+        mPreferenceHelper = new PreferenceHelper(this);
         data = realmHelper.getData();
 
         setContentView(R.layout.activity_main);
@@ -83,12 +94,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setRecyclerViewAdapter();
         setFabHidingAbility();
 
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction =
-//                fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(android.R.id.content, new ModelAddingFragment());
-//        fragmentTransaction.commit();
-//
+
+        String token = mPreferenceHelper.getToken();
+        MyApplication.getApi().getList(new TokenModel(token)).enqueue(new Callback<FlowsTreeModel>() {
+            @Override
+            public void onResponse(Call<FlowsTreeModel> call, Response<FlowsTreeModel> response) {
+                Log.e(TAG, "onResponse");
+                if (response.isSuccessful()){
+                    // TODO: 08.04.17 wtf
+                    FlowsTreeModel tree = response.body();
+                    Log.e(TAG, tree.getStatus());
+                    List<List<String>> list = tree.getList();
+                    Log.e(TAG, list.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlowsTreeModel> call, Throwable t) {
+
+            }
+        });
     }
 
     private void setFABAnimation() {

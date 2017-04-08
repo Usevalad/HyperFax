@@ -1,22 +1,13 @@
 package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
-import com.vsevolod.swipe.addphoto.model.answer.UserModel;
-import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -57,36 +48,36 @@ public class MyApplication extends Application {
     }
 
     private void getServerAccess() {
-        myasoApi.authenticate(new AuthModel("+380506361408", "admin"))
-                .enqueue(new Callback<UserModel>() {
-                    @Override
-                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
-                        //Данные успешно пришли, но надо проверить response.body() на null
-                        Log.e(TAG, "onResponse");
-                        Log.e(TAG, String.valueOf(response.code()));
-
-                        if (response.isSuccessful()) {
-                            Log.e(TAG, "onResponse: body != null");
-                            Log.e(TAG, response.body().toString());
-                            UserModel user = response.body();
-                            Log.e(TAG, user.getActive());
-                            Log.e(TAG, user.getStatus());
-                            Log.e(TAG, user.getToken());
-                        }
+//        myasoApi.authenticate(new AuthModel("+380506361408", "admin"))
+//                .enqueue(new Callback<UserModel>() {
+//                    @Override
+//                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+//                        //Данные успешно пришли, но надо проверить response.body() на null
+//                        Log.e(TAG, "onResponse");
+//                        Log.e(TAG, String.valueOf(response.code()));
+//
+//                        if (response.isSuccessful()) {
+//                            Log.e(TAG, "onResponse: body != null");
+//                            Log.e(TAG, response.body().toString());
+//                            UserModel user = response.body();
+//                            Log.e(TAG, user.getActive());
+//                            Log.e(TAG, user.getStatus());
+//                            Log.e(TAG, user.getToken());
+//                        }
 
 //                        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 //                        SharedPreferences.Editor editor = sharedPref.edit();
 //                        editor.putInt(getString(R.string.saved_high_score), newHighScore);
 //                        editor.commit();
 
-                    }
+//                    }
 
-                    @Override
-                    public void onFailure(Call<UserModel> call, Throwable t) {
-                        Log.wtf(TAG, "onFailure", t);
-                        //Произошла ошибка
-                    }
-                });
+//                    @Override
+//                    public void onFailure(Call<UserModel> call, Throwable t) {
+//                        Log.wtf(TAG, "onFailure", t);
+//                        //Произошла ошибка
+//                    }
+//                });
     }
 
 

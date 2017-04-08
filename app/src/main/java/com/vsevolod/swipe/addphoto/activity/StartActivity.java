@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.answer.UserModel;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
@@ -20,12 +21,14 @@ import retrofit2.Response;
 public class StartActivity extends AppCompatActivity {
     private final String TAG = "StartActivity";
     private Context mContext;
+    private PreferenceHelper mPreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         mContext = this;
+        mPreferenceHelper = new PreferenceHelper(this);
         getServerAccess();
     }
 
@@ -48,10 +51,8 @@ public class StartActivity extends AppCompatActivity {
                             Log.e(TAG, user.getToken());
                         }
 
-                        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString(getString(R.string.token), user.getToken());
-                        editor.commit();
+                        mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, user.getToken());
+
                         switch (user.getStatus()) {
                             case "OK":
                                 Intent intent = new Intent(mContext, MainActivity.class);
