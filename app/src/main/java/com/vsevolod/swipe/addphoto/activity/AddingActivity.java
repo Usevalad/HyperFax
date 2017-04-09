@@ -21,10 +21,10 @@ import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.flowstreelibrary.view.AndroidTreeView;
-import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -127,7 +127,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
         String formattedDateDB = simpleDateFormatDB.format(c.getTime());
 
-        Model model = new Model(formattedDateDB, prefix, photoUri, byteArray);
+        DataModel model = new DataModel(formattedDateDB, prefix, photoUri, byteArray);
         mRealmHelper.saveToRealm(model);
         finish();
     }

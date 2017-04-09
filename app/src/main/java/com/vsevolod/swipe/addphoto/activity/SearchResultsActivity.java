@@ -15,9 +15,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private final String TAG = "SearchResultsActivity";
     private RecyclerView mRecyclerView;
     private RealmHelper mRealmHelper;
-    private List<Model> data;
+    private List<DataModel> data;
     public Context mContext;
 
     @Override

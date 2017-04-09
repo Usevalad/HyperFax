@@ -2,16 +2,16 @@ package com.vsevolod.swipe.addphoto.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
-import com.vsevolod.swipe.addphoto.model.answer.UserModel;
+import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
 import retrofit2.Call;
@@ -54,17 +54,17 @@ public class StartActivity extends AppCompatActivity {
                         mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, user.getToken());
 
                         switch (user.getStatus()) {
-                            case "OK":
+                            case Constants.RESPONSE_STATUS_OK:
                                 Intent intent = new Intent(mContext, MainActivity.class);
                                 startActivity(intent);
                                 break;
-                            case "BAD":
+                            case Constants.RESPONSE_STATUS_BAD:
                                 Toast.makeText(mContext, "BAD!!!", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "INIT":
+                            case Constants.RESPONSE_STATUS_INIT:
                                 Toast.makeText(mContext, "INIT!!!", Toast.LENGTH_SHORT).show();
                                 break;
-                            case "DIE":
+                            case Constants.RESPONSE_STATUS_DIE:
                                 Toast.makeText(mContext, "DIE!!!", Toast.LENGTH_SHORT).show();
                                 break;
                             default:

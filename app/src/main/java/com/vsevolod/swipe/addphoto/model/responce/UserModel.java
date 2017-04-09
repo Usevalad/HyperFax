@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.model.answer;
+package com.vsevolod.swipe.addphoto.model.responce;
 
 /**
  * Created by vsevolod on 08.04.17.

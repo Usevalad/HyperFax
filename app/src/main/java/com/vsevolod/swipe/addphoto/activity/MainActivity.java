@@ -3,7 +3,6 @@ package com.vsevolod.swipe.addphoto.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,12 +25,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.vsevolod.swipe.addphoto.Model;
+
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.answer.FlowsTreeModel;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.model.responce.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
     public static RecyclerView mRecyclerView;
-    public static List<Model> data;
+    public static List<DataModel> data;
     public static String user;
     public static Context context;
     private PreferenceHelper mPreferenceHelper;
@@ -94,14 +94,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setRecyclerViewAdapter();
         setFabHidingAbility();
 
-
         String token = mPreferenceHelper.getToken();
         MyApplication.getApi().getList(new TokenModel(token)).enqueue(new Callback<FlowsTreeModel>() {
             @Override
             public void onResponse(Call<FlowsTreeModel> call, Response<FlowsTreeModel> response) {
                 Log.e(TAG, "onResponse");
                 if (response.isSuccessful()){
-                    // TODO: 08.04.17 wtf
                     FlowsTreeModel tree = response.body();
                     Log.e(TAG, tree.getStatus());
                     List<List<String>> list = tree.getList();

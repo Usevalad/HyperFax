@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.vsevolod.swipe.addphoto.Model;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,8 @@ public class RealmHelper {
     private final String TAG = "RealmHelper";
     private Context context;
     private Realm realm;
-    public List<Model> data = new ArrayList<>();
+    public List<DataModel> data = new ArrayList<>();
+    public List<FlowsTreeModel> tree = new ArrayList<>();
 
     public RealmHelper(Context context) {
         Log.d(TAG, "Realm constructor");
@@ -35,15 +37,15 @@ public class RealmHelper {
     private void initRealmData() {
         Log.d(TAG, "initRealmData");
         //db
-        RealmQuery query = this.realm.where(Model.class);
-        RealmResults<Model> results = query.findAllSorted("date", Sort.DESCENDING);
+        RealmQuery query = this.realm.where(DataModel.class);
+        RealmResults<DataModel> results = query.findAllSorted("date", Sort.DESCENDING);
         this.data = results;
     }
 
     public void dropRealm() {
         Log.d(TAG, "dropRealm");
 
-        RealmResults<Model> results = this.realm.where(Model.class).findAll();
+        RealmResults<DataModel> results = this.realm.where(DataModel.class).findAll();
         // All changes to data must happen in a transaction
         this.realm.beginTransaction();
         // Delete all matches
@@ -53,12 +55,12 @@ public class RealmHelper {
         Toast.makeText(this.context, "Данные удалены", Toast.LENGTH_SHORT).show();
     }
 
-    public void saveToRealm(Model model) {
+    public void saveToRealm(DataModel model) {
         Log.d(TAG, "saveToRealm");
 
         this.realm.beginTransaction();
         // Create an object
-        Model newModel = this.realm.createObject(Model.class);
+        DataModel newModel = this.realm.createObject(DataModel.class);
         // Set its fields
         newModel.setDate(model.getDate());
         newModel.setPath(model.getPath());
@@ -68,7 +70,7 @@ public class RealmHelper {
         this.realm.commitTransaction();
     }
 
-    public List<Model> getData() {
+    public List<DataModel> getData() {
         Log.d(TAG, "getData");
         return this.data;
     }
@@ -91,11 +93,11 @@ public class RealmHelper {
         return paths;
     }
 
-    public List<Model> getSearchResults(String queryString) {
-        RealmQuery query = this.realm.where(Model.class);
+    public List<DataModel> getSearchResults(String queryString) {
+        RealmQuery query = this.realm.where(DataModel.class);
         query.contains("date", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains("path", queryString);
-        RealmResults<Model> results = query.findAll();
+        RealmResults<DataModel> results = query.findAll();
 
         return results;
     }

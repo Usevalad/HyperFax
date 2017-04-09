@@ -1,12 +1,12 @@
 package com.vsevolod.swipe.addphoto.api;
 
-import com.vsevolod.swipe.addphoto.model.answer.UserInfoModel;
+import com.vsevolod.swipe.addphoto.model.responce.UserInfoModel;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
-import com.vsevolod.swipe.addphoto.model.answer.CheckedInfo;
-import com.vsevolod.swipe.addphoto.model.answer.FlowsTreeModel;
+import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
+import com.vsevolod.swipe.addphoto.model.responce.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
-import com.vsevolod.swipe.addphoto.model.answer.UserModel;
+import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

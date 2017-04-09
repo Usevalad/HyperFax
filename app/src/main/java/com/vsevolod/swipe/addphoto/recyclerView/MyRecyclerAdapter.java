@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.vsevolod.swipe.addphoto.Model;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.util.List;
 
@@ -23,9 +23,9 @@ import java.util.List;
 public class MyRecyclerAdapter extends RecyclerView.Adapter {
     private final String TAG = "MyRecyclerAdapter";
     private Context context;
-    static List<Model> data;
+    static List<DataModel> data;
 
-    public MyRecyclerAdapter(Context context, @NonNull List<Model> data) {
+    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
@@ -36,14 +36,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.recycler_view_item, parent, false);
+                    inflate(R.layout.recycler_view_item, parent, false);
+
         return new MyRecyclerViewHolder(context, view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder");
-        Model model = data.get(position);
+        DataModel model = data.get(position);
         byte[] photoByteArray = model.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
 
@@ -58,5 +59,4 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "getItemCount");
         return data.size();
     }
-
 }
