@@ -33,7 +33,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        mRealmHelper = new RealmHelper(this);
+        mRealmHelper = new RealmHelper();
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);

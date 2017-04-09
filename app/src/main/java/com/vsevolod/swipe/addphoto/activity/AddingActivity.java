@@ -48,7 +48,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
 
-        mRealmHelper = new RealmHelper(this);
+        mRealmHelper = new RealmHelper();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding);
         path = getIntent().getStringExtra("path");
@@ -128,7 +128,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         String formattedDateDB = simpleDateFormatDB.format(c.getTime());
 
         DataModel model = new DataModel(formattedDateDB, prefix, photoUri, byteArray);
-        mRealmHelper.saveToRealm(model);
+        mRealmHelper.save(model);
         finish();
     }
 

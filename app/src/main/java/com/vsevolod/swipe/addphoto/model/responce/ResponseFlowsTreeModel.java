@@ -1,21 +1,21 @@
 package com.vsevolod.swipe.addphoto.model.responce;
 
-/**
- * Created by vsevolod on 08.04.17.
- */
-
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class FlowsTreeModel {
+import java.util.List;
 
+/**
+ * Created by vsevolod on 09.04.17.
+ */
+
+public class ResponseFlowsTreeModel {
     @SerializedName("columns")
     @Expose
-    private List<String> columns = null;
+    private List<String> columns;
     @SerializedName("list")
     @Expose
-    private List<List<String>> list = null;
+    private List<List<String>> list ;
     @SerializedName("modified")
     @Expose
     private String modified;

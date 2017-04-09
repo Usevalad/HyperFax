@@ -19,7 +19,6 @@ import java.util.List;
  * Created by vsevolod on 13.03.17.
  */
 
-
 public class MyRecyclerAdapter extends RecyclerView.Adapter {
     private final String TAG = "MyRecyclerAdapter";
     private Context context;
@@ -29,7 +28,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
-        Log.e(TAG, "MyRecyclerAdapter: wtf");
     }
 
     @Override
@@ -37,7 +35,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.recycler_view_item, parent, false);
-
         return new MyRecyclerViewHolder(context, view);
     }
 

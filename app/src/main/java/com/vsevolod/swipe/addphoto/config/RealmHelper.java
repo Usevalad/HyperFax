@@ -1,8 +1,6 @@
 package com.vsevolod.swipe.addphoto.config;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
@@ -22,28 +20,30 @@ import io.realm.Sort;
 
 public class RealmHelper {
     private final String TAG = "RealmHelper";
-    private Context context;
     private Realm realm;
     public List<DataModel> data = new ArrayList<>();
     public List<FlowsTreeModel> tree = new ArrayList<>();
 
-    public RealmHelper(Context context) {
+    public RealmHelper() {
         Log.d(TAG, "Realm constructor");
         this.realm = Realm.getDefaultInstance();
-        this.context = context;
-        initRealmData();
+        initRealm();
     }
 
-    private void initRealmData() {
+    private void initRealm() {
         Log.d(TAG, "initRealmData");
-        //db
-        RealmQuery query = this.realm.where(DataModel.class);
-        RealmResults<DataModel> results = query.findAllSorted("date", Sort.DESCENDING);
-        this.data = results;
+        //data
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("date", Sort.DESCENDING);
+        this.data = dataResults;
+        //tree
+        RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
+        RealmResults<FlowsTreeModel> treeResults = treeQuery.findAll();
+        this.tree = treeResults;
     }
 
-    public void dropRealm() {
-        Log.d(TAG, "dropRealm");
+    public void dropRealmData() {
+        Log.d(TAG, "dropRealmData");
 
         RealmResults<DataModel> results = this.realm.where(DataModel.class).findAll();
         // All changes to data must happen in a transaction
@@ -51,24 +51,19 @@ public class RealmHelper {
         // Delete all matches
         results.deleteAllFromRealm();
         this.realm.commitTransaction();
-
-        Toast.makeText(this.context, "Данные удалены", Toast.LENGTH_SHORT).show();
     }
 
-    public void saveToRealm(DataModel model) {
-        Log.d(TAG, "saveToRealm");
+    public void dropRealmTree() {
+        Log.d(TAG, "dropRealmTree");
 
+        RealmResults<FlowsTreeModel> results = this.realm.where(FlowsTreeModel.class).findAll();
+        // All changes to data must happen in a transaction
         this.realm.beginTransaction();
-        // Create an object
-        DataModel newModel = this.realm.createObject(DataModel.class);
-        // Set its fields
-        newModel.setDate(model.getDate());
-        newModel.setPath(model.getPath());
-        newModel.setPhoto(model.getPhoto());
-        newModel.setPhotoURI(model.getPhotoURI());
-
+        // Delete all matches
+        results.deleteAllFromRealm();
         this.realm.commitTransaction();
     }
+
 
     public List<DataModel> getData() {
         Log.d(TAG, "getData");
@@ -101,4 +96,53 @@ public class RealmHelper {
 
         return results;
     }
+
+    public void save(List<FlowsTreeModel> flowsTreeModels) {
+        Log.d(TAG, "saveTreeList");
+        FlowsTreeModel tmp;
+        for (int i = 0; i < flowsTreeModels.size(); i++) {
+            this.realm.beginTransaction();
+            // Create an object
+            tmp = flowsTreeModels.get(i);
+            FlowsTreeModel model = this.realm.createObject(FlowsTreeModel.class);
+            // Set its fields
+            model.setId(tmp.getId());
+            model.setName(tmp.getName());
+            model.setParentId(tmp.getParentId());
+            model.setPrefix(tmp.getPrefix());
+
+            this.realm.commitTransaction();
+        }
+    }
+
+    public void save(FlowsTreeModel model) {
+        Log.d(TAG, "saveTreeList");
+        this.realm.beginTransaction();
+        // Create an object
+        FlowsTreeModel newModel = this.realm.createObject(FlowsTreeModel.class);
+        // Set its fields
+        newModel.setId(model.getId());
+        newModel.setName(model.getName());
+        newModel.setParentId(model.getParentId());
+        newModel.setPrefix(model.getPrefix());
+
+        this.realm.commitTransaction();
+
+    }
+
+    public void save(DataModel model) {
+        Log.d(TAG, "saveToRealm");
+
+        this.realm.beginTransaction();
+        // Create an object
+        DataModel newModel = this.realm.createObject(DataModel.class);
+        // Set its fields
+        newModel.setDate(model.getDate());
+        newModel.setPath(model.getPath());
+        newModel.setPhoto(model.getPhoto());
+        newModel.setPhotoURI(model.getPhotoURI());
+
+        this.realm.commitTransaction();
+    }
+
 }

@@ -25,14 +25,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.model.responce.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.io.File;
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            startActivity(intent);
 //        }
 
-        realmHelper = new RealmHelper(this);
+        realmHelper = new RealmHelper();
         mPreferenceHelper = new PreferenceHelper(this);
         data = realmHelper.getData();
 
@@ -93,25 +92,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         context = getApplicationContext();
         setRecyclerViewAdapter();
         setFabHidingAbility();
-
-        String token = mPreferenceHelper.getToken();
-        MyApplication.getApi().getList(new TokenModel(token)).enqueue(new Callback<FlowsTreeModel>() {
-            @Override
-            public void onResponse(Call<FlowsTreeModel> call, Response<FlowsTreeModel> response) {
-                Log.e(TAG, "onResponse");
-                if (response.isSuccessful()){
-                    FlowsTreeModel tree = response.body();
-                    Log.e(TAG, tree.getStatus());
-                    List<List<String>> list = tree.getList();
-                    Log.e(TAG, list.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FlowsTreeModel> call, Throwable t) {
-
-            }
-        });
     }
 
     private void setFABAnimation() {
@@ -165,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
-                realmHelper.dropRealm();
+                realmHelper.dropRealmData();
                 setRecyclerViewAdapter();
                 break;
             case R.id.main_menu_repeat_download:
