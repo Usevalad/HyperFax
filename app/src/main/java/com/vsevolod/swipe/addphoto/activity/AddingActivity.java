@@ -49,6 +49,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         Log.d(TAG, "onCreate");
 
         mRealmHelper = new RealmHelper();
+        mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding);
         path = getIntent().getStringExtra("path");
@@ -76,6 +77,18 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 .into(mImageView);
 
         setFlowsTree(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        mRealmHelper.close();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mRealmHelper.open();
+        super.onResume();
     }
 
     void handleSendImage(Intent intent) {

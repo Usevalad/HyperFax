@@ -1,14 +1,13 @@
 package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -19,6 +18,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class MyApplication extends Application {
     private final static String TAG = "MyApplication";
+    private static Context context;
     private static MyasoApi myasoApi;
     private Retrofit retrofit;
 
@@ -26,9 +26,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         Log.d(TAG, "onCreate");
         super.onCreate();
-        Realm.init(getApplicationContext());
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        Realm.setDefaultConfiguration(realmConfiguration);
+        MyApplication.context = getApplicationContext();
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -48,5 +46,9 @@ public class MyApplication extends Application {
     public static MyasoApi getApi() {
         Log.d(TAG, "getApi");
         return myasoApi;
+    }
+
+    public static Context getAppContext() {
+        return MyApplication.context;
     }
 }

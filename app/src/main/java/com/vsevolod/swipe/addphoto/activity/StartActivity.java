@@ -100,7 +100,6 @@ public class StartActivity extends AppCompatActivity {
                     List<String> columns = response.body().getColumns();
                     List<List<String>> list = response.body().getList();
 
-                    Log.d(TAG, columns.toString());
                     Log.d(TAG, list.toString());
                     Log.d(TAG, list.get(0).toString());
 

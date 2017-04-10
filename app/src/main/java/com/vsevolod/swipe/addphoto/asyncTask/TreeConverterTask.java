@@ -17,20 +17,23 @@ import java.util.List;
 
 public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String, List<FlowsTreeModel>> {
     private final String TAG = "TreeConverterTask";
+    private RealmHelper mRealmHelper = new RealmHelper();
 
     @Override
     protected List<FlowsTreeModel> doInBackground(ResponseFlowsTreeModel... params) {
         Log.d(TAG, "doInBackground");
+        mRealmHelper.open();
         List<FlowsTreeModel> result = new ArrayList<>();
         ResponseFlowsTreeModel model = params[0];
         List<List<String>> list = model.getList();
         List<String> tmp;
 
         if (list.size() > 100) {
+            mRealmHelper.dropRealmTree();
             for (int i = 0; i < list.size(); i++) {
                 tmp = list.get(i);
                 if (tmp.size() == 4) {
-                    result.add(new FlowsTreeModel(tmp.get(0), tmp.get(1), tmp.get(2), tmp.get(3)));
+                    mRealmHelper.save(new FlowsTreeModel(tmp.get(0), tmp.get(1), tmp.get(2), tmp.get(3)));
                     publishProgress(String.valueOf(i));
                 }
             }

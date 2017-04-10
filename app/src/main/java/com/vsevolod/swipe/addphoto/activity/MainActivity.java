@@ -26,12 +26,9 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
 import java.io.File;
@@ -39,10 +36,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
@@ -76,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 
         realmHelper = new RealmHelper();
+        realmHelper.open();
         mPreferenceHelper = new PreferenceHelper(this);
         data = realmHelper.getData();
 
@@ -108,9 +102,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPause() {
+        realmHelper.close();
+        super.onPause();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        realmHelper.open();
         isFabOpen = true;
         mFABCamera.setClickable(true);
         mFABGallery.setClickable(true);

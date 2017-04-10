@@ -10,6 +10,7 @@ import java.util.List;
 
 import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -26,8 +27,21 @@ public class RealmHelper {
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
+        open();
+    }
+
+    public void open() {
+        Log.d(TAG, "open");
+        Realm.init(MyApplication.getAppContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
         this.realm = Realm.getDefaultInstance();
         initRealm();
+    }
+
+    public void close() {
+        Log.d(TAG, "close");
+        this.realm.close();
     }
 
     private void initRealm() {
@@ -116,7 +130,7 @@ public class RealmHelper {
     }
 
     public void save(FlowsTreeModel model) {
-        Log.d(TAG, "saveTreeList");
+        Log.d(TAG, "saveTreeListModel");
         this.realm.beginTransaction();
         // Create an object
         FlowsTreeModel newModel = this.realm.createObject(FlowsTreeModel.class);
