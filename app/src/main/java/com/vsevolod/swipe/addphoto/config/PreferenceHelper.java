@@ -14,12 +14,13 @@ public class PreferenceHelper {
     public static final String APP_PREFERENCES_TOKEN = "token";
     public static final String APP_PREFERENCES_NAME = "user name";
     public static final String APP_PREFERENCES_TITLE = "user title";
+    public static final String APP_PREFERENCES_PHONE = "user phone";
     private static SharedPreferences mUserSettings;
     private Context context;
 
-    public PreferenceHelper(Context context) {
+    public PreferenceHelper() {
         Log.d(TAG, "PreferenceHelper");
-        this.context = context;
+        this.context = MyApplication.getAppContext();
         this.mUserSettings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
@@ -40,5 +41,9 @@ public class PreferenceHelper {
 
     public String getToken() {
         return mUserSettings.getString(APP_PREFERENCES_TOKEN, "not found");
+    }
+
+    public static String getAppPreferencesPhone() {
+        return mUserSettings.getString(APP_PREFERENCES_PHONE, "not found");
     }
 }

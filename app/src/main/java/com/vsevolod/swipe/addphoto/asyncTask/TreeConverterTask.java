@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.config.Repository;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 
@@ -49,16 +48,6 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
 
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
-        Repository.treeList = flowsTreeModels;
-        RealmHelper helper = new RealmHelper();
-        if (flowsTreeModels.size() > 100) {
-            helper.dropRealmTree();
-            helper.save(flowsTreeModels);
-//            for (int i = 0; i < flowsTreeModels.size(); i++) {
-//                helper.save(flowsTreeModels.get(i));
-//                Log.d(TAG, "onPostExecute:" + i);
-//            }
-        }
         super.onPostExecute(flowsTreeModels);
     }
 }

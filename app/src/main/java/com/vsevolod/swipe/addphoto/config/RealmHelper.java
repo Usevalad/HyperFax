@@ -18,7 +18,7 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
-
+// FIXME: 10.04.17 open/close realm stuff. think about how to init
 public class RealmHelper {
     private final String TAG = "RealmHelper";
     private Realm realm;
@@ -27,7 +27,6 @@ public class RealmHelper {
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
-        open();
     }
 
     public void open() {
@@ -82,6 +81,11 @@ public class RealmHelper {
     public List<DataModel> getData() {
         Log.d(TAG, "getData");
         return this.data;
+    }
+
+    public List<FlowsTreeModel> getTree() {
+        Log.d(TAG, "getTree");
+        return tree;
     }
 
     public List<String> getAllDates() {
@@ -145,7 +149,7 @@ public class RealmHelper {
     }
 
     public void save(DataModel model) {
-        Log.d(TAG, "saveToRealm");
+        Log.d(TAG, "saveDataModel");
 
         this.realm.beginTransaction();
         // Create an object

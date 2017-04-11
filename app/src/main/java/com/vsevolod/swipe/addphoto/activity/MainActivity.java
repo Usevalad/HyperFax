@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         realmHelper = new RealmHelper();
         realmHelper.open();
-        mPreferenceHelper = new PreferenceHelper(this);
+        mPreferenceHelper = new PreferenceHelper();
         data = realmHelper.getData();
 
         setContentView(R.layout.activity_main);
