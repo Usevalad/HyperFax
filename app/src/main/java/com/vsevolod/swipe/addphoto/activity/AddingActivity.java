@@ -10,21 +10,25 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
-import com.vsevolod.flowstreelibrary.view.AndroidTreeView;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.recyclerView.AutoCompleteAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,15 +37,18 @@ import java.util.Calendar;
 
 import it.sephiroth.android.library.picasso.Picasso;
 
+// FIXME: 11.04.17 realm init (open/close state)
 public class AddingActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "AddingActivity";
     private final int THUMBSIZE = 500;
     private Toolbar toolbar;
-    private AndroidTreeView tView;
+    //    private AndroidTreeView tView;
     private RealmHelper mRealmHelper;
     private ImageView mImageView;
+    private AutoCompleteTextView mAutoCompleteTextView;
+    private EditText mEditText;
     private String path;
-    private String prefix = null;
+    private String text = null;
     private long mLastClickTime = 0;
 
     @Override
@@ -51,7 +58,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adding);
+        setContentView(R.layout.activity_adding2);
         path = getIntent().getStringExtra("path");
 
         toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
@@ -70,13 +77,28 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
 
-        mImageView = (ImageView) findViewById(R.id.model_adding_image_view);
+        mImageView = (ImageView) findViewById(R.id.adding_image_view);
 
         Picasso.with(this)
                 .load(path)
                 .into(mImageView);
 
-        setFlowsTree(savedInstanceState);
+//        setFlowsTree(savedInstanceState);
+        mAutoCompleteTextView =
+                (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
+        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter());
+        mEditText = (EditText) findViewById(R.id.adding_edit_text);
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    savePhoto();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
     }
 
     @Override
@@ -102,8 +124,10 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     private void addImage(String path) {
         File imageFile = new File(path);
+        text = mAutoCompleteTextView.getText().toString();
+        String comment = mEditText.getText().toString(); // TODO: 11.04.17 add comment to model
         if (imageFile.exists()) {
-            if (prefix == null) {
+            if (text.length() < 10 || !text.contains("@")) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -140,7 +164,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
         String formattedDateDB = simpleDateFormatDB.format(c.getTime());
 
-        DataModel model = new DataModel(formattedDateDB, prefix, photoUri, byteArray);
+        DataModel model = new DataModel(formattedDateDB, text, photoUri, byteArray);
         mRealmHelper.save(model);
         finish();
     }
@@ -165,19 +189,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.send:
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    break;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-                addImage(path);
+                savePhoto();
                 break;
-//            case R.id.expandAll:
-//                tView.expandAll();
-//                break;
-//
-//            case R.id.collapseAll:
-//                tView.collapseAll();
-//                break;
             default:
                 break;
         }
@@ -185,11 +198,19 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         return super.onOptionsItemSelected(item);
     }
 
+    public void savePhoto() {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+        addImage(path);
+    }
+
     private TreeNode.TreeNodeClickListener nodeClickListener = new TreeNode.TreeNodeClickListener() {
         @Override
         public void onClick(TreeNode node, Object value) {
             IconTreeItemHolder.IconTreeItem item = (IconTreeItemHolder.IconTreeItem) value;
-            prefix = item.text;
+            text = item.text;
         }
     };
 
@@ -595,19 +616,19 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         root.addChildren(parcels, parishFunds, arrivalOfGoods, cashOutflow, productConsumption);
 
 
-        tView = new AndroidTreeView(this, root);
-        tView.setDefaultAnimation(true);
-        tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
-        tView.setDefaultViewHolder(IconTreeItemHolder.class);
-        tView.setDefaultNodeClickListener(nodeClickListener);
-
-        containerView.addView(tView.getView());
-
-        if (savedInstanceState != null) {
-            String state = savedInstanceState.getString("tState");
-            if (!TextUtils.isEmpty(state)) {
-                tView.restoreState(state);
-            }
-        }
+//        tView = new AndroidTreeView(this, root);
+//        tView.setDefaultAnimation(true);
+//        tView.setDefaultContainerStyle(R.style.TreeNodeStyleCustom);
+//        tView.setDefaultViewHolder(IconTreeItemHolder.class);
+//        tView.setDefaultNodeClickListener(nodeClickListener);
+//
+//        containerView.addView(tView.getView());
+//
+//        if (savedInstanceState != null) {
+//            String state = savedInstanceState.getString("tState");
+//            if (!TextUtils.isEmpty(state)) {
+//                tView.restoreState(state);
+//            }
+//        }
     }
 }

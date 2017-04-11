@@ -88,7 +88,7 @@ public class SearchResultsActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            data = mRealmHelper.getSearchResults(query);
+            data = mRealmHelper.search(query);
         }
     }
 }

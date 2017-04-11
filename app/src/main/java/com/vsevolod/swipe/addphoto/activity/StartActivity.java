@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.command.Authentication;
-import com.vsevolod.swipe.addphoto.command.GetTree;
+import com.vsevolod.swipe.addphoto.command.method.Authentication;
+import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;

@@ -41,12 +41,22 @@
             android:scaleType="centerCrop"
             android:src="@drawable/login_background" />
 
-        <ScrollView
-            android:id="@+id/container"
+        <AutoCompleteTextView
+            android:id="@+id/adding_auto_complete"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/adding_image_view" />
+            android:layout_below="@id/adding_image_view"
+            android:inputType="text"
+            android:imeOptions="actionNext"/>
 
+        <EditText
+            android:id="@+id/adding_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/adding_auto_complete"
+            android:inputType="textAutoCorrect"
+            android:imeOptions="actionGo"
+            android:hint="Комментарий" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 

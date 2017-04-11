@@ -1,7 +1,10 @@
-package com.vsevolod.swipe.addphoto.command;
+package com.vsevolod.swipe.addphoto.command.method;
 
 import android.util.Log;
 
+import com.vsevolod.swipe.addphoto.command.Api;
+import com.vsevolod.swipe.addphoto.command.Command;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 
@@ -9,13 +12,13 @@ import com.vsevolod.swipe.addphoto.model.query.TokenModel;
  * Created by vsevolod on 11.04.17.
  */
 
-public class Check implements Command {
-    private final String TAG = "Check";
+public class GetTree implements Command {
+    private final String TAG = "GetTree";
     private Api mApi;
 
-    public Check(Api api) {
-        Log.d(TAG, "Check");
-        this.mApi = api;
+    public GetTree(Api Api) {
+        Log.d(TAG, "GetTree");
+        this.mApi = Api;
     }
 
     @Override
@@ -23,6 +26,6 @@ public class Check implements Command {
         Log.d(TAG, "execute");
         PreferenceHelper mPreferenceHelper = new PreferenceHelper();
         String token = mPreferenceHelper.getToken();
-        mApi.verify(new TokenModel(token));
+        mApi.getTree(new TokenModel(token));
     }
 }

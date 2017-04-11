@@ -53,4 +53,9 @@ public class FlowsTreeModel extends RealmObject {
     public void setParentId(String parentId) {
         this.parentId = parentId;
     }
+
+    @Override
+    public String toString() {
+        return name + " @" + prefix;
+    }
 }

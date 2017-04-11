@@ -1,7 +1,9 @@
-package com.vsevolod.swipe.addphoto.command;
+package com.vsevolod.swipe.addphoto.command.method;
 
 import android.util.Log;
 
+import com.vsevolod.swipe.addphoto.command.Api;
+import com.vsevolod.swipe.addphoto.command.Command;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
 /**

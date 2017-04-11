@@ -106,13 +106,20 @@ public class RealmHelper {
         return paths;
     }
 
-    public List<DataModel> getSearchResults(String queryString) {
+    public List<DataModel> search(String queryString) {
         RealmQuery query = this.realm.where(DataModel.class);
         query.contains("date", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains("path", queryString);
-        RealmResults<DataModel> results = query.findAll();
 
-        return results;
+        return query.findAll();
+    }
+
+    public List<FlowsTreeModel> searchTree(String queryString) {
+        RealmQuery query = this.realm.where(FlowsTreeModel.class);
+        query.contains("name", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.or().contains("prefix", queryString);
+
+        return query.findAll();
     }
 
     public void save(List<FlowsTreeModel> flowsTreeModels) {
