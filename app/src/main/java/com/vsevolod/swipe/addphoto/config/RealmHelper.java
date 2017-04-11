@@ -47,7 +47,7 @@ public class RealmHelper {
         Log.d(TAG, "initRealmData");
         //data
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("date", Sort.DESCENDING);
+        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
         this.data = dataResults;
         //tree
         RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
@@ -92,7 +92,7 @@ public class RealmHelper {
         Log.d(TAG, "getAllDates");
         List<String> dates = new ArrayList<>();
         for (int i = 0; i < this.data.size(); i++) {
-            dates.add(data.get(i).getDate());
+            dates.add(data.get(i).getSearchDate());
         }
         return dates;
     }
@@ -108,7 +108,7 @@ public class RealmHelper {
 
     public List<DataModel> search(String queryString) {
         RealmQuery query = this.realm.where(DataModel.class);
-        query.contains("date", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.contains("searchDate", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains("path", queryString);
 
         return query.findAll();
@@ -162,9 +162,14 @@ public class RealmHelper {
         // Create an object
         DataModel newModel = this.realm.createObject(DataModel.class);
         // Set its fields
-        newModel.setDate(model.getDate());
+        newModel.setSearchDate(model.getSearchDate());
         newModel.setPath(model.getPath());
         newModel.setPhoto(model.getPhoto());
+        newModel.setViewDate(model.getViewDate());
+        newModel.setLatitude(model.getLatitude());
+        newModel.setLongitude(model.getLongitude());
+        newModel.setComment(model.getComment());
+        newModel.setStateCode(model.getStateCode());
         newModel.setPhotoURI(model.getPhotoURI());
 
         this.realm.commitTransaction();

@@ -34,7 +34,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.recycler_view_item, parent, false);
+                inflate(R.layout.recycler_view_item, parent, false);
         return new MyRecyclerViewHolder(context, view);
     }
 
@@ -47,8 +47,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
 
         ((MyRecyclerViewHolder) holder).mPhotoImageView.setImageBitmap(bitmap);
         ((MyRecyclerViewHolder) holder).mStateIconImageView.setImageResource(model.getStateIconImage());
-        ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getDate());
+        ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getSearchDate());
         ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getPath());
+        ((MyRecyclerViewHolder) holder).mComment.setText(model.getComment());
+        ((MyRecyclerViewHolder) holder).mLocation.setText("lat: " + String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
     }
 
     @Override

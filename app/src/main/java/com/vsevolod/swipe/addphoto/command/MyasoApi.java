@@ -42,12 +42,13 @@ public class MyasoApi implements Api {
                 if (response.isSuccessful()) {
                     List<String> columns = response.body().getColumns();
                     List<List<String>> list = response.body().getList();
+                    if (list != null) {
+                        Log.d(TAG, list.toString());
+                        Log.d(TAG, list.get(0).toString());
 
-                    Log.d(TAG, list.toString());
-                    Log.d(TAG, list.get(0).toString());
-
-                    TreeConverterTask task = new TreeConverterTask();
-                    task.execute(response.body());
+                        TreeConverterTask task = new TreeConverterTask();
+                        task.execute(response.body());
+                    }
                 }
                 Intent intent = new Intent(MyApplication.getAppContext(), MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

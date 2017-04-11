@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
 
 /**
  * Created by vsevolod on 13.03.17.
@@ -19,6 +19,8 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
     private final String extra = "photo uri";
     TextView mDateTextView;
     TextView mPathTextView;
+    TextView mComment;
+    TextView mLocation;
     ImageView mPhotoImageView;
     ImageView mStateIconImageView;
     CardView mCardView;
@@ -28,12 +30,13 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
         super(itemView);
         this.context = context;
         mCardView = (CardView) itemView.findViewById(R.id.my_card_view);
-//        mCardView.setOnCreateContextMenuListener((MainActivity) context);
-        mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo);
+        mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo_image_view);
         mPhotoImageView.setOnClickListener(this);
-        mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state);
+        mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state_image_view);
         mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
         mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
+        mComment = (TextView) itemView.findViewById(R.id.comment_text_view);
+        mLocation = (TextView) itemView.findViewById(R.id.location_text_view);
     }
 
     @Override

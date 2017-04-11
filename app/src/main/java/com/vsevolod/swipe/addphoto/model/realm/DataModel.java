@@ -9,15 +9,23 @@ import io.realm.RealmObject;
  */
 
 public class DataModel extends RealmObject {
-    private String date;
+    private String searchDate;
+    private String viewDate;
     private String path;
     private String photoURI;
-    private int deliveryCode = 0;
+    private String comment;
+    private double latitude;
+    private double longitude;
     private int stateCode = 0;
     private byte[] photo;
 
-    public DataModel(String date, String path, String photoURI, byte[] photo) {
-        this.date = date;
+    public DataModel(String searchDate, String viewDate, String path, String comment,
+                     String photoURI, byte[] photo, double latitude, double longitude) {
+        this.comment = comment;
+        this.viewDate = viewDate;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.searchDate = searchDate;
         this.path = path;
         this.photoURI = photoURI;
         this.photo = photo;
@@ -27,12 +35,12 @@ public class DataModel extends RealmObject {
         //realm need to add empty constructor
     }
 
-    public String getDate() {
-        return date;
+    public String getSearchDate() {
+        return searchDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setSearchDate(String searchDate) {
+        this.searchDate = searchDate;
     }
 
     public String getPath() {
@@ -65,6 +73,38 @@ public class DataModel extends RealmObject {
 
     public void setPhotoURI(String photoURI) {
         this.photoURI = photoURI;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getViewDate() {
+        return viewDate;
+    }
+
+    public void setViewDate(String viewDate) {
+        this.viewDate = viewDate;
     }
 
     public int getStateIconImage() {

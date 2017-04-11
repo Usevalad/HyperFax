@@ -1,13 +1,19 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,9 +44,12 @@ import java.util.Calendar;
 import it.sephiroth.android.library.picasso.Picasso;
 
 // FIXME: 11.04.17 realm init (open/close state)
+// FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
+// FIXME: 11.04.17 refactor "addNewDataItem" method
+// FIXME: 11.04.17 location!!!
 public class AddingActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "AddingActivity";
-    private final int THUMBSIZE = 500;
+    private final int THUMB_SIZE = 500;
     private Toolbar toolbar;
     //    private AndroidTreeView tView;
     private RealmHelper mRealmHelper;
@@ -48,7 +57,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
     private String path;
-    private String text = null;
+    private String text;
     private long mLastClickTime = 0;
 
     @Override
@@ -125,7 +134,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private void addImage(String path) {
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
-        String comment = mEditText.getText().toString(); // TODO: 11.04.17 add comment to model
         if (imageFile.exists()) {
             if (text.length() < 10 || !text.contains("@")) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
@@ -139,7 +147,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
             //compress thumbnail
             Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imageFile.getAbsolutePath()),
-                    THUMBSIZE, THUMBSIZE);
+                    THUMB_SIZE, THUMB_SIZE);
             thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             addNewDataItem(byteArray, path);
@@ -150,7 +158,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path.getEncodedPath()),
-                THUMBSIZE, THUMBSIZE);
+                THUMB_SIZE, THUMB_SIZE);
         thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] byteArray = stream.toByteArray();
         addNewDataItem(byteArray, path.getPath());
@@ -163,8 +171,21 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
         String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
         String formattedDateDB = simpleDateFormatDB.format(c.getTime());
+        String comment = mEditText.getText().toString();
+        text = mAutoCompleteTextView.getText().toString();
+        double latitude = 321;
+        double longitude = 123;
 
-        DataModel model = new DataModel(formattedDateDB, text, photoUri, byteArray);
+        DataModel model = new DataModel(
+                formattedDateDB,
+                formattedDateTV,
+                text,
+                comment,
+                photoUri,
+                byteArray,
+                latitude,
+                longitude);
+
         mRealmHelper.save(model);
         finish();
     }
