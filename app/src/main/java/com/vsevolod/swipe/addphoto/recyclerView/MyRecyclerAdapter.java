@@ -48,9 +48,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         ((MyRecyclerViewHolder) holder).mPhotoImageView.setImageBitmap(bitmap);
         ((MyRecyclerViewHolder) holder).mStateIconImageView.setImageResource(model.getStateIconImage());
         ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getSearchDate());
-        ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getPath());
+        ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getName() + " @" + model.getPrefix());
         ((MyRecyclerViewHolder) holder).mComment.setText(model.getComment());
-        ((MyRecyclerViewHolder) holder).mLocation.setText("lat: " + String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
+        ((MyRecyclerViewHolder) holder).mLocation.setText("lat: " +
+                String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
     }
 
     @Override

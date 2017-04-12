@@ -1,19 +1,13 @@
 package com.vsevolod.swipe.addphoto.activity;
 
-import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -170,16 +164,20 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         SimpleDateFormat simpleDateFormatTV = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
         String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
-        String formattedDateDB = simpleDateFormatDB.format(c.getTime());
+        String searchDate = simpleDateFormatDB.format(c.getTime());
         String comment = mEditText.getText().toString();
         text = mAutoCompleteTextView.getText().toString();
+        String prefix = text.substring(text.length() - 4);
+        String name = text.substring(0, text.length() - 6);
+
         double latitude = 321;
         double longitude = 123;
 
         DataModel model = new DataModel(
-                formattedDateDB,
+                searchDate,
                 formattedDateTV,
-                text,
+                prefix,
+                name,
                 comment,
                 photoUri,
                 byteArray,

@@ -34,6 +34,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mRealmHelper = new RealmHelper();
+        mRealmHelper.open();
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
@@ -47,6 +48,18 @@ public class SearchResultsActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
         mContext = getApplicationContext();
+    }
+
+    @Override
+    protected void onResume() {
+        mRealmHelper.open();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        mRealmHelper.close();
+        super.onPause();
     }
 
     @Override

@@ -88,28 +88,11 @@ public class RealmHelper {
         return tree;
     }
 
-    public List<String> getAllDates() {
-        Log.d(TAG, "getAllDates");
-        List<String> dates = new ArrayList<>();
-        for (int i = 0; i < this.data.size(); i++) {
-            dates.add(data.get(i).getSearchDate());
-        }
-        return dates;
-    }
-
-    public List<String> getAllPaths() {
-        Log.d(TAG, "getAllPaths");
-        List<String> paths = new ArrayList<>();
-        for (int i = 0; i < this.data.size(); i++) {
-            paths.add(data.get(i).getPath());
-        }
-        return paths;
-    }
-
     public List<DataModel> search(String queryString) {
         RealmQuery query = this.realm.where(DataModel.class);
         query.contains("searchDate", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.or().contains("path", queryString);
+        query.or().contains("name", queryString, Case.INSENSITIVE);
+        query.or().beginsWith("prefix", queryString);
 
         return query.findAll();
     }
@@ -117,7 +100,8 @@ public class RealmHelper {
     public List<FlowsTreeModel> searchTree(String queryString) {
         RealmQuery query = this.realm.where(FlowsTreeModel.class);
         query.contains("name", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.or().contains("prefix", queryString);
+        query.or().beginsWith("prefix", queryString);
+        query.or().equalTo("prefix", queryString);
 
         return query.findAll();
     }
@@ -163,7 +147,7 @@ public class RealmHelper {
         DataModel newModel = this.realm.createObject(DataModel.class);
         // Set its fields
         newModel.setSearchDate(model.getSearchDate());
-        newModel.setPath(model.getPath());
+        newModel.setPrefix(model.getPrefix());
         newModel.setPhoto(model.getPhoto());
         newModel.setViewDate(model.getViewDate());
         newModel.setLatitude(model.getLatitude());
@@ -171,8 +155,8 @@ public class RealmHelper {
         newModel.setComment(model.getComment());
         newModel.setStateCode(model.getStateCode());
         newModel.setPhotoURI(model.getPhotoURI());
+        newModel.setName(model.getName());
 
         this.realm.commitTransaction();
     }
-
 }

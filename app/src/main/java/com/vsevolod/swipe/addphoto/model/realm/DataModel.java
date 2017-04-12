@@ -11,7 +11,8 @@ import io.realm.RealmObject;
 public class DataModel extends RealmObject {
     private String searchDate;
     private String viewDate;
-    private String path;
+    private String prefix;
+    private String name;
     private String photoURI;
     private String comment;
     private double latitude;
@@ -19,16 +20,17 @@ public class DataModel extends RealmObject {
     private int stateCode = 0;
     private byte[] photo;
 
-    public DataModel(String searchDate, String viewDate, String path, String comment,
+    public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
                      String photoURI, byte[] photo, double latitude, double longitude) {
         this.comment = comment;
         this.viewDate = viewDate;
         this.latitude = latitude;
         this.longitude = longitude;
         this.searchDate = searchDate;
-        this.path = path;
+        this.prefix = prefix;
         this.photoURI = photoURI;
         this.photo = photo;
+        this.name = name;
     }
 
     public DataModel() {
@@ -41,14 +43,6 @@ public class DataModel extends RealmObject {
 
     public void setSearchDate(String searchDate) {
         this.searchDate = searchDate;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
     }
 
     public int getStateCode() {
@@ -105,6 +99,22 @@ public class DataModel extends RealmObject {
 
     public void setViewDate(String viewDate) {
         this.viewDate = viewDate;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getStateIconImage() {
