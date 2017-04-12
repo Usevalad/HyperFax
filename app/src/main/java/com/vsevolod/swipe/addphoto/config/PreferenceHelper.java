@@ -15,6 +15,7 @@ public class PreferenceHelper {
     public static final String APP_PREFERENCES_NAME = "user name";
     public static final String APP_PREFERENCES_TITLE = "user title";
     public static final String APP_PREFERENCES_PHONE = "user phone";
+    public static final String APP_PREFERENCES_PASSWORD = "user password";
     private static SharedPreferences mUserSettings;
     private Context context;
 
@@ -43,7 +44,11 @@ public class PreferenceHelper {
         return mUserSettings.getString(APP_PREFERENCES_TOKEN, "not found");
     }
 
-    public static String getAppPreferencesPhone() {
+    public String getPhone() {
         return mUserSettings.getString(APP_PREFERENCES_PHONE, "not found");
+    }
+
+    public String getPassword() {
+        return mUserSettings.getString(APP_PREFERENCES_PASSWORD, "not found");
     }
 }

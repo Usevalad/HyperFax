@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int SELECT_PICTURE = 12;
     public static RecyclerView mRecyclerView;
     public static List<DataModel> data;
-    public static String user;
     public static Context context;
     private PreferenceHelper mPreferenceHelper;
     private FloatingActionButton mFAB;
@@ -162,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_log_out:
                 Toast.makeText(this, "Выход", Toast.LENGTH_SHORT).show();
-                user = null;
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 break;

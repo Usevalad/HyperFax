@@ -5,33 +5,36 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.command.method.Authentication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,37 +51,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private final String TAG = "LoginActivity";
     private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+    private final Context CONTEXT = this;
     private UserLoginTask mAuthTask = null;
-
-    // UI references.
     private EditText mPhoneNumberView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private MyasoApi api = new MyasoApi();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
 
         String phoneNumber = getPhoneNUmber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
-        mPhoneNumberView.setText(phoneNumber);
+        mPhoneNumberView.setText("+380506361408");//номер телефона максима
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.phone_number);
+        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView.setText("admin");//пароль максима
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -104,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @NonNull
     private String getPhoneNUmber() {
+        //костыль, который по аккаунтам находит номер телефона
+        Log.d(TAG, "getPhoneNUmber");
         AccountManager am = AccountManager.get(this);
         Account[] accounts = am.getAccounts();
         String phoneNumber = "oops";
@@ -115,20 +111,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (acname.startsWith("+380")) { //viber acc name is phone number
                 phoneNumber = acname;
             }
-            System.out.println("Accounts : " + acname + ", " + actype + " describe:" + acdescribe );
+            System.out.println("Accounts : " + acname + ", " + actype + " describe:" + acdescribe);
         }
         return phoneNumber;
     }
 
     private void populateAutoComplete() {
+        Log.d(TAG, "populateAutoComplete");
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
 
     private boolean mayRequestContacts() {
+        Log.d(TAG, "mayRequestContacts");
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
@@ -156,6 +153,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult");
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
@@ -170,6 +168,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
+        Log.d(TAG, "attemptLogin");
         if (mAuthTask != null) {
             return;
         }
@@ -179,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mPhoneNumberView.getText().toString();
+        String phoneNumber = mPhoneNumberView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -193,11 +192,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(phoneNumber)) {
             mPhoneNumberView.setError(getString(R.string.error_field_required));
             focusView = mPhoneNumberView;
             cancel = true;
-        } else if (!isPhoneNumberValid(email)) {
+        } else if (!isPhoneNumberValid(phoneNumber)) {
             mPhoneNumberView.setError("Номер не валидный");
             focusView = mPhoneNumberView;
             cancel = true;
@@ -211,13 +210,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(phoneNumber, password);
             mAuthTask.execute((Void) null);
         }
     }
 
     private boolean isPhoneNumberValid(String phoneNumber) {
         //TODO: Replace this with your own logic
+        Log.d(TAG, "isPhoneNumberValid");
 
         return phoneNumber.length() == 13;
 
@@ -225,6 +225,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
+        Log.d(TAG, "isPasswordValid");
         return password.length() > 4;
     }
 
@@ -233,6 +234,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
+        Log.d(TAG, "showProgress");
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -266,6 +268,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader");
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
@@ -283,6 +286,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished");
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -295,10 +299,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        Log.d(TAG, "onLoaderReset");
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+        Log.d(TAG, "addEmailsToAutoComplete");
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
@@ -324,45 +329,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        UserLoginTask(String phoneNumber, String password) {
+            Log.d(TAG, "UserLoginTask");
+            PreferenceHelper helper = new PreferenceHelper();
+            helper.saveString(PreferenceHelper.APP_PREFERENCES_PHONE, phoneNumber);
+            helper.saveString(PreferenceHelper.APP_PREFERENCES_PASSWORD, password);
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            Log.d(TAG, "doInBackground");
+            Authentication auth = new Authentication(api);
+            auth.execute();
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
             return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
+            Log.d(TAG, "onPostExecute");
             mAuthTask = null;
             showProgress(false);
 
             if (success) {
-                MainActivity.user = "user";
-                finish();
+//                Intent intent = new Intent(CONTEXT, MainActivity.class);
+//                startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
@@ -371,6 +362,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected void onCancelled() {
+            Log.d(TAG, "onCancelled");
             mAuthTask = null;
             showProgress(false);
         }

@@ -182,7 +182,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 photoUri,
                 byteArray,
                 latitude,
-                longitude);
+                longitude
+        );
 
         mRealmHelper.save(model);
         finish();

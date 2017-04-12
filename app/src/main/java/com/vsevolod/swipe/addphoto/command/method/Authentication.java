@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.Command;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 
 /**
@@ -13,6 +14,7 @@ import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 public class Authentication implements Command {
     private final String TAG = "Authentication";
     private Api mApi;
+    private PreferenceHelper helper = new PreferenceHelper();
 
     public Authentication(Api api) {
         Log.d(TAG, "Authentication");
@@ -22,6 +24,8 @@ public class Authentication implements Command {
     @Override
     public void execute() {
         Log.d(TAG, "execute");
-        mApi.authenticate(new AuthModel("+380506361408", "admin"));
+        String phoneNumber = helper.getPhone();
+        String password = helper.getPassword();
+        mApi.authenticate(new AuthModel(phoneNumber, password));
     }
 }

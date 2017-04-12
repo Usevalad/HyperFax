@@ -7,6 +7,7 @@ import android.util.Log;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.Authentication;
+import com.vsevolod.swipe.addphoto.command.method.Check;
 import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
@@ -23,8 +24,12 @@ public class StartActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        getServerAccess();
-        getTree();
+
+        Check check = new Check(api);
+        check.execute();
+
+//        getServerAccess();
+//        getTree();
         // TODO: 11.04.17 start next activity from here
     }
 
