@@ -25,6 +25,9 @@ import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.command.Api;
+import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -36,6 +39,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import it.sephiroth.android.library.picasso.Picasso;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 // FIXME: 11.04.17 realm init (open/close state)
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
@@ -126,6 +132,20 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
 
     private void addImage(String path) {
+
+
+        File file = new File(path);
+
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
+        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+        Api api = new MyasoApi();
+        UploadPhoto uploadPhoto = new UploadPhoto(api);
+        uploadPhoto.execute(body, name);
+
+
+
+
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) {

@@ -16,12 +16,17 @@ import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
+import java.io.IOException;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.Part;
 
 /**
  * Created by vsevolod on 11.04.17.
@@ -59,7 +64,7 @@ public class MyasoApi implements Api {
 
             @Override
             public void onFailure(Call<ResponseFlowsTreeModel> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
     }
@@ -87,7 +92,7 @@ public class MyasoApi implements Api {
                             Log.e(TAG, "onResponse: сбой обработки задачи по внешней причине");
                             break;
                         case Constants.RESPONSE_STATUS_OK: // here i need to understand what was the
-                                                            // call model to know how to react
+                            // call model to know how to react
                             Log.e(TAG, "onResponse: выполнено успешно, ождиается корректный " +
                                     "протокол выдачи конкретной задачи");
                             String token = response.body().getToken();
@@ -112,7 +117,7 @@ public class MyasoApi implements Api {
 
             @Override
             public void onFailure(Call<UserModel> call, Throwable t) {
-
+                t.printStackTrace();
             }
         });
         Log.d(TAG, "authenticate");
@@ -126,7 +131,7 @@ public class MyasoApi implements Api {
     @Override
     public void verify(@Body TokenModel token) {
         Log.d(TAG, "verify");
-        MyApplication.getApi().verify(new TokenModel("")).enqueue(new Callback<CheckedInfo>() {
+        MyApplication.getApi().verify(token).enqueue(new Callback<CheckedInfo>() {
             @Override
             public void onResponse(Call<CheckedInfo> call, Response<CheckedInfo> response) {
                 Log.d(TAG, "onResponse");
@@ -169,6 +174,34 @@ public class MyasoApi implements Api {
             @Override
             public void onFailure(Call<CheckedInfo> call, Throwable t) {
                 Log.d(TAG, "onFailure");
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void uploadImage(@Part MultipartBody.Part image, @Part("name") RequestBody name) {
+        Log.d(TAG, "uploadImage");
+        MyApplication.getApi().postImage(image, name).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e(TAG, "onResponse:whaaaaaaaaaaaaaaaaaaaa ");
+                Log.e(TAG, String.valueOf(response.code()));
+                if (response.isSuccessful()){
+                    try {
+                        Log.e(TAG, response.body().string().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Log.e(TAG, response.errorBody().toString());
+                    Log.e(TAG, response.headers().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
