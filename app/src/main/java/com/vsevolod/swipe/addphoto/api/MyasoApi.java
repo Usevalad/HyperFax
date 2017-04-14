@@ -35,9 +35,8 @@ public interface MyasoApi {
     @POST("api/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
 
-    //    @Headers("Content-Length: ?")
+    @Multipart  //    @Headers("Content-Length: ?")
     @PUT("/api/upload")
-    @Multipart
     Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
 }
 
