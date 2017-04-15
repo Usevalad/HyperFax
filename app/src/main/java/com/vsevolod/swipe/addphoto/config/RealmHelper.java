@@ -144,7 +144,8 @@ public class RealmHelper {
 
         this.realm.beginTransaction();
         // Create an object
-        DataModel newModel = this.realm.createObject(DataModel.class);
+        DataModel newModel = this.realm.createObject(DataModel.class, UniqueIDFactory.generateId());
+
         // Set its fields
         newModel.setSearchDate(model.getSearchDate());
         newModel.setPrefix(model.getPrefix());
@@ -156,6 +157,8 @@ public class RealmHelper {
         newModel.setStateCode(model.getStateCode());
         newModel.setPhotoURI(model.getPhotoURI());
         newModel.setName(model.getName());
+        newModel.setServerPhotoURL(model.getServerPhotoURL());
+//        newModel.setUid(model.getUid());
 
         this.realm.commitTransaction();
     }

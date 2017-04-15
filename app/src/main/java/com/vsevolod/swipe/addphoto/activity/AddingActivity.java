@@ -10,6 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -27,14 +28,18 @@ import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.command.method.Commit;
 import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.config.UniqueIDFactory;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.recyclerView.AutoCompleteAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -42,16 +47,23 @@ import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 // FIXME: 11.04.17 realm init (open/close state)
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
 // FIXME: 11.04.17 refactor "addNewDataItem" method
 // FIXME: 11.04.17 location!!!
+// FIXME: 15.04.17 refactor activity methods call order
+// TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = "AddingActivity";
     private final int THUMB_SIZE = 500;
     private Toolbar toolbar;
-    //    private AndroidTreeView tView;
+    private Api api = new MyasoApi();
+    //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper;
     private ImageView mImageView;
     private AutoCompleteTextView mAutoCompleteTextView;
@@ -59,6 +71,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private String path;
     private String text;
     private long mLastClickTime = 0;
+    private String serverPhotoURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +109,11 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
         mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter());
+        mAutoCompleteTextView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        mAutoCompleteTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText = (EditText) findViewById(R.id.adding_edit_text);
+        mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
+        mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -122,6 +139,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         super.onResume();
     }
 
+    // FIXME: 15.04.17 why it's just void?
     void handleSendImage(Intent intent) {
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
@@ -130,25 +148,45 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     private void addImage(String path) {
-
-
         File file = new File(path);
 
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-        Api api = new MyasoApi();
-        UploadPhoto uploadPhoto = new UploadPhoto(api);
-        uploadPhoto.execute(body, name);
+//        UploadPhoto uploadPhoto = new UploadPhoto(api);
+//        uploadPhoto.execute(body, name);
 
+        MyApplication.getApi().postImage(body, name).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
+                if (response.isSuccessful()) {
+                    try {
+                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
+                        serverPhotoURL = response.body().string();
 
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
 
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
-        if (imageFile.exists()) {
+        if (imageFile.exists()) { // FIXME: 15.04.17 improve prefix validation
             if (text.length() < 10 || !text.contains("@")) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
                 return;
@@ -180,17 +218,22 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
-        Calendar c = Calendar.getInstance();
+//        try {
+//            wait(10000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormatTV = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
-        String formattedDateTV = simpleDateFormatTV.format(c.getTime()); //date format for textView
-        String searchDate = simpleDateFormatDB.format(c.getTime());
+        String formattedDateTV = simpleDateFormatTV.format(calendar.getTime()); //date format for textView
+        String searchDate = simpleDateFormatDB.format(calendar.getTime());
         String comment = mEditText.getText().toString();
         text = mAutoCompleteTextView.getText().toString();
         String prefix = text.substring(text.length() - 4);
         String name = text.substring(0, text.length() - 6);
 
-        double latitude = 321;
+        double latitude = 321;//
         double longitude = 123;
 
         DataModel model = new DataModel(
@@ -200,15 +243,18 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 name,
                 comment,
                 photoUri,
+                serverPhotoURL,
                 byteArray,
                 latitude,
                 longitude
         );
 
         mRealmHelper.save(model);
+
+        Commit commit = new Commit(api);
+        commit.execute(model);
         finish();
     }
-
 
     @Override
     public void onClick(View v) {

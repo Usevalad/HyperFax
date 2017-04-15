@@ -28,5 +28,6 @@ public class UploadPhoto implements Command {
 
     @Override
     public void execute() {
+
     }
 }

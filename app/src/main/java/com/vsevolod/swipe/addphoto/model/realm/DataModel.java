@@ -3,17 +3,21 @@ package com.vsevolod.swipe.addphoto.model.realm;
 import com.vsevolod.swipe.addphoto.R;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by vsevolod on 09.04.17.
  */
 
 public class DataModel extends RealmObject {
+    @PrimaryKey
+    private String uid;
     private String searchDate;
     private String viewDate;
     private String prefix;
     private String name;
     private String photoURI;
+    private String serverPhotoURL;
     private String comment;
     private double latitude;
     private double longitude;
@@ -21,7 +25,7 @@ public class DataModel extends RealmObject {
     private byte[] photo;
 
     public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
-                     String photoURI, byte[] photo, double latitude, double longitude) {
+                     String photoURI, String serverPhotoURL, byte[] photo, double latitude, double longitude) {
         this.comment = comment;
         this.viewDate = viewDate;
         this.latitude = latitude;
@@ -31,6 +35,7 @@ public class DataModel extends RealmObject {
         this.photoURI = photoURI;
         this.photo = photo;
         this.name = name;
+        this.serverPhotoURL = serverPhotoURL;
     }
 
     public DataModel() {
@@ -115,6 +120,18 @@ public class DataModel extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getServerPhotoURL() {
+        return serverPhotoURL;
+    }
+
+    public void setServerPhotoURL(String serverPhotoURL) {
+        this.serverPhotoURL = serverPhotoURL;
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public int getStateIconImage() {

@@ -26,6 +26,8 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper realmHelper;
+    private MyasoApi api = new MyasoApi();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.main_menu_request_flow:
-                Toast.makeText(this, "Обновлено", Toast.LENGTH_SHORT).show();
+                getTree();
                 break;
             case R.id.main_menu_log_out:
                 Toast.makeText(this, "Выход", Toast.LENGTH_SHORT).show();
@@ -350,5 +353,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isFabOpen = true;
             Log.d(TAG, "animateFAB: open");
         }
+    }
+
+    private void getTree() {
+        Log.d(TAG, "getTree");
+        GetTree tree = new GetTree(api);
+        tree.execute();
     }
 }

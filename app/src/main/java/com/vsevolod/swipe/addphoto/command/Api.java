@@ -1,6 +1,7 @@
 package com.vsevolod.swipe.addphoto.command;
 
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
+import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 
@@ -23,4 +24,6 @@ public interface Api {
     void verify(@Body TokenModel user);
 
     void uploadImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+
+    void commit(@Body CommitModel commitModel);
 }

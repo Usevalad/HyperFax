@@ -2,7 +2,9 @@ package com.vsevolod.swipe.addphoto.asyncTask;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
@@ -49,5 +51,6 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
         super.onPostExecute(flowsTreeModels);
+        Toast.makeText(MyApplication.getAppContext(), "Обновлено", Toast.LENGTH_SHORT).show();
     }
 }

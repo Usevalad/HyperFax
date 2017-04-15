@@ -10,6 +10,7 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
+import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
@@ -95,8 +96,9 @@ public class MyasoApi implements Api {
                             // call model to know how to react
                             Log.e(TAG, "onResponse: выполнено успешно, ождиается корректный " +
                                     "протокол выдачи конкретной задачи");
-                            String token = response.body().getToken();
+                            String token = response.body().getToken().toString();
                             mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, token);
+                            // FIXME: 15.04.17  token = not found
                             startMainActivity();
                             break;
                         case Constants.RESPONSE_STATUS_BAD:
@@ -185,17 +187,49 @@ public class MyasoApi implements Api {
         MyApplication.getApi().postImage(image, name).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e(TAG, "onResponse:whaaaaaaaaaaaaaaaaaaaa ");
-                Log.e(TAG, String.valueOf(response.code()));
-                if (response.isSuccessful()){
+                Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
+                if (response.isSuccessful()) {
                     try {
-                        Log.e(TAG, response.body().string().toString());
+                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
+                        String serverPhotoURL = response.body().string();
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    Log.e(TAG, response.errorBody().toString());
-                    Log.e(TAG, response.headers().toString());
+                    try {
+                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void commit(@Body CommitModel commitModel) {
+        MyApplication.getApi().commit(commitModel).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d(TAG, "onResponse");
+                if (response.isSuccessful()) {
+                    try {
+                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

@@ -1,6 +1,7 @@
 package com.vsevolod.swipe.addphoto.api;
 
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
+import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
@@ -35,9 +36,12 @@ public interface MyasoApi {
     @POST("api/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
 
-    @Multipart  //    @Headers("Content-Length: ?")
-    @PUT("/api/upload")
+    @Multipart //    @Headers("Content-Length: ?")
+    @PUT("api/upload")//// FIXME: 15.04.17 do i need @Part("name")?
     Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+
+    @POST("api/commit")
+    Call<ResponseBody> commit(@Body CommitModel commitModel);
 }
 
 

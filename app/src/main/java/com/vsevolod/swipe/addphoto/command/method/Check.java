@@ -24,7 +24,7 @@ public class Check implements Command {
     public void execute() {
         Log.d(TAG, "execute");
         PreferenceHelper mPreferenceHelper = new PreferenceHelper();
-        String token = mPreferenceHelper.getUserTitlte();
+        String token = mPreferenceHelper.getToken();
         mApi.verify(new TokenModel(token));
     }
 }
