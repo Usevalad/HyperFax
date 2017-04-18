@@ -84,9 +84,17 @@ public class RealmHelper {
         return this.data;
     }
 
-    public List<FlowsTreeModel> getTree() {
-        Log.d(TAG, "getTree");
-        return tree;
+    public boolean isValid(String text) {
+        Log.d(TAG, "isValid");
+        String tmp;
+
+        for (int i = 0; i < tree.size(); i++) {
+            tmp = tree.get(i).getName() + " @" + tree.get(i).getPrefix();
+            if (tmp.equals(text)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<DataModel> search(String queryString) {
@@ -146,7 +154,6 @@ public class RealmHelper {
         this.realm.beginTransaction();
         // Create an object
         DataModel newModel = this.realm.createObject(DataModel.class, UUID.randomUUID().toString());
-
         // Set its fields
         newModel.setSearchDate(model.getSearchDate());
         newModel.setPrefix(model.getPrefix());
@@ -159,7 +166,6 @@ public class RealmHelper {
         newModel.setPhotoURI(model.getPhotoURI());
         newModel.setName(model.getName());
         newModel.setServerPhotoURL(model.getServerPhotoURL());
-//        newModel.setUid(model.getUid());
 
         this.realm.commitTransaction();
     }

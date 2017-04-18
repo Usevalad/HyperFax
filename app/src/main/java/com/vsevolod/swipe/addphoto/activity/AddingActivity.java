@@ -131,8 +131,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         super.onResume();
     }
 
-    // FIXME: 15.04.17 why it's just void?
-    void handleSendImage(Intent intent) {
+    public void handleSendImage(Intent intent) {
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             // Update UI to reflect image being shared
@@ -152,7 +151,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) { // FIXME: 15.04.17 improve prefix validation
-            if (text.length() < 5 || !text.contains("@")) {
+            if (!mRealmHelper.isValid(text)) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
                 return;
             }
