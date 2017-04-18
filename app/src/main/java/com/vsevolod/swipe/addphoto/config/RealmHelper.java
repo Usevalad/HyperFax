@@ -19,18 +19,20 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
-// FIXME: 10.04.17 open/close realm stuff. think about how to init
+// FIXME: 18.04.17 improve open/close by boolean
 public class RealmHelper {
     private final String TAG = "RealmHelper";
     private Realm realm;
     public List<DataModel> data = new ArrayList<>();
     public List<FlowsTreeModel> tree = new ArrayList<>();
+    boolean isOpen = false;
 
     public RealmHelper() {
+        open();
         Log.d(TAG, "Realm constructor");
     }
 
-    public void open() {
+    private void open() {
         Log.d(TAG, "open");
         Realm.init(MyApplication.getAppContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
@@ -39,7 +41,7 @@ public class RealmHelper {
         initRealm();
     }
 
-    public void close() {
+    private void close() {
         Log.d(TAG, "close");
         this.realm.close();
     }
@@ -58,6 +60,7 @@ public class RealmHelper {
 
     public void dropRealmData() {
         Log.d(TAG, "dropRealmData");
+        open();
 
         RealmResults<DataModel> results = this.realm.where(DataModel.class).findAll();
         // All changes to data must happen in a transaction
@@ -65,10 +68,12 @@ public class RealmHelper {
         // Delete all matches
         results.deleteAllFromRealm();
         this.realm.commitTransaction();
+        close();
     }
 
     public void dropRealmTree() {
         Log.d(TAG, "dropRealmTree");
+        open();
 
         RealmResults<FlowsTreeModel> results = this.realm.where(FlowsTreeModel.class).findAll();
         // All changes to data must happen in a transaction
@@ -76,6 +81,7 @@ public class RealmHelper {
         // Delete all matches
         results.deleteAllFromRealm();
         this.realm.commitTransaction();
+        close();
     }
 
 
@@ -94,29 +100,33 @@ public class RealmHelper {
                 return true;
             }
         }
+
         return false;
     }
 
     public List<DataModel> search(String queryString) {
+        open();
         RealmQuery query = this.realm.where(DataModel.class);
         query.contains("searchDate", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains("name", queryString, Case.INSENSITIVE);
         query.or().beginsWith("prefix", queryString);
-
+        close();
         return query.findAll();
     }
 
     public List<FlowsTreeModel> searchTree(String queryString) {
+        open();
         RealmQuery query = this.realm.where(FlowsTreeModel.class);
         query.contains("name", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().beginsWith("prefix", queryString);
         query.or().equalTo("prefix", queryString);
-
+        close();
         return query.findAll();
     }
 
     public void save(List<FlowsTreeModel> flowsTreeModels) {
         Log.d(TAG, "saveTreeList");
+        open();
         FlowsTreeModel tmp;
         for (int i = 0; i < flowsTreeModels.size(); i++) {
             this.realm.beginTransaction();
@@ -131,10 +141,12 @@ public class RealmHelper {
 
             this.realm.commitTransaction();
         }
+        close();
     }
 
     public void save(FlowsTreeModel model) {
         Log.d(TAG, "saveTreeListModel");
+        open();
         this.realm.beginTransaction();
         // Create an object
         FlowsTreeModel newModel = this.realm.createObject(FlowsTreeModel.class);
@@ -145,12 +157,12 @@ public class RealmHelper {
         newModel.setPrefix(model.getPrefix());
 
         this.realm.commitTransaction();
-
+        close();
     }
 
     public void save(DataModel model) {
         Log.d(TAG, "saveDataModel");
-
+        open();
         this.realm.beginTransaction();
         // Create an object
         DataModel newModel = this.realm.createObject(DataModel.class, UUID.randomUUID().toString());
@@ -168,14 +180,16 @@ public class RealmHelper {
         newModel.setServerPhotoURL(model.getServerPhotoURL());
 
         this.realm.commitTransaction();
+        close();
     }
 
 
     public DataModel getLastDataModel() {
         Log.d(TAG, "getLastDataModel");
+        open();
         RealmQuery dataQuery = this.realm.where(DataModel.class);
         RealmResults<DataModel> models = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
-
+        close();
         return models.first();
     }
 }

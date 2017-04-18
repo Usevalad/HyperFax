@@ -193,7 +193,7 @@ public class MyasoApi implements Api {
                 Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
                     try {
                         RealmHelper mRealmHelper = new RealmHelper();
-                        mRealmHelper.open();
+//                        mRealmHelper.open();
                         DataModel dataModel = mRealmHelper.getLastDataModel();
                         String token = mPreferenceHelper.getToken();
                         String link = response.body().string().toString();
@@ -204,7 +204,7 @@ public class MyasoApi implements Api {
                         Log.e(TAG, id);
                         CommitModel commitModel = new CommitModel(token, link, id);
                         commit(commitModel);
-                        mRealmHelper.close();
+//                        mRealmHelper.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

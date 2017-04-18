@@ -86,9 +86,9 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
     @NonNull
     private List<FlowsTreeModel> filterTreeNode(String query) {
         RealmHelper realmHelper = new RealmHelper();
-        realmHelper.open();
+//        realmHelper.open();
         List<FlowsTreeModel> list = realmHelper.searchTree(query);
-        realmHelper.close();
+//        realmHelper.close();
         return list;
     }
 }

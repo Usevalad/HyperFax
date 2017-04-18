@@ -70,7 +70,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         Log.d(TAG, "onCreate");
 
         mRealmHelper = new RealmHelper();
-        mRealmHelper.open();
+//        mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
         path = getIntent().getStringExtra("path");
@@ -121,13 +121,13 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onPause() {
-        mRealmHelper.close();
+//        mRealmHelper.close();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-        mRealmHelper.open();
+//        mRealmHelper.open();
         super.onResume();
     }
 
@@ -150,7 +150,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
-        if (imageFile.exists()) { // FIXME: 15.04.17 improve prefix validation
+        if (imageFile.exists()) {
             if (!mRealmHelper.isValid(text)) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
                 return;

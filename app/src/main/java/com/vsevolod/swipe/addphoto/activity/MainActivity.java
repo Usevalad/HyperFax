@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 
         realmHelper = new RealmHelper();
-        realmHelper.open();
+//        realmHelper.open();
         mPreferenceHelper = new PreferenceHelper();
         data = realmHelper.getData();
 
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-        realmHelper.close();
+//        realmHelper.close();
         super.onPause();
     }
 
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        realmHelper.open();
+//        realmHelper.open();
         isFabOpen = true;
         mFABCamera.setClickable(true);
         mFABGallery.setClickable(true);
