@@ -7,6 +7,7 @@ import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.realm.Case;
 import io.realm.Realm;
@@ -144,7 +145,7 @@ public class RealmHelper {
 
         this.realm.beginTransaction();
         // Create an object
-        DataModel newModel = this.realm.createObject(DataModel.class, UniqueIDFactory.generateId());
+        DataModel newModel = this.realm.createObject(DataModel.class, UUID.randomUUID().toString());
 
         // Set its fields
         newModel.setSearchDate(model.getSearchDate());
@@ -161,5 +162,14 @@ public class RealmHelper {
 //        newModel.setUid(model.getUid());
 
         this.realm.commitTransaction();
+    }
+
+
+    public DataModel getLastDataModel() {
+        Log.d(TAG, "getLastDataModel");
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        RealmResults<DataModel> models = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
+
+        return models.first();
     }
 }

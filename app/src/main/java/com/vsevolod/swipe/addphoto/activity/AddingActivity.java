@@ -28,18 +28,14 @@ import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
-import com.vsevolod.swipe.addphoto.command.method.Commit;
 import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.config.UniqueIDFactory;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.recyclerView.AutoCompleteAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -47,10 +43,6 @@ import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 // FIXME: 11.04.17 realm init (open/close state)
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
@@ -154,40 +146,13 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
         RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-//        UploadPhoto uploadPhoto = new UploadPhoto(api);
-//        uploadPhoto.execute(body, name);
-
-        MyApplication.getApi().postImage(body, name).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
-                if (response.isSuccessful()) {
-                    try {
-                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
-                        serverPhotoURL = response.body().string();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        UploadPhoto uploadPhoto = new UploadPhoto(api);
+        uploadPhoto.execute(body, name);
 
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) { // FIXME: 15.04.17 improve prefix validation
-            if (text.length() < 10 || !text.contains("@")) {
+            if (text.length() < 5 || !text.contains("@")) {
                 Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -218,11 +183,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
-//        try {
-//            wait(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormatTV = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
@@ -250,9 +211,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         );
 
         mRealmHelper.save(model);
-
-        Commit commit = new Commit(api);
-        commit.execute(model);
         finish();
     }
 

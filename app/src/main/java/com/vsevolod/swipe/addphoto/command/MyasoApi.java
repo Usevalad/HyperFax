@@ -9,10 +9,12 @@ import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
+import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
@@ -34,6 +36,7 @@ import retrofit2.http.Part;
  */
 
 public class MyasoApi implements Api {
+    // FIXME: 17.04.17 need rx
     private final String TAG = "MyasoApi";
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 
@@ -188,21 +191,24 @@ public class MyasoApi implements Api {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
-                if (response.isSuccessful()) {
                     try {
-                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
-                        String serverPhotoURL = response.body().string();
+                        RealmHelper mRealmHelper = new RealmHelper();
+                        mRealmHelper.open();
+                        DataModel dataModel = mRealmHelper.getLastDataModel();
+                        String token = mPreferenceHelper.getToken();
+                        String link = response.body().string().toString();
+                        String id = dataModel.getUid();
+                        Log.e(TAG, id);
+                        Log.e(TAG, id);
+                        Log.e(TAG, id);
+                        Log.e(TAG, id);
+                        CommitModel commitModel = new CommitModel(token, link, id);
+                        commit(commitModel);
+                        mRealmHelper.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
 
             @Override
@@ -214,6 +220,7 @@ public class MyasoApi implements Api {
 
     @Override
     public void commit(@Body CommitModel commitModel) {
+        Log.d(TAG, "commit");
         MyApplication.getApi().commit(commitModel).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -241,12 +248,14 @@ public class MyasoApi implements Api {
     }
 
     private void startMainActivity() {
+        Log.d(TAG, "startMainActivity");
         Intent mainIntent = new Intent(MyApplication.getAppContext(), MainActivity.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyApplication.getAppContext().startActivity(mainIntent);
     }
 
     private void startLoginActivity() {
+        Log.d(TAG, "startLoginActivity");
         Intent loginIntent = new Intent(MyApplication.getAppContext(), LoginActivity.class);
         loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyApplication.getAppContext().startActivity(loginIntent);
