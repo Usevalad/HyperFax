@@ -2,6 +2,8 @@ package com.vsevolod.swipe.addphoto.model.realm;
 
 import com.vsevolod.swipe.addphoto.R;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -24,10 +26,11 @@ public class DataModel extends RealmObject {
     private int stateCode = 0;
     private byte[] photo;
     private String prefixID;
+    private Date date;
 
     public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
                      String photoURI, String serverPhotoURL, byte[] photo, double latitude, double longitude,
-                     String prefixID) {
+                     String prefixID, Date date) {
         this.comment = comment;
         this.viewDate = viewDate;
         this.latitude = latitude;
@@ -39,6 +42,7 @@ public class DataModel extends RealmObject {
         this.name = name;
         this.serverPhotoURL = serverPhotoURL;
         this.prefixID = prefixID;
+        this.date = date;
     }
 
     public DataModel() {
@@ -143,6 +147,14 @@ public class DataModel extends RealmObject {
 
     public void setPrefixID(String prefixID) {
         this.prefixID = prefixID;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public int getStateIconImage() {

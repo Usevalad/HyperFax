@@ -68,11 +68,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         String phoneNumber = getPhoneNUmber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
-        mPhoneNumberView.setText("+380506361408");//номер телефона максима
+        mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона максима
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setText("admin");//пароль максима
+        mPasswordView.setText("user");//admin пароль максима
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         Log.d(TAG, "isPasswordValid");
-        return password.length() > 4;
+        return password.length() > 1;
     }
 
     /**

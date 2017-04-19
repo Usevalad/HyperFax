@@ -60,7 +60,7 @@ public class RealmHelper {
         Log.d(TAG, "initRealmData");
         //data
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
+        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("date", Sort.DESCENDING);
         this.data = dataResults;
         //tree
         RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
@@ -175,6 +175,7 @@ public class RealmHelper {
         newModel.setName(model.getName());
         newModel.setServerPhotoURL(model.getServerPhotoURL());
         newModel.setPrefixID(model.getPrefixID());
+        newModel.setDate(model.getDate());
 
         this.realm.commitTransaction();
     }
@@ -183,7 +184,7 @@ public class RealmHelper {
     public DataModel getLastDataModel() {
         Log.d(TAG, "getLastDataModel");
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> models = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
+        RealmResults<DataModel> models = dataQuery.findAllSorted("date", Sort.DESCENDING);
         return models.first();
     }
 

@@ -25,23 +25,24 @@ import retrofit2.http.Part;
  */
 
 public interface MyasoApi {
-    @POST("api/tree")
+    @POST("ext/apit/tree")
     Call<ResponseFlowsTreeModel> getList(@Body TokenModel model);
 
-    @POST("api/auth")
+    @POST("ext/apit/auth")
     Call<UserModel> authenticate(@Body AuthModel user);
 
-    @POST("api/auth")
+    @POST("ext/apit/auth")
     Call<UserInfoModel> authenticate(@Body SimpleAuthModel user);
 
-    @POST("api/check")
+    @POST("ext/apit/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
 
      //    @Headers("Content-Length: ?")
-    @PUT("api/upload")//// FIXME: 15.04.17 do i need @Part("name")?
+    //ext/api/upload
+    @PUT("ext/apit/upload")
     Call<ResponseBody> postImage(@Body RequestBody body);
 
-    @POST("api/commit")
+    @POST("ext/apit/commit")//ext/api/commit
     Call<ResponseBody> commit(@Body CommitModel commitModel);
 }
 

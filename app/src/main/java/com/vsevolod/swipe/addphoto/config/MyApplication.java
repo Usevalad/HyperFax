@@ -36,7 +36,7 @@ public class MyApplication extends Application {
                 //Конвертер, необходимый для преобразования JSON'а в объекты
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 //Базовая часть адреса
-                .baseUrl("http://crm.myaso.net.ua/ext/")
+                .baseUrl("http://crm.myaso.net.ua/")
                 .build();
 
         //Создаем объект, при помощи которого будем выполнять запросы

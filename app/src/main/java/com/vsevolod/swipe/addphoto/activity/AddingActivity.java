@@ -38,6 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
@@ -194,11 +196,14 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.d(TAG, "addNewDataItem");
 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormatTV = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
-        SimpleDateFormat simpleDateFormatDB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss E");
-        String formattedDateTV = simpleDateFormatTV.format(calendar.getTime()); //date format for textView
-        String searchDate = simpleDateFormatDB.format(calendar.getTime());
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance(timeZone);
+        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        searchDateFormat.setTimeZone(timeZone);
+        String viewDate = viewDateFormat.format(calendar.getTime()); //date format for textView
+        String searchDate = searchDateFormat.format(date.getTime());
         String comment = mEditText.getText().toString();
         text = mAutoCompleteTextView.getText().toString();
         String prefix = text.substring(text.length() - 4);
@@ -210,7 +215,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
         DataModel model = new DataModel(
                 searchDate,
-                formattedDateTV,
+                viewDate,
                 prefix,
                 name,
                 comment,
@@ -219,7 +224,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 byteArray,
                 latitude,
                 longitude,
-                prefixID
+                prefixID,
+                date
         );
 
         mRealmHelper.save(model);

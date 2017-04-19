@@ -29,11 +29,14 @@ public class Commit implements Command {
 
     public void execute(DataModel model) {
         String token = mPreferenceHelper.getToken();
-        // TODO: 15.04.17 add more attributes in CommitModel.java
         CommitModel commitModel = new CommitModel(
                 token,
                 model.getServerPhotoURL(),
-                model.getUid()
+                model.getUid(),
+                model.getPrefixID(),
+                model.getComment(),
+                model.getSearchDate(),
+                String.valueOf(model.getLatitude() + "," + model.getLongitude())
         );
 
         mApi.commit(commitModel);

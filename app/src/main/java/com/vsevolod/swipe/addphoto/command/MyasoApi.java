@@ -22,7 +22,6 @@ import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 import java.io.IOException;
 import java.util.List;
 
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -192,18 +191,23 @@ public class MyasoApi implements Api {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
+
                 try {
                     RealmHelper mRealmHelper = new RealmHelper();
                     mRealmHelper.open();
-                    DataModel dataModel = mRealmHelper.getLastDataModel();
                     String token = mPreferenceHelper.getToken();
                     String link = response.body().string().toString();
-                    String id = dataModel.getUid();
-                    Log.e(TAG, id);
-                    Log.e(TAG, id);
-                    Log.e(TAG, id);
-                    Log.e(TAG, id);
-                    CommitModel commitModel = new CommitModel(token, link, id);
+                    DataModel model = mRealmHelper.getLastDataModel();
+                    CommitModel commitModel = new CommitModel(
+                            token,
+                            link,
+                            model.getUid(),
+                            model.getPrefixID(),
+                            model.getComment(),
+                            model.getSearchDate(),
+                            String.valueOf(model.getLatitude() + "," + model.getLongitude())
+                    );
+
                     commit(commitModel);
                     mRealmHelper.close();
                 } catch (IOException e) {
