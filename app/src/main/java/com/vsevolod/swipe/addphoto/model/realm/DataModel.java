@@ -23,9 +23,11 @@ public class DataModel extends RealmObject {
     private double longitude;
     private int stateCode = 0;
     private byte[] photo;
+    private String prefixID;
 
     public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
-                     String photoURI, String serverPhotoURL, byte[] photo, double latitude, double longitude) {
+                     String photoURI, String serverPhotoURL, byte[] photo, double latitude, double longitude,
+                     String prefixID) {
         this.comment = comment;
         this.viewDate = viewDate;
         this.latitude = latitude;
@@ -36,6 +38,7 @@ public class DataModel extends RealmObject {
         this.photo = photo;
         this.name = name;
         this.serverPhotoURL = serverPhotoURL;
+        this.prefixID = prefixID;
     }
 
     public DataModel() {
@@ -132,6 +135,14 @@ public class DataModel extends RealmObject {
 
     public String getUid() {
         return uid;
+    }
+
+    public String getPrefixID() {
+        return prefixID;
+    }
+
+    public void setPrefixID(String prefixID) {
+        this.prefixID = prefixID;
     }
 
     public int getStateIconImage() {

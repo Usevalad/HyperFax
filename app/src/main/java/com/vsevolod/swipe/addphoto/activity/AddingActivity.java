@@ -44,7 +44,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-// FIXME: 11.04.17 realm init (open/close state)
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
 // FIXME: 11.04.17 refactor "addNewDataItem" method
 // FIXME: 11.04.17 location!!!
@@ -197,6 +196,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         text = mAutoCompleteTextView.getText().toString();
         String prefix = text.substring(text.length() - 4);
         String name = text.substring(0, text.length() - 6);
+        String prefixID = mRealmHelper.getPrefixID(prefix);
 
         double latitude = 321;//
         double longitude = 123;
@@ -211,7 +211,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 serverPhotoURL,
                 byteArray,
                 latitude,
-                longitude
+                longitude,
+                prefixID
         );
 
         mRealmHelper.save(model);

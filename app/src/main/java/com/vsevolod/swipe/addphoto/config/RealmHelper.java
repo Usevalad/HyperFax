@@ -36,19 +36,19 @@ public class RealmHelper {
 //        if (isOpen) {
 //            return;
 //        } else {
-            Realm.init(MyApplication.getAppContext());
-            RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-            Realm.setDefaultConfiguration(realmConfiguration);
-            this.realm = Realm.getDefaultInstance();
-            initRealm();
-            isOpen = true;
+        Realm.init(MyApplication.getAppContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+        this.realm = Realm.getDefaultInstance();
+        initRealm();
+        isOpen = true;
 //        }
     }
 
     public void close() {
         Log.d(TAG, "close");
 //        if (isOpen) {
-            this.realm.close();
+        this.realm.close();
 //            isOpen = false;
 //        } else {
 //            return;
@@ -111,6 +111,7 @@ public class RealmHelper {
         RealmQuery query = this.realm.where(DataModel.class);
         query.contains("searchDate", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains("name", queryString, Case.INSENSITIVE);
+        query.or().equalTo("name", queryString, Case.INSENSITIVE);
         query.or().beginsWith("prefix", queryString);
         return query.findAll();
     }
@@ -172,6 +173,7 @@ public class RealmHelper {
         newModel.setPhotoURI(model.getPhotoURI());
         newModel.setName(model.getName());
         newModel.setServerPhotoURL(model.getServerPhotoURL());
+        newModel.setPrefixID(model.getPrefixID());
 
         this.realm.commitTransaction();
     }
@@ -182,5 +184,14 @@ public class RealmHelper {
         RealmQuery dataQuery = this.realm.where(DataModel.class);
         RealmResults<DataModel> models = dataQuery.findAllSorted("searchDate", Sort.DESCENDING);
         return models.first();
+    }
+
+    public String getPrefixID(String prefix) {
+        Log.d(TAG, "getPrefixID");
+        RealmQuery idQuery = this.realm.where(FlowsTreeModel.class);
+        idQuery.equalTo("prefix", prefix, Case.INSENSITIVE);
+
+        FlowsTreeModel model = (FlowsTreeModel) idQuery.findFirst();
+        return model.getId();
     }
 }
