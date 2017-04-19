@@ -146,11 +146,11 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private void addImage(String path) {
         File file = new File(path);
 
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-        UploadPhoto uploadPhoto = new UploadPhoto(api);
-        uploadPhoto.execute(body, name);
+//        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+////        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
+////        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+//        UploadPhoto uploadPhoto = new UploadPhoto(api);
+//        uploadPhoto.execute(reqFile);
 
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
@@ -171,6 +171,13 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
             thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             addNewDataItem(byteArray, path);
+
+            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+//        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
+//        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+            UploadPhoto uploadPhoto = new UploadPhoto(api);
+            uploadPhoto.execute(reqFile);
+
         }
     }
 

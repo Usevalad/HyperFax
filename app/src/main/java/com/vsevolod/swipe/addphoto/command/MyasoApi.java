@@ -186,9 +186,9 @@ public class MyasoApi implements Api {
     }
 
     @Override
-    public void uploadImage(@Part MultipartBody.Part image, @Part("name") RequestBody name) {
+    public void uploadImage(@Part("body") RequestBody body) {
         Log.d(TAG, "uploadImage");
-        MyApplication.getApi().postImage(image, name).enqueue(new Callback<ResponseBody>() {
+        MyApplication.getApi().postImage(body).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
@@ -209,7 +209,6 @@ public class MyasoApi implements Api {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override

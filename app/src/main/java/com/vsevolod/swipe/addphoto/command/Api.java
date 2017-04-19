@@ -5,7 +5,6 @@ import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Part;
@@ -23,7 +22,7 @@ public interface Api {
 
     void verify(@Body TokenModel user);
 
-    void uploadImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+    void uploadImage(@Part RequestBody body);
 
     void commit(@Body CommitModel commitModel);
 }

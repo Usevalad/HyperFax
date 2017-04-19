@@ -14,6 +14,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -36,9 +37,9 @@ public interface MyasoApi {
     @POST("api/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
 
-    @Multipart //    @Headers("Content-Length: ?")
+     //    @Headers("Content-Length: ?")
     @PUT("api/upload")//// FIXME: 15.04.17 do i need @Part("name")?
-    Call<ResponseBody> postImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+    Call<ResponseBody> postImage(@Body RequestBody body);
 
     @POST("api/commit")
     Call<ResponseBody> commit(@Body CommitModel commitModel);

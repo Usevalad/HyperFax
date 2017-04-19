@@ -21,9 +21,9 @@ public class UploadPhoto implements Command {
         this.mApi = api;
     }
 
-    public void execute(MultipartBody.Part body, RequestBody name) {
+    public void execute(RequestBody body) {
         Log.d(TAG, "execute");
-        mApi.uploadImage(body, name);
+        mApi.uploadImage(body);
     }
 
     @Override
