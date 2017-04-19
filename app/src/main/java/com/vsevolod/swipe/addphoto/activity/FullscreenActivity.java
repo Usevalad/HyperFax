@@ -19,6 +19,7 @@ import it.sephiroth.android.library.picasso.Picasso;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
+// FIXME: 19.04.17 refactor
 public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener {
     private final String extra = "photo uri";
     /**

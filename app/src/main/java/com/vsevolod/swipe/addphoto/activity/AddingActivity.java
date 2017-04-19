@@ -56,7 +56,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private Toolbar toolbar;
     private Api api = new MyasoApi();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
-    private RealmHelper mRealmHelper;
+    private RealmHelper mRealmHelper = new RealmHelper();
     private ImageView mImageView;
     private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
@@ -69,8 +69,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
 
-        mRealmHelper = new RealmHelper();
-//        mRealmHelper.open();
+        mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
         path = getIntent().getStringExtra("path");
@@ -121,13 +120,19 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onPause() {
-//        mRealmHelper.close();
+        mRealmHelper.close();
         super.onPause();
     }
 
     @Override
+    protected void onDestroy() {
+        mRealmHelper.close();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
-//        mRealmHelper.open();
+        mRealmHelper.open();
         super.onResume();
     }
 

@@ -37,6 +37,7 @@ import retrofit2.http.Part;
 
 public class MyasoApi implements Api {
     // FIXME: 17.04.17 need rx
+    // FIXME: 19.04.17 time outs no connection
     private final String TAG = "MyasoApi";
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 
@@ -191,23 +192,23 @@ public class MyasoApi implements Api {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.e(TAG, "response.code(): " + String.valueOf(response.code()));
-                    try {
-                        RealmHelper mRealmHelper = new RealmHelper();
-//                        mRealmHelper.open();
-                        DataModel dataModel = mRealmHelper.getLastDataModel();
-                        String token = mPreferenceHelper.getToken();
-                        String link = response.body().string().toString();
-                        String id = dataModel.getUid();
-                        Log.e(TAG, id);
-                        Log.e(TAG, id);
-                        Log.e(TAG, id);
-                        Log.e(TAG, id);
-                        CommitModel commitModel = new CommitModel(token, link, id);
-                        commit(commitModel);
-//                        mRealmHelper.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    RealmHelper mRealmHelper = new RealmHelper();
+                    mRealmHelper.open();
+                    DataModel dataModel = mRealmHelper.getLastDataModel();
+                    String token = mPreferenceHelper.getToken();
+                    String link = response.body().string().toString();
+                    String id = dataModel.getUid();
+                    Log.e(TAG, id);
+                    Log.e(TAG, id);
+                    Log.e(TAG, id);
+                    Log.e(TAG, id);
+                    CommitModel commitModel = new CommitModel(token, link, id);
+                    commit(commitModel);
+                    mRealmHelper.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
 

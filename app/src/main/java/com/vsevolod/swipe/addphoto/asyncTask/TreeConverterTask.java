@@ -23,7 +23,7 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
     @Override
     protected List<FlowsTreeModel> doInBackground(ResponseFlowsTreeModel... params) {
         Log.d(TAG, "doInBackground");
-//        mRealmHelper.open();
+        mRealmHelper.open();
         List<FlowsTreeModel> result = new ArrayList<>();
         ResponseFlowsTreeModel model = params[0];
         List<List<String>> list = model.getList();
@@ -39,6 +39,7 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
                 }
             }
         }
+        mRealmHelper.close();
         return result;
     }
 

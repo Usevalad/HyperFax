@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static RecyclerView mRecyclerView;
     public static List<DataModel> data;
     public static Context context;
-    private PreferenceHelper mPreferenceHelper;
+    private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
@@ -57,31 +57,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isFabOpen = false;
     private boolean isChecked = false;
     private Uri fileUri = null;
-    private RealmHelper realmHelper;
+    private RealmHelper mRealmHelper = new RealmHelper();
     private MyasoApi api = new MyasoApi();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-//        to start login activity
-//        if (user == null) {
-//            Intent intent = new Intent(this, LoginActivity.class);
-//            startActivity(intent);
-//        }
 
-        realmHelper = new RealmHelper();
-//        realmHelper.open();
-        mPreferenceHelper = new PreferenceHelper();
-        data = realmHelper.getData();
-
+        mRealmHelper.open();
+        data = mRealmHelper.getData();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.logo);
         setSupportActionBar(toolbar);
-
         setFABAnimation();
-
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
@@ -103,22 +93,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
     }
 
+
     @Override
     protected void onPause() {
-//        realmHelper.close();
+        mRealmHelper.close();
         super.onPause();
     }
 
     @Override
+    protected void onDestroy() {
+        mRealmHelper.close();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onResume() {
-        super.onResume();
         Log.d(TAG, "onResume");
-//        realmHelper.open();
+        mRealmHelper.open();
         isFabOpen = true;
         mFABCamera.setClickable(true);
         mFABGallery.setClickable(true);
         animateFAB();
         setRecyclerViewAdapter();
+        super.onResume();
     }
 
     @Override
@@ -148,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
-                realmHelper.dropRealmData();
+                mRealmHelper.dropRealmData();
                 setRecyclerViewAdapter();
                 break;
             case R.id.main_menu_repeat_download:

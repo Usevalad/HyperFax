@@ -34,7 +34,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mRealmHelper = new RealmHelper();
-//        mRealmHelper.open();
+        mRealmHelper.open();
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
@@ -51,15 +51,21 @@ public class SearchResultsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-//        mRealmHelper.open();
-        super.onResume();
+    protected void onDestroy() {
+        mRealmHelper.close();
+        super.onDestroy();
     }
 
     @Override
     protected void onPause() {
-//        mRealmHelper.close();
+        mRealmHelper.close();
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mRealmHelper.open();
+        super.onResume();
     }
 
     @Override
@@ -98,7 +104,6 @@ public class SearchResultsActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
         Log.d(TAG, "handleIntent");
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             data = mRealmHelper.search(query);
