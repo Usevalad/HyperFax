@@ -1,6 +1,7 @@
 package com.vsevolod.swipe.addphoto.config;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
@@ -190,8 +191,14 @@ public class RealmHelper {
         Log.d(TAG, "getPrefixID");
         RealmQuery idQuery = this.realm.where(FlowsTreeModel.class);
         idQuery.equalTo("prefix", prefix, Case.INSENSITIVE);
-
-        FlowsTreeModel model = (FlowsTreeModel) idQuery.findFirst();
-        return model.getId();
+        FlowsTreeModel model;
+        try {
+            model = (FlowsTreeModel) idQuery.findFirst();
+            return model.getId();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Toast.makeText(MyApplication.getAppContext(), "Can't find prefix", Toast.LENGTH_SHORT).show();
+            return "no id";
+        }
     }
 }
