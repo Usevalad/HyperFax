@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
@@ -41,6 +42,7 @@ import com.vsevolod.swipe.addphoto.recyclerView.AutoCompleteAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +56,6 @@ import okhttp3.RequestBody;
 
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
 // FIXME: 11.04.17 refactor "addNewDataItem" method
-// FIXME: 11.04.17 location!!!
 // FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
@@ -141,58 +142,54 @@ public class AddingActivity extends AppCompatActivity {
                 @Override
                 public void onLocationFound(Location location) {
                     // Do some stuff when a new GPS Location has been found
+                    Log.d(TAG, "onLocationFound");
                     mLocation = location;
                     stopListening();
                 }
 
                 @Override
                 public void onTimeout() {
-
+                    Log.d(TAG, "onTimeout");
                 }
             };
             mTracker.startListening();
         }
     }
 
-    @Override
-    protected void onStop() {
-        if (mTracker != null) {
-            mTracker.stopListening();
-        }
-        mRealmHelper.close();
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        if (mTracker != null) {
-            mTracker.stopListening();
-        }
-        mRealmHelper.close();
-        super.onPause();
-    }
+//    @Override
+//    protected void onStop() {
+//        Log.d(TAG, "onStop");
+//        if (mTracker != null) {
+//            mTracker.stopListening();
+//        }
+//        mRealmHelper.close();
+//        super.onStop();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        Log.d(TAG, "onPause");
+//        if (mTracker != null) {
+//            mTracker.stopListening();
+//        }
+//        mRealmHelper.close();
+//        super.onPause();
+//    }
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        if (mTracker != null) {
+            mTracker.stopListening();
+        }
         mRealmHelper.close();
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        if (mTracker != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            mTracker.startListening();
-        }
+        Log.d(TAG, "onResume");
+        setLocationTracker();
         mRealmHelper.open();
         super.onResume();
     }
@@ -224,11 +221,18 @@ public class AddingActivity extends AppCompatActivity {
                     THUMB_SIZE, THUMB_SIZE);
             thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             addNewDataItem(byteArray, path);
 
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-            UploadPhoto uploadPhoto = new UploadPhoto(api);
-            uploadPhoto.execute(reqFile);
+//            UploadPhoto uploadPhoto = new UploadPhoto(api);
+//            uploadPhoto.execute(reqFile);
+            CommitTask task = new CommitTask();
+            task.execute(reqFile);
         }
     }
 
@@ -260,7 +264,7 @@ public class AddingActivity extends AppCompatActivity {
         String prefixID = mRealmHelper.getPrefixID(prefix);
         double latitude = 321;
         double longitude = 123;
-        
+
         if (mLocation != null) {
             latitude = mLocation.getLatitude();
             longitude = mLocation.getLongitude();
