@@ -10,6 +10,7 @@ import java.util.List;
  */
 
 public class ResponseFlowsTreeModel {
+
     @SerializedName("columns")
     @Expose
     private List<String> columns;

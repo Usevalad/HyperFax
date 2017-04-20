@@ -54,6 +54,7 @@ public class ListResponse {
         }
         return ids;
     }
+
     public List<String> stateCodes() {
         List<String> states = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {

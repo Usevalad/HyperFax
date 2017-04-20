@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.command.method.GetList;
 import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setRecyclerViewAdapter();
                 break;
             case R.id.main_menu_repeat_download:
-                com.vsevolod.swipe.addphoto.command.method.List list = new com.vsevolod.swipe.addphoto.command.method.List(api);
+                GetList list = new GetList(api);
                 if (mRealmHelper.dataQueue().size() < 1){
                     break;
                 }

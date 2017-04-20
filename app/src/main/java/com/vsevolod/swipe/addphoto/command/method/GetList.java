@@ -10,12 +10,12 @@ import com.vsevolod.swipe.addphoto.model.query.ListModel;
  * Created by vsevolod on 20.04.17.
  */
 
-public class List implements Command {
-    private final String TAG = "List";
+public class GetList implements Command {
+    private final String TAG = "GetList";
     private Api mApi;
 
-    public List(Api mApi) {
-        Log.d(TAG, "List");
+    public GetList(Api mApi) {
+        Log.d(TAG, "GetList");
         this.mApi = mApi;
     }
 
