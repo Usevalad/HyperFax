@@ -9,7 +9,7 @@
         android:background="#FFFFBB33"
         android:contentDescription="@string/app_name"
         android:scaleType="center"
-        android:src="@drawable/common_google_signin_btn_icon_dark" />
+         />
 
     <EditText
         android:id="@+id/path_edit_text"

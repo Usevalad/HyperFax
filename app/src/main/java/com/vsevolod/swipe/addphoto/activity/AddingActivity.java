@@ -1,13 +1,18 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -15,7 +20,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
@@ -29,6 +33,7 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -41,9 +46,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import fr.quentinklein.slt.LocationTracker;
+import fr.quentinklein.slt.TrackerSettings;
 import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
@@ -51,7 +57,7 @@ import okhttp3.RequestBody;
 // FIXME: 11.04.17 location!!!
 // FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
-public class AddingActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddingActivity extends AppCompatActivity {
     private final String TAG = "AddingActivity";
     private final int THUMB_SIZE = 500;
     private Toolbar toolbar;
@@ -64,23 +70,21 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     private String path;
     private String text;
     private long mLastClickTime = 0;
-    private String serverPhotoURL;
+    private LocationTracker mTracker;
+    private Location mLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
-
         mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
         path = getIntent().getStringExtra("path");
-
         toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         toolbar.setLogo(R.drawable.logo);
-
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -92,7 +96,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         mImageView = (ImageView) findViewById(R.id.adding_image_view);
-
         Picasso.with(this)
                 .load(path)
                 .into(mImageView);
@@ -117,10 +120,54 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 return handled;
             }
         });
+        setLocationTracker();
+    }
+
+    private void setLocationTracker() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // You need to ask the user to enable the permissions
+        } else {
+            TrackerSettings settings =
+                    new TrackerSettings()
+                            .setUseGPS(true)
+                            .setUseNetwork(true)
+                            .setUsePassive(true)
+                            .setTimeBetweenUpdates(1)
+                            .setMetersBetweenUpdates(1);
+
+            mTracker = new LocationTracker(MyApplication.getAppContext(), settings) {
+
+                @Override
+                public void onLocationFound(Location location) {
+                    // Do some stuff when a new GPS Location has been found
+                    mLocation = location;
+                    stopListening();
+                }
+
+                @Override
+                public void onTimeout() {
+
+                }
+            };
+            mTracker.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        if (mTracker != null) {
+            mTracker.stopListening();
+        }
+        mRealmHelper.close();
+        super.onStop();
     }
 
     @Override
     protected void onPause() {
+        if (mTracker != null) {
+            mTracker.stopListening();
+        }
         mRealmHelper.close();
         super.onPause();
     }
@@ -133,6 +180,19 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     protected void onResume() {
+        if (mTracker != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mTracker.startListening();
+        }
         mRealmHelper.open();
         super.onResume();
     }
@@ -146,14 +206,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void addImage(String path) {
-        File file = new File(path);
-
-//        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-////        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-////        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-//        UploadPhoto uploadPhoto = new UploadPhoto(api);
-//        uploadPhoto.execute(reqFile);
-
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) {
@@ -175,11 +227,8 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
             addNewDataItem(byteArray, path);
 
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-//        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-//        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
             UploadPhoto uploadPhoto = new UploadPhoto(api);
             uploadPhoto.execute(reqFile);
-
         }
     }
 
@@ -209,9 +258,13 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
         String prefix = text.substring(text.length() - 4);
         String name = text.substring(0, text.length() - 6);
         String prefixID = mRealmHelper.getPrefixID(prefix);
-
-        double latitude = 321;//
+        double latitude = 321;
         double longitude = 123;
+        
+        if (mLocation != null) {
+            latitude = mLocation.getLatitude();
+            longitude = mLocation.getLongitude();
+        }
 
         DataModel model = new DataModel(
                 searchDate,
@@ -220,7 +273,7 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
                 name,
                 comment,
                 photoUri,
-                serverPhotoURL,
+                " ",
                 byteArray,
                 latitude,
                 longitude,
@@ -230,14 +283,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
 
         mRealmHelper.save(model);
         finish();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-        }
     }
 
     @Override
@@ -256,7 +301,6 @@ public class AddingActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
