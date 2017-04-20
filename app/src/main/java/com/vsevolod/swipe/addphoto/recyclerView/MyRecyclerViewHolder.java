@@ -16,7 +16,8 @@ import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
  */
 
 public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private final String extra = "photo uri";
+    private final String PHOTO_URI = "photo uri";
+    private final String PHOTO_URL = "photo url";
     TextView mDateTextView;
     TextView mPathTextView;
     TextView mComment;
@@ -42,8 +43,11 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
     @Override
     public void onClick(View v) {
         String photoUri = MyRecyclerAdapter.data.get(getAdapterPosition()).getPhotoURI();
+        String photoUrl = MyRecyclerAdapter.data.get(getAdapterPosition()).getServerPhotoURL();
         Intent intent = new Intent(context, FullscreenActivity.class);
-        intent.putExtra(extra, photoUri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(PHOTO_URI, photoUri);
+        intent.putExtra(PHOTO_URL, photoUrl);
         context.startActivity(intent);
     }
 }
