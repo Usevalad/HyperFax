@@ -96,13 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
     }
 
-
-    @Override
-    protected void onPause() {
-//        mRealmHelper.close();
-        super.onPause();
-    }
-
     @Override
     protected void onDestroy() {
         mRealmHelper.close();

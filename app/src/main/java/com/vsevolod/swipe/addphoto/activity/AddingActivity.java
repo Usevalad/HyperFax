@@ -56,7 +56,6 @@ import okhttp3.RequestBody;
 // FIXME: 11.04.17 refactor "addNewDataItem" method
 // FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
-// FIXME: 20.04.17 привести модели к одному виду
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = "AddingActivity";
     private final int THUMB_SIZE = 500;
@@ -241,8 +240,8 @@ public class AddingActivity extends AppCompatActivity {
         String prefix = text.substring(text.length() - 4);
         String name = text.substring(0, text.length() - 6);
         String prefixID = mRealmHelper.getPrefixID(prefix);
-        double latitude = 321;
-        double longitude = 123;
+        double latitude = 404;
+        double longitude = 404;
 
         if (mLocation != null) {
             latitude = mLocation.getLatitude();

@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -21,13 +20,11 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
-// FIXME: 18.04.17 improve open/close by boolean
-public class RealmHelper implements RealmChangeListener<Realm>{
+public class RealmHelper {
     private final String TAG = "RealmHelper";
     private Realm realm;
     public List<DataModel> data = new ArrayList<>();
     public List<FlowsTreeModel> tree = new ArrayList<>();
-    private boolean isOpen = false;
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
@@ -35,26 +32,16 @@ public class RealmHelper implements RealmChangeListener<Realm>{
 
     public void open() {
         Log.d(TAG, "open");
-//        if (isOpen) {
-//            return;
-//        } else {
         Realm.init(MyApplication.getAppContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         this.realm = Realm.getDefaultInstance();
         initRealm();
-        isOpen = true;
-//        }
     }
 
     public void close() {
         Log.d(TAG, "close");
-//        if (isOpen) {
         this.realm.close();
-//            isOpen = false;
-//        } else {
-//            return;
-//        }
     }
 
     private void initRealm() {
@@ -225,22 +212,34 @@ public class RealmHelper implements RealmChangeListener<Realm>{
         Log.d(TAG, "updateStateCode: updated " + stateCode);
     }
 
-    @Override
-    public void onChange(Realm element) {
-        Log.e(TAG, "onChange");
-        Log.e(TAG, "onChange");
-        Log.e(TAG, "onChange");
-        Log.e(TAG, "onChange");
-        Log.e(TAG, "onChange");
-        Log.e(TAG, "onChange");
+    public void updateServerPhotoURL(String id, String imageUrl) {
+        Log.d(TAG, "updateServerPhotoURL");
+
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        dataQuery.equalTo("uid", id);
+        DataModel model;
+        try {
+            model = (DataModel) dataQuery.findFirst();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getDataById: no data with such id");
+            return;
+        }
+
+        this.realm.beginTransaction();
+        model.setServerPhotoURL(imageUrl);
+        this.realm.copyToRealmOrUpdate(model);
+        this.realm.commitTransaction();
+        Log.d(TAG, "updateServerPhotoURL: updated " + imageUrl);
     }
 
     public List<String> dataQueue() {
+        Log.d(TAG, "dataQueue");
         List<String> ids = new ArrayList<>();
         for (int i = 0; i < data.size(); i++) {
             String stateCode = data.get(i).getStateCode();
-            if (stateCode.equals(Constants.STATE_CODE_CREATED)||
-            stateCode.equals(Constants.STATE_CODE_REVIEW)) {
+            if (stateCode.equals(Constants.STATE_CODE_CREATED) ||
+                    stateCode.equals(Constants.STATE_CODE_REVIEW)) {
                 ids.add(data.get(i).getUid());
             }
         }

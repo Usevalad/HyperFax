@@ -201,6 +201,8 @@ public class MyasoApi implements Api {
                     String token = mPreferenceHelper.getToken();
                     String link = response.body().string().toString();
                     DataModel model = mRealmHelper.getLastDataModel();
+                    String id = model.getUid();
+                    mRealmHelper.updateServerPhotoURL(id, link);
                     CommitModel commitModel = new CommitModel(
                             token,
                             link,
