@@ -16,4 +16,5 @@ public interface Constants {
     public static final String STATE_CODE_ACCEPTED = "Accepted";
     public static final String STATE_CODE_REVIEW = "Review";
     public static final String STATE_CODE_DECLINED = "Declined";
+    public static final int THUMB_SIZE = 500;
 }

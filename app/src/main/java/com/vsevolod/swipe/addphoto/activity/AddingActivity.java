@@ -1,8 +1,10 @@
 package com.vsevolod.swipe.addphoto.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -10,6 +12,7 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,13 +28,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
-import com.vsevolod.swipe.addphoto.command.Api;
-import com.vsevolod.swipe.addphoto.command.MyasoApi;
+import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
@@ -52,21 +53,21 @@ import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
+// FIXME: 20.04.17 save hardcoded strings to res/values/strings
 // FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
 // FIXME: 11.04.17 refactor "addNewDataItem" method
 // FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = "AddingActivity";
-    private final int THUMB_SIZE = 500;
+    private final int THUMB_SIZE = Constants.THUMB_SIZE;
     private Toolbar toolbar;
-    private Api api = new MyasoApi();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper = new RealmHelper();
     private ImageView mImageView;
     private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
-    private String path;
+    private String path = null;
     private String text;
     private long mLastClickTime = 0;
     private LocationTracker mTracker;
@@ -78,7 +79,6 @@ public class AddingActivity extends AppCompatActivity {
         mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
-        path = getIntent().getStringExtra("path");
         toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -92,7 +92,10 @@ public class AddingActivity extends AppCompatActivity {
             if (type.startsWith("image/")) {
                 handleSendImage(intent); // Handle single image being sent
             }
+        } else {
+            path = getIntent().getStringExtra("path");
         }
+        path.toString();
 
         mImageView = (ImageView) findViewById(R.id.adding_image_view);
         Picasso.with(this)
@@ -113,7 +116,7 @@ public class AddingActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    savePhoto();
+                    checkLastClick();
                     handled = true;
                 }
                 return handled;
@@ -173,30 +176,37 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     public void handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        Log.d(TAG, "handleSendImage");
+        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageUri != null) {
             // Update UI to reflect image being shared
-            addImage(imageUri);
+            Cursor cursor = null;
+            try {
+                String[] proj = {MediaStore.Images.Media.DATA};
+
+                Context context = MyApplication.getAppContext();
+                cursor = context.getContentResolver().query(imageUri, proj, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                cursor.moveToFirst();
+                path = cursor.getString(column_index);
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+            }
         }
     }
 
-    private void addImage(String path) {
+    private void addImage() {
+        Log.d(TAG, "addImage");
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) {
-            if (!mRealmHelper.isValid(text)) {
-                Toast.makeText(this, "Выбери тэг", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            prefixValidation();
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            //to compress full size photo use commented strings below
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-            //compress thumbnail
-            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imageFile.getAbsolutePath()),
-                    THUMB_SIZE, THUMB_SIZE);
+            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+                    BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
             thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] byteArray = stream.toByteArray();
             try {
@@ -207,21 +217,18 @@ public class AddingActivity extends AppCompatActivity {
             addNewDataItem(byteArray, path);
 
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-//            UploadPhoto uploadPhoto = new UploadPhoto(api);
-//            uploadPhoto.execute(reqFile);
             CommitTask task = new CommitTask();
             task.execute(reqFile);
+        } else {
+            Log.d(TAG, "addImage: file is not exist");
         }
     }
 
-    private void addImage(Uri path) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-        Bitmap thumbImage = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path.getEncodedPath()),
-                THUMB_SIZE, THUMB_SIZE);
-        thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        addNewDataItem(byteArray, path.getPath());
+    private void prefixValidation() {
+        Log.d(TAG, "prefixValidation");
+        if (!mRealmHelper.isValid(text)) {
+            mAutoCompleteTextView.setError("Выбери тэг");
+        }
     }
 
     private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
@@ -244,6 +251,7 @@ public class AddingActivity extends AppCompatActivity {
         double longitude = 404;
 
         if (mLocation != null) {
+            Log.d(TAG, "location != null");
             latitude = mLocation.getLatitude();
             longitude = mLocation.getLongitude();
         }
@@ -269,6 +277,7 @@ public class AddingActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_adding, menu);
         return true;
@@ -276,9 +285,10 @@ public class AddingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.send:
-                savePhoto();
+                checkLastClick();
                 break;
             default:
                 break;
@@ -286,23 +296,26 @@ public class AddingActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void savePhoto() {
+    public void checkLastClick() {
+        Log.d(TAG, "checkLastClick");
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
-        addImage(path);
+        addImage();
     }
 
     private TreeNode.TreeNodeClickListener nodeClickListener = new TreeNode.TreeNodeClickListener() {
         @Override
         public void onClick(TreeNode node, Object value) {
+            Log.d(TAG, "TreeNode.TreeNodeClickListener onClick");
             IconTreeItemHolder.IconTreeItem item = (IconTreeItemHolder.IconTreeItem) value;
             text = item.text;
         }
     };
 
     private void setFlowsTree(Bundle savedInstanceState) {
+        Log.d(TAG, "setFlowsTree");
         ViewGroup containerView = (ViewGroup) findViewById(R.id.container);
 
         TreeNode root = TreeNode.root();
