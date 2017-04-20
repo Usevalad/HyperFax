@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmConfiguration;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
@@ -21,7 +22,7 @@ import io.realm.Sort;
  * Created by vsevolod on 26.03.17.
  */
 // FIXME: 18.04.17 improve open/close by boolean
-public class RealmHelper {
+public class RealmHelper implements RealmChangeListener<Realm>{
     private final String TAG = "RealmHelper";
     private Realm realm;
     public List<DataModel> data = new ArrayList<>();
@@ -201,5 +202,48 @@ public class RealmHelper {
             Toast.makeText(MyApplication.getAppContext(), "Can't find prefix", Toast.LENGTH_SHORT).show();
             return "no id";
         }
+    }
+
+    public void updateStateCode(String id, String stateCode) {
+        Log.d(TAG, "updateStateCode");
+
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        dataQuery.equalTo("uid", id);
+        DataModel model;
+        try {
+            model = (DataModel) dataQuery.findFirst();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getDataById: no data with such id");
+            return;
+        }
+
+        this.realm.beginTransaction();
+        model.setStateCode(stateCode);
+        this.realm.copyToRealmOrUpdate(model);
+        this.realm.commitTransaction();
+        Log.d(TAG, "updateStateCode: updated " + stateCode);
+    }
+
+    @Override
+    public void onChange(Realm element) {
+        Log.e(TAG, "onChange");
+        Log.e(TAG, "onChange");
+        Log.e(TAG, "onChange");
+        Log.e(TAG, "onChange");
+        Log.e(TAG, "onChange");
+        Log.e(TAG, "onChange");
+    }
+
+    public List<String> dataQueue() {
+        List<String> ids = new ArrayList<>();
+        for (int i = 0; i < data.size(); i++) {
+            String stateCode = data.get(i).getStateCode();
+            if (stateCode.equals(Constants.STATE_CODE_CREATED)||
+            stateCode.equals(Constants.STATE_CODE_REVIEW)) {
+                ids.add(data.get(i).getUid());
+            }
+        }
+        return ids;
     }
 }

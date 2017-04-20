@@ -12,4 +12,8 @@ public interface Constants {
     public static final String RESPONSE_STATUS_AUTH = "AUTH";
     public static final String RESPONSE_STATUS_PARAM = "PARAM";
     public static final String RESPONSE_STATUS_FAIL = "FAIL";
+    public static final String STATE_CODE_CREATED = "Created";
+    public static final String STATE_CODE_ACCEPTED = "Accepted";
+    public static final String STATE_CODE_REVIEW = "Review";
+    public static final String STATE_CODE_DECLINED = "Declined";
 }

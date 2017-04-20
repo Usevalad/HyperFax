@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +32,6 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
 import com.vsevolod.swipe.addphoto.command.Api;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
-import com.vsevolod.swipe.addphoto.command.method.UploadPhoto;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
@@ -58,6 +56,7 @@ import okhttp3.RequestBody;
 // FIXME: 11.04.17 refactor "addNewDataItem" method
 // FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
+// FIXME: 20.04.17 привести модели к одному виду
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = "AddingActivity";
     private final int THUMB_SIZE = 500;
@@ -155,26 +154,6 @@ public class AddingActivity extends AppCompatActivity {
             mTracker.startListening();
         }
     }
-
-//    @Override
-//    protected void onStop() {
-//        Log.d(TAG, "onStop");
-//        if (mTracker != null) {
-//            mTracker.stopListening();
-//        }
-//        mRealmHelper.close();
-//        super.onStop();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        Log.d(TAG, "onPause");
-//        if (mTracker != null) {
-//            mTracker.stopListening();
-//        }
-//        mRealmHelper.close();
-//        super.onPause();
-//    }
 
     @Override
     protected void onDestroy() {
@@ -277,7 +256,7 @@ public class AddingActivity extends AppCompatActivity {
                 name,
                 comment,
                 photoUri,
-                " ",
+                null,
                 byteArray,
                 latitude,
                 longitude,

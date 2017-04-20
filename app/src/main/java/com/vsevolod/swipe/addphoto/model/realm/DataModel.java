@@ -23,7 +23,7 @@ public class DataModel extends RealmObject {
     private String comment;
     private double latitude;
     private double longitude;
-    private int stateCode = 0;
+    private String stateCode = "Created";
     private byte[] photo;
     private String prefixID;
     private Date date;
@@ -57,11 +57,11 @@ public class DataModel extends RealmObject {
         this.searchDate = searchDate;
     }
 
-    public int getStateCode() {
+    public String getStateCode() {
         return stateCode;
     }
 
-    public void setStateCode(int stateCode) {
+    public void setStateCode(String stateCode) {
         this.stateCode = stateCode;
     }
 
@@ -159,11 +159,13 @@ public class DataModel extends RealmObject {
 
     public int getStateIconImage() {
         switch (stateCode) {
-            case 0:
+            case "Created":
                 return R.drawable.ic_time;
-            case 1:
+            case "Accepted":
                 return R.drawable.ic_all_checked;
-            case 2:
+            case "Review":
+                return R.drawable.ic_bomb;
+            case "Declined":
                 return R.drawable.ic_canceled;
             default:
                 return R.drawable.ic_bomb; //if something wrong you'll see bomb

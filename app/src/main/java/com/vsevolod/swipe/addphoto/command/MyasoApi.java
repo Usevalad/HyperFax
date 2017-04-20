@@ -12,14 +12,17 @@ import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
+import com.vsevolod.swipe.addphoto.model.query.ListModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
+import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.RequestBody;
@@ -46,7 +49,7 @@ public class MyasoApi implements Api {
     @Override
     public void getTree(@Body TokenModel model) {
         Log.d(TAG, "getTree");
-        MyApplication.getApi().getList(model).enqueue(new Callback<ResponseFlowsTreeModel>() {
+        MyApplication.getApi().getTree(model).enqueue(new Callback<ResponseFlowsTreeModel>() {
             @Override
             public void onResponse(Call<ResponseFlowsTreeModel> call, Response<ResponseFlowsTreeModel> response) {
                 Log.d(TAG, "onResponse");
@@ -246,6 +249,47 @@ public class MyasoApi implements Api {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void list(@Body ListModel listModel) {
+        Log.d(TAG, "list");
+        MyApplication.getApi().list(listModel).enqueue(new Callback<ListResponse>() {
+            @Override
+            public void onResponse(Call<ListResponse> call, Response<ListResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.e(TAG, "onResponse: ");
+                    List<String> ids = new ArrayList<String>();
+                    List<String> states = new ArrayList<String>();
+                    ids = response.body().getIds();
+                    states = response.body().stateCodes();
+                    Log.d(TAG, "onResponse: id = " + ids.get(0));
+                    Log.d(TAG, "onResponse: state = " + states.get(0));
+
+                    RealmHelper realmHelper = new RealmHelper();
+                    realmHelper.open();
+                    for (int i = 0; i < ids.size(); i++) {
+
+                        realmHelper.updateStateCode(ids.get(i), states.get(i));
+                    }
+
+
+                    for (int i = 0; i < response.body().getList().size(); i++) {
+                        for (int j = 0; j < response.body().getList().get(i).size(); j++) {
+                            Log.e(TAG, response.body().getList().get(i).get(j));
+                        }
+                    }
+                    realmHelper.close();
+                    MainActivity.setRecyclerViewAdapter();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ListResponse> call, Throwable t) {
+                Log.e(TAG, "onFailure");
                 t.printStackTrace();
             }
         });

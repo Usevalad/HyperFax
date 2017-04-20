@@ -2,9 +2,11 @@ package com.vsevolod.swipe.addphoto.api;
 
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
+import com.vsevolod.swipe.addphoto.model.query.ListModel;
 import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
+import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserInfoModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
@@ -26,7 +28,7 @@ import retrofit2.http.Part;
 
 public interface MyasoApi {
     @POST("ext/apit/tree")
-    Call<ResponseFlowsTreeModel> getList(@Body TokenModel model);
+    Call<ResponseFlowsTreeModel> getTree(@Body TokenModel model);
 
     @POST("ext/apit/auth")
     Call<UserModel> authenticate(@Body AuthModel user);
@@ -44,6 +46,9 @@ public interface MyasoApi {
 
     @POST("ext/apit/commit")//ext/api/commit
     Call<ResponseBody> commit(@Body CommitModel commitModel);
+
+    @POST("ext/apit/list")
+    Call<ListResponse> list(@Body ListModel listModel);
 }
 
 

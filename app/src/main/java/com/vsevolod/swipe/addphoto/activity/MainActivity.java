@@ -28,8 +28,10 @@ import android.widget.Toast;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.GetTree;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.model.query.ListModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
 
@@ -149,6 +151,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 setRecyclerViewAdapter();
                 break;
             case R.id.main_menu_repeat_download:
+                com.vsevolod.swipe.addphoto.command.method.List list = new com.vsevolod.swipe.addphoto.command.method.List(api);
+                if (mRealmHelper.dataQueue().size() < 1){
+                    break;
+                }
+                String[] ids = new String[mRealmHelper.dataQueue().size()];
+                for (int i = 0; i < mRealmHelper.dataQueue().size(); i++) {
+                    ids[i] = mRealmHelper.dataQueue().get(i);
+                }
+                ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
+                list.execute(model);
                 Toast.makeText(this, "Идет загрузка", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.main_menu_notifications:
@@ -170,12 +182,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    public void setRecyclerViewAdapter() {
+    public static void setRecyclerViewAdapter() {
         Log.d(TAG, "setRecyclerViewAdapter");
         if (data != null) {
             Log.d(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(MyApplication.getAppContext(), data));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
