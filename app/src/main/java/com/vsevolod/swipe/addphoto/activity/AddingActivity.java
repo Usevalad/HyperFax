@@ -54,9 +54,6 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 // FIXME: 20.04.17 save hardcoded strings to res/values/strings
-// FIXME: 11.04.17 take care about strings (path, text, comment), look at method constructors
-// FIXME: 11.04.17 refactor "addNewDataItem" method
-// FIXME: 15.04.17 refactor activity methods call order
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = "AddingActivity";
@@ -126,17 +123,17 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     private void setLocationTracker() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             // You need to ask the user to enable the permissions
         } else {
             TrackerSettings settings =
                     new TrackerSettings()
                             .setUseGPS(true)
                             .setUseNetwork(true)
-                            .setUsePassive(true)
-                            .setTimeBetweenUpdates(1)
-                            .setMetersBetweenUpdates(1);
+                            .setUsePassive(true);
 
             mTracker = new LocationTracker(MyApplication.getAppContext(), settings) {
 
@@ -182,6 +179,7 @@ public class AddingActivity extends AppCompatActivity {
             // Update UI to reflect image being shared
             Cursor cursor = null;
             try {
+                // Converting the received link into a complete one
                 String[] proj = {MediaStore.Images.Media.DATA};
 
                 Context context = MyApplication.getAppContext();
@@ -197,8 +195,8 @@ public class AddingActivity extends AppCompatActivity {
         }
     }
 
-    private void addImage() {
-        Log.d(TAG, "addImage");
+    private void decodeImage() {
+        Log.d(TAG, "decodeImage");
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
         if (imageFile.exists()) {
@@ -214,14 +212,17 @@ public class AddingActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            addNewDataItem(byteArray, path);
-
-            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-            CommitTask task = new CommitTask();
-            task.execute(reqFile);
+            saveDataToRealm(byteArray, path);
+            uploadImage(imageFile);
         } else {
             Log.d(TAG, "addImage: file is not exist");
         }
+    }
+
+    private void uploadImage(File imageFile) {
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+        CommitTask task = new CommitTask();
+        task.execute(reqFile);
     }
 
     private void prefixValidation() {
@@ -231,8 +232,8 @@ public class AddingActivity extends AppCompatActivity {
         }
     }
 
-    private void addNewDataItem(@NonNull byte[] byteArray, @NonNull String photoUri) {
-        Log.d(TAG, "addNewDataItem");
+    private void saveDataToRealm(@NonNull byte[] byteArray, @NonNull String photoUri) {
+        Log.d(TAG, "saveDataToRealm");
 
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Date date = new Date();
@@ -302,7 +303,8 @@ public class AddingActivity extends AppCompatActivity {
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
-        addImage();
+        decodeImage();
+
     }
 
     private TreeNode.TreeNodeClickListener nodeClickListener = new TreeNode.TreeNodeClickListener() {
