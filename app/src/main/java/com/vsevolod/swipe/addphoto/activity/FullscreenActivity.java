@@ -58,6 +58,8 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.full_screen_back_button).setOnClickListener(this);
         String photoURI = getIntent().getStringExtra(PHOTO_URI);
         String photoURL = getIntent().getStringExtra(PHOTO_URL);
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, 0);
         if (photoURL != null) {
             Picasso.with(this)
                     .load(photoURL)
@@ -65,8 +67,6 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         } else {
             setImageFromStorage(photoURI);
         }
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, 0);
     }
 
     private void setImageFromStorage(String path) {
@@ -95,11 +95,10 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
-    @SuppressLint("InlinedApi")
     private void show() {
         // Show the system status bar
         mTouchImageView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                        View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
         mHideHandler.removeCallbacks(mHidePart2Runnable);
         mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);

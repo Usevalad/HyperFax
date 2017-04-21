@@ -62,6 +62,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Uri fileUri = null;
     private RealmHelper mRealmHelper = new RealmHelper();
     private MyasoApi api = new MyasoApi();
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.d(TAG, "onClick");
+            switch (v.getId()) {
+                case R.id.fab:
+                    animateFAB();
+                    break;
+                case R.id.fab_camera:
+                    mFABCamera.setClickable(false);
+                    mFABGallery.setClickable(false);
+                    startCameraActivity();
+                    break;
+                case R.id.fab_gallery:
+                    mFABCamera.setClickable(false);
+                    mFABGallery.setClickable(false);
+                    Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Select Picture"), SELECT_PICTURE);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_repeat_download:
                 GetList list = new GetList(api);
-                if (mRealmHelper.dataQueue().size() < 1){
+                if (mRealmHelper.dataQueue().size() < 1) {
                     break;
                 }
                 String[] ids = new String[mRealmHelper.dataQueue().size()];
@@ -326,11 +355,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (isFabOpen) {
                             animateFAB();
                         }
+                        mFAB.setClickable(false);
                         mFAB.hide();
                     }
                 } else if (dy < 0) {
                     // Scroll Up
                     if (!mFAB.isShown()) {
+                        mFAB.setClickable(true);
                         mFAB.show();
                     }
                 }
