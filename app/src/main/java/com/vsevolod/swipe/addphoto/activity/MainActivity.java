@@ -30,6 +30,7 @@ import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.GetList;
 import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.ListModel;
@@ -62,35 +63,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Uri fileUri = null;
     private RealmHelper mRealmHelper = new RealmHelper();
     private MyasoApi api = new MyasoApi();
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "onClick");
-            switch (v.getId()) {
-                case R.id.fab:
-                    animateFAB();
-                    break;
-                case R.id.fab_camera:
-                    mFABCamera.setClickable(false);
-                    mFABGallery.setClickable(false);
-                    startCameraActivity();
-                    break;
-                case R.id.fab_gallery:
-                    mFABCamera.setClickable(false);
-                    mFABGallery.setClickable(false);
-                    Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Select Picture"), SELECT_PICTURE);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -297,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             } else if (requestCode == SELECT_PICTURE) {
                 photoUri = data.getData();
-                String path = getPath(photoUri);
+                String path = PathConverter.getFullPath(photoUri);
                 Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
 //                startAddingActivity(getPath(photoUri));
             } else {
@@ -305,30 +277,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.LENGTH_LONG).show();
             }
         }
-    }
-
-    public String getPath(Uri uri) {
-        // TODO: 31.03.17 out of memory
-        // just some safety built in
-        if (uri == null) {
-            // TODO perform some logging or show user feedback
-            return null;
-        }
-        // try to retrieve the image from the media store first
-        // this will only work for images selected from gallery
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String path = cursor.getString(column_index);
-            cursor.close();
-            cursor = null;
-            return path;
-        }
-        // this is our fallback here
-        return uri.getPath();
     }
 
     private void startAddingActivity(String path) {

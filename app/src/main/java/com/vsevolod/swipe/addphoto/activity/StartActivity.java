@@ -30,7 +30,7 @@ public class StartActivity extends AppCompatActivity {
 
 //        getServerAccess();
 //        getTree();
-        // TODO: 11.04.17 start next activity from here
+        // 11.04.17 start next activity from here
     }
 
     private void getServerAccess() {

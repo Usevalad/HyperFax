@@ -34,6 +34,7 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -87,7 +88,9 @@ public class AddingActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
-                handleSendImage(intent); // Handle single image being sent
+                Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+//                handleSendImage(intent); // Handle single image being sent
+                path = PathConverter.getFullPath(imageUri);
             }
         } else {
             path = getIntent().getStringExtra("path");
@@ -180,16 +183,17 @@ public class AddingActivity extends AppCompatActivity {
             Cursor cursor = null;
             try {
                 // Converting the received link into a complete one
-                String[] proj = {MediaStore.Images.Media.DATA};
+                String[] projection = {MediaStore.Images.Media.DATA};
 
                 Context context = MyApplication.getAppContext();
-                cursor = context.getContentResolver().query(imageUri, proj, null, null, null);
+                cursor = context.getContentResolver().query(imageUri, projection, null, null, null);
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
                 path = cursor.getString(column_index);
             } finally {
                 if (cursor != null) {
                     cursor.close();
+                    cursor = null;
                 }
             }
         }
