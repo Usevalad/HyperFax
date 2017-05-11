@@ -27,6 +27,7 @@ dependencies {
     })
 
     compile project(path: ':flowstreelibrary')
+
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.google.android.gms:play-services-drive:10.2.0'
     compile 'com.android.support:design:25.2.0'
@@ -41,6 +42,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     compile 'com.github.quentin7b:android-location-tracker:3.2'
-
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'junit:junit:4.12'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }

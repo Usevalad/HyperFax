@@ -25,7 +25,7 @@ import retrofit2.http.Part;
 /**
  * Created by vsevolod on 07.04.17.
  */
-
+// FIXME: 21.04.17 rename methods
 public interface MyasoApi {
     @POST("ext/apit/tree")
     Call<ResponseFlowsTreeModel> getTree(@Body TokenModel model);

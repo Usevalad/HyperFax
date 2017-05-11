@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.leakcanary.LeakCanary;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
 
 import retrofit2.Retrofit;
@@ -41,6 +42,13 @@ public class MyApplication extends Application {
 
         //Создаем объект, при помощи которого будем выполнять запросы
         myasoApi = retrofit.create(MyasoApi.class);
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
     }
 
     public static MyasoApi getApi() {

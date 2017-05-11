@@ -40,6 +40,9 @@ import retrofit2.http.Part;
 public class MyasoApi implements Api {
     // FIXME: 17.04.17 need rx
     // FIXME: 19.04.17 time outs no connection
+    // FIXME: 21.04.17 response status checker
+    // FIXME: 21.04.17 create new query call order
+    // FIXME: 21.04.17 wrap queries in asyncTask
     private final String TAG = "MyasoApi";
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 

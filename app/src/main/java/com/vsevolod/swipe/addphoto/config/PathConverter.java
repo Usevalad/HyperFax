@@ -18,7 +18,7 @@ public class PathConverter {
     private static final String TAG = "PathConverter";
 
     public static String getFullPath(@NonNull Uri uri) {
-        Log.d(TAG, "handleSendImage");
+        Log.d(TAG, "getFullPath");
         Cursor cursor = null;
         try {
             String[] projection = {MediaStore.Images.Media.DATA};

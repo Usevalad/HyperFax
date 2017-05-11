@@ -1,10 +1,8 @@
 package com.vsevolod.swipe.addphoto.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -12,7 +10,6 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -89,7 +86,6 @@ public class AddingActivity extends AppCompatActivity {
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith("image/")) {
                 Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-//                handleSendImage(intent); // Handle single image being sent
                 path = PathConverter.getFullPath(imageUri);
             }
         } else {
@@ -98,9 +94,7 @@ public class AddingActivity extends AppCompatActivity {
         path.toString();
 
         mImageView = (ImageView) findViewById(R.id.adding_image_view);
-        Picasso.with(this)
-                .load(path)
-                .into(mImageView);
+        Picasso.with(this).load(path).into(mImageView);
 
 //        setFlowsTree(savedInstanceState);
         mAutoCompleteTextView =
@@ -136,7 +130,8 @@ public class AddingActivity extends AppCompatActivity {
                     new TrackerSettings()
                             .setUseGPS(true)
                             .setUseNetwork(true)
-                            .setUsePassive(true);
+                            .setUsePassive(true)
+                            .setTimeBetweenUpdates(1);
 
             mTracker = new LocationTracker(MyApplication.getAppContext(), settings) {
 
@@ -175,30 +170,6 @@ public class AddingActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    public void handleSendImage(Intent intent) {
-        Log.d(TAG, "handleSendImage");
-        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (imageUri != null) {
-            // Update UI to reflect image being shared
-            Cursor cursor = null;
-            try {
-                // Converting the received link into a complete one
-                String[] projection = {MediaStore.Images.Media.DATA};
-
-                Context context = MyApplication.getAppContext();
-                cursor = context.getContentResolver().query(imageUri, projection, null, null, null);
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                path = cursor.getString(column_index);
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                    cursor = null;
-                }
-            }
-        }
-    }
-
     private void decodeImage() {
         Log.d(TAG, "decodeImage");
         File imageFile = new File(path);
@@ -209,7 +180,7 @@ public class AddingActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
                     BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, 40, stream);
             byte[] byteArray = stream.toByteArray();
             try {
                 stream.close();
@@ -252,14 +223,8 @@ public class AddingActivity extends AppCompatActivity {
         String prefix = text.substring(text.length() - 4);
         String name = text.substring(0, text.length() - 6);
         String prefixID = mRealmHelper.getPrefixID(prefix);
-        double latitude = 404;
-        double longitude = 404;
-
-        if (mLocation != null) {
-            Log.d(TAG, "location != null");
-            latitude = mLocation.getLatitude();
-            longitude = mLocation.getLongitude();
-        }
+        double latitude = mLocation != null ? mLocation.getLatitude() : 404;
+        double longitude = mLocation != null ? mLocation.getLongitude() : 404;
 
         DataModel model = new DataModel(
                 searchDate,

@@ -3,7 +3,6 @@ package com.vsevolod.swipe.addphoto.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,13 +42,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// FIXME: 21.04.17 find memory leak
+// FIXME: 21.04.17 fix memory leak
+// FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
+// FIXME: 21.04.17 check onActivityResult, looks horribly
+// TODO: 21.04.17 add internet connection checker
+// FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
     public static RecyclerView mRecyclerView;
     public static List<DataModel> data;
-    public static Context context;
+//    public static Context context;
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
@@ -79,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        context = getApplicationContext();
+//        context = getApplicationContext();
         setRecyclerViewAdapter();
         setFabHidingAbility();
     }
@@ -199,13 +204,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_camera:
                 mFABCamera.setClickable(false);
                 mFABGallery.setClickable(false);
+                // TODO: 21.04.17 wrap in a method
                 startCameraActivity();
                 break;
             case R.id.fab_gallery:
                 mFABCamera.setClickable(false);
                 mFABGallery.setClickable(false);
-                Toast.makeText(context, "gallery", Toast.LENGTH_SHORT).show();
-
+                // TODO: 21.04.17 wrap this in a method
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -270,8 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (requestCode == SELECT_PICTURE) {
                 photoUri = data.getData();
                 String path = PathConverter.getFullPath(photoUri);
-                Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
-//                startAddingActivity(getPath(photoUri));
+                startAddingActivity(path);
             } else {
                 Toast.makeText(this, "Call out for image capture failed!",
                         Toast.LENGTH_LONG).show();
