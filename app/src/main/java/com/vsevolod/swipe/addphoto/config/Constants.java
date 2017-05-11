@@ -27,6 +27,4 @@ public class Constants {
     public static final String KEY_ACCOUNT_PHONE_NUMBER = "phoneNumber";
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
-
-
 }
