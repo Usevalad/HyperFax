@@ -33,9 +33,8 @@ import retrofit2.Response;
 /**
  * A login screen that offers login via phone number/password.
  */
-// FIXME: 21.04.17 refactor!!!!
 // FIXME: 21.04.17 handle hardware back button onCLick (quit from app)
-// TODO: 21.04.17 add phone number finding lib
+// TODO: 21.04.17 add phone number finding library
 public class LoginActivity extends AccountAuthenticatorActivity {
     private final String TAG = LoginActivity.class.getSimpleName();
     private AsyncTask mAuthTask = null;

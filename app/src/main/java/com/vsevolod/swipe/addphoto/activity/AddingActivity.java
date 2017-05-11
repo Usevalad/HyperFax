@@ -54,7 +54,7 @@ import okhttp3.RequestBody;
 // FIXME: 20.04.17 save hardcoded strings to res/values/strings
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
-    private final String TAG = "AddingActivity";
+    private final String TAG = AddingActivity.class.getSimpleName();
     private final int THUMB_SIZE = Constants.THUMB_SIZE;
     private Toolbar toolbar;
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
@@ -84,12 +84,12 @@ public class AddingActivity extends AppCompatActivity {
         String type = intent.getType();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
+            if (type.startsWith("image/")) { // FIXME: 11.05.17 hardcode
                 Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 path = PathConverter.getFullPath(imageUri);
             }
         } else {
-            path = getIntent().getStringExtra("path");
+            path = getIntent().getStringExtra("path"); // FIXME: 11.05.17 hardcode
         }
         path.toString();
 
@@ -180,7 +180,7 @@ public class AddingActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
                     BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, 40, stream);
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, 40, stream); // FIXME: 11.05.17 magic number
             byte[] byteArray = stream.toByteArray();
             try {
                 stream.close();
@@ -195,7 +195,7 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     private void uploadImage(File imageFile) {
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile); // FIXME: 11.05.17 hardcode
         CommitTask task = new CommitTask();
         task.execute(reqFile);
     }
@@ -203,7 +203,7 @@ public class AddingActivity extends AppCompatActivity {
     private void prefixValidation() {
         Log.d(TAG, "prefixValidation");
         if (!mRealmHelper.isValid(text)) {
-            mAutoCompleteTextView.setError("Выбери тэг");
+            mAutoCompleteTextView.setError("Выбери тэг"); // FIXME: 11.05.17 hardcode
         }
     }
 
@@ -213,7 +213,7 @@ public class AddingActivity extends AppCompatActivity {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Date date = new Date();
         Calendar calendar = Calendar.getInstance(timeZone);
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E"); // FIXME: 11.05.17 refactor
         SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         searchDateFormat.setTimeZone(timeZone);
         String viewDate = viewDateFormat.format(calendar.getTime()); //date format for textView

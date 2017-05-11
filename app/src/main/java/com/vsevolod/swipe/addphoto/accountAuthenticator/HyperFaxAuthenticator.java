@@ -5,7 +5,6 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.util.Log;
 import com.vsevolod.swipe.addphoto.activity.LoginActivity;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
-import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
@@ -29,9 +27,8 @@ import retrofit2.Response;
 
 public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
     private final String TAG = HyperFaxAuthenticator.class.getSimpleName();
-    private Context mContext; // TODO: 10.05.17 remove context
+    private Context mContext;
     private String mAuthToken;
-    private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 
     public HyperFaxAuthenticator(Context context) {
         super(context);
@@ -79,7 +76,7 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
         mAuthToken = am.peekAuthToken(account, authTokenType);
         if (TextUtils.isEmpty(mAuthToken)) {
             final String password = am.getPassword(account);
-            final String phoneNumber = am.getUserData(account, "phoneNumber");// FIXME: 10.05.17 hardcode! add to constants
+            final String phoneNumber = am.getUserData(account, Constants.KEY_ACCOUNT_PHONE_NUMBER);
             if (!TextUtils.isEmpty(password) && !TextUtils.isEmpty(phoneNumber)) {
                 final AuthModel user = new AuthModel(phoneNumber, password);
                 MyApplication.getApi().authenticate(user).enqueue(new Callback<UserModel>() {
@@ -91,12 +88,10 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
                             switch (response.body().getStatus()) {
                                 case Constants.RESPONSE_STATUS_AUTH:
                                     Log.e(TAG, "onResponse: need auth");
-//                                    startLoginActivity();
                                     break;
                                 case Constants.RESPONSE_STATUS_PARAM:
                                     Log.e(TAG, "onResponse: неверный набор параметров");
                                     //empty token
-//                                    startLoginActivity();
                                     break;
                                 case Constants.RESPONSE_STATUS_FAIL:
                                     Log.e(TAG, "onResponse: сбой обработки задачи по внешней причине");
@@ -106,10 +101,7 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
                                     Log.e(TAG, "onResponse: выполнено успешно, ождиается корректный " +
                                             "протокол выдачи конкретной задачи");
                                     mAuthToken = response.body().getToken().toString();
-                                    mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, mAuthToken);
-                                    // TODO: 10.05.17 delete prefHelper?
                                     // FIXME: 15.04.17  token = not found
-//                                    startMainActivity();
                                     break;
                                 case Constants.RESPONSE_STATUS_BAD:
                                     Log.e(TAG, "onResponse: задача не поддерживается сервером");

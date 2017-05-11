@@ -49,7 +49,7 @@ import java.util.Locale;
 // TODO: 21.04.17 add internet connection checker
 // FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
     public static RecyclerView mRecyclerView;
@@ -161,18 +161,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
                 list.execute(model);
-                Toast.makeText(this, "Идет загрузка", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Идет загрузка", Toast.LENGTH_SHORT).show(); // FIXME: 11.05.17 hardcode
                 break;
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
-                Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();// FIXME: 11.05.17 hardcode
                 break;
             case R.id.main_menu_request_flow:
                 getTree();
                 break;
             case R.id.main_menu_log_out:
-                Toast.makeText(this, "Выход", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 break;
@@ -212,10 +211,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mFABGallery.setClickable(false);
                 // TODO: 21.04.17 wrap this in a method
                 Intent intent = new Intent();
-                intent.setType("image/*");
+                intent.setType("image/*");// FIXME: 11.05.17 hardcode
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"), SELECT_PICTURE);
+                        "Select Picture"), SELECT_PICTURE);// FIXME: 11.05.17 hardcode
                 break;
             default:
                 break;
@@ -254,8 +253,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
 
-        return new File(directory.getPath() + File.separator + "IMG_"
-                + timeStamp + ".jpg");
+        return new File(directory.getPath() + File.separator + "IMG_"// FIXME: 11.05.17 hardcode
+                + timeStamp + ".jpg");// FIXME: 11.05.17 hardcode
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -267,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     photoUri = fileUri;
                 } else {
                     photoUri = data.getData();
-                    Toast.makeText(this, "Image saved successfully in: " + data.getData(),
+                    Toast.makeText(this, "Image saved successfully in: " + data.getData(),// FIXME: 11.05.17 hardcode
                             Toast.LENGTH_LONG).show();
                 }
                 startAddingActivity(photoUri.getPath());
@@ -277,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String path = PathConverter.getFullPath(photoUri);
                 startAddingActivity(path);
             } else {
-                Toast.makeText(this, "Call out for image capture failed!",
+                Toast.makeText(this, "Call out for image capture failed!",// FIXME: 11.05.17 hardcode
                         Toast.LENGTH_LONG).show();
             }
         }
@@ -285,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startAddingActivity(String path) {
         Intent intent = new Intent(this, AddingActivity.class);
-        intent.putExtra("path", path);
+        intent.putExtra("path", path);// FIXME: 11.05.17 hardcode
         startActivity(intent);
     }
 
