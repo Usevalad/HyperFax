@@ -44,9 +44,9 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
             throws NetworkErrorException {
         Log.d(TAG, "addAccount");
         final Intent intent = new Intent(mContext, LoginActivity.class);
-        intent.putExtra(LoginActivity.EXTRA_TOKEN_TYPE, accountType);
-        intent.putExtra(LoginActivity.ARG_AUTH_TYPE, authTokenType);
-        intent.putExtra(LoginActivity.ARG_IS_ADDING_NEW_ACCOUNT, true);
+        intent.putExtra(Constants.EXTRA_TOKEN_TYPE, accountType);
+        intent.putExtra(Constants.ARG_AUTH_TYPE, authTokenType);
+        intent.putExtra(Constants.ARG_IS_ADDING_NEW_ACCOUNT, true);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         final Bundle bundle = new Bundle();
         if (options != null) {
@@ -143,7 +143,7 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
         } else {
             final Intent intent = new Intent(mContext, LoginActivity.class);
             intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
-            intent.putExtra(LoginActivity.EXTRA_TOKEN_TYPE, authTokenType);
+            intent.putExtra(Constants.EXTRA_TOKEN_TYPE, authTokenType);
             final Bundle bundle = new Bundle();
             bundle.putParcelable(AccountManager.KEY_INTENT, intent);
         }

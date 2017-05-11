@@ -19,4 +19,5 @@
     <string name="token">get token string</string>
     <string name="title_activity_account_authenticator">AccountAuthenticatorActivity</string>
     <string name="account_already_exists">Account already exists</string>
+    <string name="phone_nuber_invalid">Номер не валидный</string>
 </resources>
