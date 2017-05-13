@@ -14,14 +14,17 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.holder.MyRecyclerViewHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by vsevolod on 13.03.17.
  */
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter {
-    private final String TAG = "MyRecyclerAdapter";
+    private final String TAG = this.getClass().getSimpleName();
     private Context context;
     public static List<DataModel> data;
 
@@ -46,9 +49,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter {
         byte[] photoByteArray = model.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
 
+        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        String viewDate = viewDateFormat.format(model.getDate()); //date format for textView
+
         ((MyRecyclerViewHolder) holder).mPhotoImageView.setImageBitmap(bitmap);
         ((MyRecyclerViewHolder) holder).mStateIconImageView.setImageResource(model.getStateIconImage());
-        ((MyRecyclerViewHolder) holder).mDateTextView.setText(model.getViewDate());
+        ((MyRecyclerViewHolder) holder).mDateTextView.setText(viewDate);
         ((MyRecyclerViewHolder) holder).mPathTextView.setText(model.getName() + " @" + model.getPrefix());
         ((MyRecyclerViewHolder) holder).mComment.setText(model.getComment());
         ((MyRecyclerViewHolder) holder).mLocation.setText("lat: " +

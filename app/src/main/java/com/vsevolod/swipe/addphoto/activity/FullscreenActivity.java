@@ -56,16 +56,15 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         mTouchImageView.setImageResource(R.drawable.test);
         mTouchImageView.setOnClickListener(this);
         findViewById(R.id.full_screen_back_button).setOnClickListener(this);
-        String photoURI = getIntent().getStringExtra(PHOTO_URI);
         String photoURL = getIntent().getStringExtra(PHOTO_URL);
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, 0);
-        if (photoURL != null) {
+        if (photoURL != null) { // TODO: 13.05.17 change this test to valid one
             Picasso.with(this)
                     .load(photoURL)
                     .into(mTouchImageView);
         } else {
-            setImageFromStorage(photoURI);
+            setImageFromStorage(photoURL);
         }
     }
 

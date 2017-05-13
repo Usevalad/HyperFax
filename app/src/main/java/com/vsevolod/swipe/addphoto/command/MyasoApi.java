@@ -43,7 +43,7 @@ public class MyasoApi implements Api {
     // FIXME: 21.04.17 response status checker
     // FIXME: 21.04.17 create new query call order
     // FIXME: 21.04.17 wrap queries in asyncTask
-    private final String TAG = "MyasoApi";
+    private final String TAG = this.getClass().getSimpleName();
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 
     public MyasoApi() {
@@ -201,11 +201,12 @@ public class MyasoApi implements Api {
                 try {
                     RealmHelper mRealmHelper = new RealmHelper();
                     mRealmHelper.open();
-                    String token = mPreferenceHelper.getToken();
+                    String token = mPreferenceHelper.getToken(); // FIXME: 13.05.17 get token from account manager
                     String link = response.body().string().toString();
                     DataModel model = mRealmHelper.getLastDataModel();
                     String id = model.getUid();
-                    mRealmHelper.updateServerPhotoURL(id, link);
+                    mRealmHelper.updatePhotoURL(id, link);
+                    mRealmHelper.setSynced(id, true);
                     CommitModel commitModel = new CommitModel(
                             token,
                             link,

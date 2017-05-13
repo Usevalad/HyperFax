@@ -31,7 +31,7 @@ public class Commit implements Command {
         String token = mPreferenceHelper.getToken();
         CommitModel commitModel = new CommitModel(
                 token,
-                model.getServerPhotoURL(),
+                model.getPhotoURL(),
                 model.getUid(),
                 model.getPrefixID(),
                 model.getComment(),

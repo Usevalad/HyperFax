@@ -14,14 +14,10 @@ import io.realm.annotations.PrimaryKey;
 public class DataModel extends RealmObject {
     @PrimaryKey
     private String uid;
-    private String searchDate; // TODO: 11.05.17 maybe i need to left only Date date?
-    private String viewDate;
+    private String searchDate;
     private String prefix;
     private String name;
-    private String photoURI;
-    private String serverPhotoURL; //// TODO: 11.05.17 maybe i need to left only one photo link
-    /// and change it when i'll get it from server response
-    // TODO: 11.05.17 decide it before i'll finish MVP
+    private String photoURL;
     private String comment;
     private double latitude;
     private double longitude;
@@ -29,20 +25,19 @@ public class DataModel extends RealmObject {
     private byte[] photo;
     private String prefixID;
     private Date date;
+    private boolean isSynced = false;
 
-    public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
-                     String photoURI, String serverPhotoURL, byte[] photo, double latitude, double longitude,
+    public DataModel(String searchDate, String prefix, String name, String comment,
+                     String photoURL, byte[] photo, double latitude, double longitude,
                      String prefixID, Date date) {
         this.comment = comment;
-        this.viewDate = viewDate;
         this.latitude = latitude;
         this.longitude = longitude;
         this.searchDate = searchDate;
         this.prefix = prefix;
-        this.photoURI = photoURI;
+        this.photoURL = photoURL;
         this.photo = photo;
         this.name = name;
-        this.serverPhotoURL = serverPhotoURL;
         this.prefixID = prefixID;
         this.date = date;
     }
@@ -75,12 +70,12 @@ public class DataModel extends RealmObject {
         this.photo = photo;
     }
 
-    public String getPhotoURI() {
-        return photoURI;
+    public String getPhotoURL() {
+        return photoURL;
     }
 
-    public void setPhotoURI(String photoURI) {
-        this.photoURI = photoURI;
+    public void setPhotoURL(String photoURL) {
+        this.photoURL = photoURL;
     }
 
     public String getComment() {
@@ -107,14 +102,6 @@ public class DataModel extends RealmObject {
         this.longitude = longitude;
     }
 
-    public String getViewDate() {
-        return viewDate;
-    }
-
-    public void setViewDate(String viewDate) {
-        this.viewDate = viewDate;
-    }
-
     public String getPrefix() {
         return prefix;
     }
@@ -129,14 +116,6 @@ public class DataModel extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getServerPhotoURL() {
-        return serverPhotoURL;
-    }
-
-    public void setServerPhotoURL(String serverPhotoURL) {
-        this.serverPhotoURL = serverPhotoURL;
     }
 
     public String getUid() {
@@ -158,6 +137,15 @@ public class DataModel extends RealmObject {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        isSynced = synced;
+    }
+
 
     public int getStateIconImage() {// FIXME: 11.05.17 hardcode
         switch (stateCode) {

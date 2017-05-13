@@ -41,7 +41,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -212,11 +211,8 @@ public class AddingActivity extends AppCompatActivity {
 
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Date date = new Date();
-        Calendar calendar = Calendar.getInstance(timeZone);
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E"); // FIXME: 11.05.17 refactor
         SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         searchDateFormat.setTimeZone(timeZone);
-        String viewDate = viewDateFormat.format(calendar.getTime()); //date format for textView
         String searchDate = searchDateFormat.format(date.getTime());
         String comment = mEditText.getText().toString();
         text = mAutoCompleteTextView.getText().toString();
@@ -228,12 +224,10 @@ public class AddingActivity extends AppCompatActivity {
 
         DataModel model = new DataModel(
                 searchDate,
-                viewDate,
                 prefix,
                 name,
                 comment,
                 photoUri,
-                null,
                 byteArray,
                 latitude,
                 longitude,

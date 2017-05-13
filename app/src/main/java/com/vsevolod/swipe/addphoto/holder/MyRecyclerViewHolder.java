@@ -43,12 +43,10 @@ public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements Vie
 
     @Override
     public void onClick(View v) {
-        String photoUri = MyRecyclerAdapter.data.get(getAdapterPosition()).getPhotoURI();
-        String photoUrl = MyRecyclerAdapter.data.get(getAdapterPosition()).getServerPhotoURL();
+        String photoUri = MyRecyclerAdapter.data.get(getAdapterPosition()).getPhotoURL();
         Intent intent = new Intent(context, FullscreenActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(PHOTO_URI, photoUri);
-        intent.putExtra(PHOTO_URL, photoUrl);
         context.startActivity(intent);
     }
 }

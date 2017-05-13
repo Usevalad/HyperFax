@@ -67,6 +67,8 @@ import retrofit2.Response;
 // что бы после получения токена продолжилось действие, которое проверяло наличие этого токена.
 // то есть если я нажимал обновить дерево, то после получения токена оно начало обновляться без
 // очередного вмешательства юзера
+// TODO: 13.05.17 add some settings in account menu (shared prefs)
+// TODO: 13.05.17 if creates new account - need to update flowsTree
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
@@ -187,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
                 Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();// FIXME: 11.05.17 hardcode
+                mRealmHelper.countData();
                 break;
             case R.id.main_menu_request_flow:
                 getTree();

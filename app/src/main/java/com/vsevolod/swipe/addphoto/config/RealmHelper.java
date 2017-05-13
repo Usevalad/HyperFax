@@ -154,14 +154,12 @@ public class RealmHelper {
         newModel.setSearchDate(model.getSearchDate());
         newModel.setPrefix(model.getPrefix());
         newModel.setPhoto(model.getPhoto());
-        newModel.setViewDate(model.getViewDate());
         newModel.setLatitude(model.getLatitude());
         newModel.setLongitude(model.getLongitude());
         newModel.setComment(model.getComment());
         newModel.setStateCode(model.getStateCode());
-        newModel.setPhotoURI(model.getPhotoURI());
+        newModel.setPhotoURL(model.getPhotoURL());
         newModel.setName(model.getName());
-        newModel.setServerPhotoURL(model.getServerPhotoURL());
         newModel.setPrefixID(model.getPrefixID());
         newModel.setDate(model.getDate());
 
@@ -212,7 +210,7 @@ public class RealmHelper {
         Log.d(TAG, "updateStateCode: updated " + stateCode);
     }
 
-    public void updateServerPhotoURL(String id, String imageUrl) {
+    public void updatePhotoURL(String id, String imageUrl) {
         Log.d(TAG, "updateServerPhotoURL");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
@@ -227,11 +225,33 @@ public class RealmHelper {
         }
 
         this.realm.beginTransaction();
-        model.setServerPhotoURL(imageUrl);
+        model.setPhotoURL(imageUrl);
         this.realm.copyToRealmOrUpdate(model);
         this.realm.commitTransaction();
         Log.d(TAG, "updateServerPhotoURL: updated " + imageUrl);
     }
+
+    public void setSynced(String id, boolean isSynced) {
+        Log.d(TAG, "setSynced");
+
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        dataQuery.equalTo("uid", id);
+        DataModel model;
+        try {
+            model = (DataModel) dataQuery.findFirst();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getDataById: no data with such id");
+            return;
+        }
+
+        this.realm.beginTransaction();
+        model.setSynced(isSynced);
+        this.realm.copyToRealmOrUpdate(model);
+        this.realm.commitTransaction();
+        Log.d(TAG, "setSynced: isSynced " + isSynced);
+    }
+
 
     public List<String> dataQueue() {
         Log.d(TAG, "dataQueue");
@@ -244,5 +264,36 @@ public class RealmHelper {
             }
         }
         return ids;
+    }
+
+    public void countData() {
+        Log.d(TAG, "countData" + "data.size() is " + data.size());
+        for (int i = 0; i < data.size(); i++) {
+            String searchDate = data.get(i).getSearchDate();
+            String prefix = data.get(i).getPrefix();
+            String name = data.get(i).getName();
+            String photoUri = data.get(i).getPhotoURL();
+            String comment = data.get(i).getComment();
+            String latitude = String.valueOf(data.get(i).getLatitude());
+            String longitude = String.valueOf(data.get(i).getLongitude());
+            String stateCode = data.get(i).getStateCode();
+            String photoArrayLength = String.valueOf(data.get(i).getPhoto().length);
+            String prefixID = data.get(i).getPrefixID();
+            String date = String.valueOf(data.get(i).getDate());
+            String isSync = String.valueOf(data.get(i).isSynced());
+            Log.i(TAG,
+                    "searchDate = " + searchDate + "\n" +
+                            "date = " + date + "\n" +
+                            "prefix = " + prefix + "\n" +
+                            "prefixID = " + prefixID + "\n" +
+                            "name = " + name + "\n" +
+                            "comment = " + comment + "\n" +
+                            "photoUri = " + photoUri + "\n" +
+                            "photoArrayLength = " + photoArrayLength + "\n" +
+                            "latitude = " + latitude + "\n" +
+                            "longitude = " + longitude + "\n" +
+                            "stateCode = " + stateCode + "\n" +
+                            "isSynced = " + isSync);
+        }
     }
 }
