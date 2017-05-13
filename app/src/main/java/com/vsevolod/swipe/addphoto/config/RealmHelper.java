@@ -44,6 +44,10 @@ public class RealmHelper {
         this.realm.close();
     }
 
+    public Realm getRealm() {
+        return realm;
+    }
+
     private void initRealm() {
         Log.d(TAG, "initRealmData");
         //data

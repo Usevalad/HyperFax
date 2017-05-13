@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import io.realm.RealmChangeListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -69,6 +70,7 @@ import retrofit2.Response;
 // очередного вмешательства юзера
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
 // TODO: 13.05.17 if creates new account - need to update flowsTree
+// TODO: 13.05.17 set onRealmChangeListener to make recyclerView not static
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyasoApi api = new MyasoApi();
     private AccountManager mAccountManager;
     private String mAuthToken;
+    private RealmChangeListener realmChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +110,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object element) {
+                setRecyclerViewAdapter();
+                Log.e(TAG, "onChange: invalidate");
+            }
+        };
+        mRealmHelper.getRealm().addChangeListener(realmChangeListener);
     }
 
     private void setFABAnimation() {
@@ -204,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    public static void setRecyclerViewAdapter() {
+    public void setRecyclerViewAdapter() {
         Log.d(TAG, "setRecyclerViewAdapter");
         if (data != null) {
             Log.d(TAG, "setRecyclerViewAdapter: true");

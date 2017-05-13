@@ -288,8 +288,9 @@ public class MyasoApi implements Api {
                             Log.e(TAG, response.body().getList().get(i).get(j));
                         }
                     }
+
                     realmHelper.close();
-                    MainActivity.setRecyclerViewAdapter();
+//                    MainActivity.setRecyclerViewAdapter();
                 }
             }
 
