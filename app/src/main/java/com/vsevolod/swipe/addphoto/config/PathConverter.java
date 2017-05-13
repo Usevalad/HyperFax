@@ -9,7 +9,6 @@ import android.util.Log;
 
 /**
  * Created by vsevolod on 21.04.17.
- * <p>
  * getting full path instead of short android absolute path
  * needed for decoding image to byte array
  */

@@ -21,7 +21,7 @@ import io.realm.Sort;
  * Created by vsevolod on 26.03.17.
  */
 public class RealmHelper {
-    private final String TAG = "RealmHelper";
+    private final String TAG = this.getClass().getSimpleName();
     private Realm realm;
     public List<DataModel> data = new ArrayList<>();
     public List<FlowsTreeModel> tree = new ArrayList<>();

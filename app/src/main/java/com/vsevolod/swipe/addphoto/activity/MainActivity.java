@@ -1,5 +1,11 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -25,22 +31,30 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
+import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.GetList;
-import com.vsevolod.swipe.addphoto.command.method.GetTree;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.ListModel;
+import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 // FIXME: 21.04.17 find memory leak
 // FIXME: 21.04.17 fix memory leak
@@ -48,13 +62,17 @@ import java.util.Locale;
 // FIXME: 21.04.17 check onActivityResult, looks horribly
 // TODO: 21.04.17 add internet connection checker
 // FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
+// TODO: 13.05.17 add feature: когда я нажимаю обновить дерево, но у меня нет токена.аккаунта - я отправляюсь
+// в логин активити, где получаю токен, но после это просто попадаю в мэин активити. Надо сделать так,
+// что бы после получения токена продолжилось действие, которое проверяло наличие этого токена.
+// то есть если я нажимал обновить дерево, то после получения токена оно начало обновляться без
+// очередного вмешательства юзера
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
-    public static RecyclerView mRecyclerView;
+    public static RecyclerView mRecyclerView; // static recycler can be memory leak
     public static List<DataModel> data;
-//    public static Context context;
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
@@ -68,12 +86,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Uri fileUri = null;
     private RealmHelper mRealmHelper = new RealmHelper();
     private MyasoApi api = new MyasoApi();
+    private AccountManager mAccountManager;
+    private String mAuthToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-
         mRealmHelper.open();
         data = mRealmHelper.getData();
         setContentView(R.layout.activity_main);
@@ -84,12 +103,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-//        context = getApplicationContext();
         setRecyclerViewAdapter();
         setFabHidingAbility();
     }
 
     private void setFABAnimation() {
+        Log.d(TAG, "setFABAnimation");
         mFAB = (FloatingActionButton) findViewById(R.id.fab);
         mFABCamera = (FloatingActionButton) findViewById(R.id.fab_camera);
         mFABGallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
@@ -104,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         mRealmHelper.close();
         super.onDestroy();
     }
@@ -243,23 +263,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private File getOutputPhotoFile() {
+        Log.d(TAG, "getOutputPhotoFile");
         File directory = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getPackageName());
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                Log.e(TAG, "Failed to create storage directory.");
+                Log.e(TAG, "Failed to create storage directory");
                 return null;
             }
         }
-        String timeStamp = new SimpleDateFormat("yyyMMdd_HHmmss", Locale.US).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.US).format(new Date());
 
         return new File(directory.getPath() + File.separator + "IMG_"// FIXME: 11.05.17 hardcode
                 + timeStamp + ".jpg");// FIXME: 11.05.17 hardcode
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult");
         if (resultCode != RESULT_CANCELED) {
-            Uri photoUri = null;
+            Uri photoUri;
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
                 if (data == null) {
                     // A known bug here! The image should have saved in fileUri
@@ -283,12 +305,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startAddingActivity(String path) {
+        Log.d(TAG, "startAddingActivity");
         Intent intent = new Intent(this, AddingActivity.class);
         intent.putExtra("path", path);// FIXME: 11.05.17 hardcode
         startActivity(intent);
     }
 
     private void startCameraActivity() {
+        Log.d(TAG, "startCameraActivity");
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = Uri.fromFile(getOutputPhotoFile());
         i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
@@ -296,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setFabHidingAbility() {
+        Log.d(TAG, "setFabHidingAbility");
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -342,7 +367,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getTree() {
         Log.d(TAG, "getTree");
-        GetTree tree = new GetTree(api);
-        tree.execute();
+        mAccountManager = AccountManager.get(this);
+        Account[] acc = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+
+        if (acc.length == 0) {
+            Log.e(TAG, "No accounts of type " + AccountGeneral.ARG_ACCOUNT_TYPE + " found");
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, true);
+            startActivity(intent);
+            return;
+        }
+        Account account = acc[0];
+        startAuthTokenFetch(account);
+    }
+
+    private void startAuthTokenFetch(Account account) {
+        Log.d(TAG, "startAuthTokenFetch");
+        Bundle options = new Bundle();
+        android.os.Handler handler = new android.os.Handler();
+        OnAccountManagerComplete callBack = new OnAccountManagerComplete();
+        mAccountManager.getAuthToken(
+                account,
+                AccountGeneral.ARG_TOKEN_TYPE,
+                options,
+                this,
+                callBack,
+                handler
+        );
+    }
+
+    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
+        private final String TAG = this.getClass().getSimpleName();
+
+        @Override
+        public void run(AccountManagerFuture<Bundle> result) {
+            Bundle bundle;
+            Log.e(TAG, "run");
+            try {
+                bundle = result.getResult();
+            } catch (OperationCanceledException e) {
+                e.printStackTrace();
+                return;
+            } catch (AuthenticatorException e) {
+                e.printStackTrace();
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            mAuthToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+            Log.e(TAG, "Received authentication token " + mAuthToken);
+            MyApplication.getApi().getTree(new TokenModel(mAuthToken)).enqueue(new Callback<ResponseFlowsTreeModel>() {
+                @Override
+                public void onResponse(Call<ResponseFlowsTreeModel> call, Response<ResponseFlowsTreeModel> response) {
+                    if (response.isSuccessful()) {
+                        List<List<String>> list = response.body().getList();
+                        if (list != null) {
+                            Log.d(TAG, list.toString());
+                            Log.d(TAG, list.get(0).toString());
+
+                            TreeConverterTask task = new TreeConverterTask();
+                            task.execute(response.body());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseFlowsTreeModel> call, Throwable t) {
+                    Log.e(TAG, "onFailure: ", t);
+                }
+            });
+        }
     }
 }

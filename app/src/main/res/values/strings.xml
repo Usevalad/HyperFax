@@ -19,5 +19,8 @@
     <string name="token">get token string</string>
     <string name="title_activity_account_authenticator">AccountAuthenticatorActivity</string>
     <string name="account_already_exists">Account already exists</string>
-    <string name="phone_nuber_invalid">Номер не валидный</string>
+    <string name="phone_number_invalid">Номер не валидный</string>
+    <string name="general_settings">general_settings</string>
+    <string name="sync_settings_summary">sync_settings_summary</string>
+    <string name="sync">sync</string>
 </resources>

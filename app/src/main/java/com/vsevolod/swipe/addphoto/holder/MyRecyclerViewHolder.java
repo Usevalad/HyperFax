@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.recyclerView;
+package com.vsevolod.swipe.addphoto.holder;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,22 +10,23 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
+import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 
 /**
  * Created by vsevolod on 13.03.17.
  */
 
 public class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private final String PHOTO_URI = "photo uri";
-    private final String PHOTO_URL = "photo url";
-    TextView mDateTextView;
-    TextView mPathTextView;
-    TextView mComment;
-    TextView mLocation;
-    ImageView mPhotoImageView;
-    ImageView mStateIconImageView;
-    CardView mCardView;
-    Context context;
+    private final String PHOTO_URI = "photo uri";// FIXME: 11.05.17 hardcode
+    private final String PHOTO_URL = "photo url";// FIXME: 11.05.17 hardcode
+    public TextView mDateTextView;
+    public TextView mPathTextView;
+    public TextView mComment;
+    public TextView mLocation;
+    public ImageView mPhotoImageView;
+    public ImageView mStateIconImageView;
+    public CardView mCardView;
+    public Context context;
 
     public MyRecyclerViewHolder(final Context context, View itemView) {
         super(itemView);

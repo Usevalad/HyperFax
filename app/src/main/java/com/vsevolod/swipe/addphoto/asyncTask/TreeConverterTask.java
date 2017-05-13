@@ -17,7 +17,7 @@ import java.util.List;
  */
 
 public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String, List<FlowsTreeModel>> {
-    private final String TAG = "TreeConverterTask";
+    private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper = new RealmHelper();
 
     @Override
@@ -29,7 +29,7 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
         List<List<String>> list = model.getList();
         List<String> tmp;
 
-        if (list.size() > 100) {
+        if (list.size() > 100) { // FIXME: 13.05.17 magic numbers
             mRealmHelper.dropRealmTree();
             for (int i = 0; i < list.size(); i++) {
                 tmp = list.get(i);
@@ -51,7 +51,7 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
 
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
-        super.onPostExecute(flowsTreeModels);
+        super.onPostExecute(flowsTreeModels); // FIXME: 13.05.17 hardcode
         Toast.makeText(MyApplication.getAppContext(), "Обновлено", Toast.LENGTH_SHORT).show();
     }
 }

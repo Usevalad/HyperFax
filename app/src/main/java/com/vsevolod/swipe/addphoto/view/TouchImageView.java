@@ -30,26 +30,17 @@ import android.widget.Scroller;
 public class TouchImageView extends android.support.v7.widget.AppCompatImageView {
 
     private static final String DEBUG = "DEBUG";
-
-    //
     // SuperMin and SuperMax multipliers. Determine how much the image can be
     // zoomed below or above the zoom boundaries, before animating back to the
     // min/max zoom boundary.
-    //
     private static final float SUPER_MIN_MULTIPLIER = .75f;
     private static final float SUPER_MAX_MULTIPLIER = 1.25f;
-
-    //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
     // when the image is stretched to fit view.
-    //
     private float normalizedScale;
-
-    //
     // Matrix applied to image. MSCALE_X and MSCALE_Y should always be equal.
     // MTRANS_X and MTRANS_Y are the other values used. prevMatrix is the matrix
     // saved prior to the screen rotating.
-    //
     private Matrix matrix, prevMatrix;
 
     private static enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
@@ -72,15 +63,9 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     private boolean onDrawReady;
 
     private ZoomVariables delayedZoomVariables;
-
-    //
     // Size of view and previous view size (ie before rotation)
-    //
     private int viewWidth, viewHeight, prevViewWidth, prevViewHeight;
-
-    //
     // Size of image when it is stretched to fit view. Before and After rotation.
-    //
     private float matchViewWidth, matchViewHeight, prevMatchViewWidth, prevMatchViewHeight;
 
     private ScaleGestureDetector mScaleDetector;

@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.recyclerView;
+package com.vsevolod.swipe.addphoto.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.holder.MyRecyclerViewHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class MyRecyclerAdapter extends RecyclerView.Adapter {
     private final String TAG = "MyRecyclerAdapter";
     private Context context;
-    static List<DataModel> data;
+    public static List<DataModel> data;
 
     public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");

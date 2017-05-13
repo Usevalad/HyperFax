@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
@@ -35,7 +36,6 @@ import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.recyclerView.AutoCompleteAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,7 +54,7 @@ import okhttp3.RequestBody;
 // FIXME: 20.04.17 save hardcoded strings to res/values/strings
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
-    private final String TAG = AddingActivity.class.getSimpleName();
+    private final String TAG = this.getClass().getSimpleName();
     private final int THUMB_SIZE = Constants.THUMB_SIZE;
     private Toolbar toolbar;
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"

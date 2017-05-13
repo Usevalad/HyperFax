@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.recyclerView.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 
 import java.util.List;
 

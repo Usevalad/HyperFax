@@ -21,8 +21,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
@@ -35,19 +37,36 @@ import retrofit2.Response;
  */
 // FIXME: 21.04.17 handle hardware back button onCLick (quit from app)
 // TODO: 21.04.17 add phone number finding library
+// TODO: 13.05.17 refactor
 public class LoginActivity extends AccountAuthenticatorActivity {
-    private final String TAG = LoginActivity.class.getSimpleName();
+    private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
     private EditText mPhoneNumberView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String password;
+    private String phoneNumber;
+    private AccountManager mAccountManager;
+    private String mAccountName;
+    private String mAccountType;
+    private String mAuthType;
+    private boolean isAddingNewAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAccountManager = AccountManager.get(this);
+        mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
+        Log.e(TAG, "onCreate: mAccountName " + mAccountName);
+        mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
+        Log.e(TAG, "onCreate: mAccountType " + mAccountType);
+        mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
+        Log.e(TAG, "onCreate: mAuthType " + mAuthType);
+        isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
+        Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
 
         String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
@@ -86,18 +105,28 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         Account[] accounts = am.getAccounts();
         String phoneNumber = "oops";
         for (Account ac : accounts) {
-            String acname = ac.name;
-            String actype = ac.type;
-            String acdescribe = String.valueOf(ac.describeContents());
+            String accountName = ac.name;
+            String accountType = ac.type;
+            String accountDescribe = String.valueOf(ac.describeContents());
             // Take your time to look at all available accounts
-            if (acname.startsWith("+380")) { //viber acc name is phone number
-                phoneNumber = acname;
+            if (accountName.startsWith("+380")) { //viber acc name is phone number
+                phoneNumber = accountName;
             }
-            System.out.println("Accounts : " + acname + ", " + actype + " describe:" + acdescribe);
+            System.out.println("Accounts : " + accountName + ", " + accountType + " describe:" + accountDescribe);
+            if (TextUtils.equals(ac.name, AccountGeneral.ARG_ACCOUNT_NAME)) {
+                Log.e(TAG, "getPhoneNumber: " + ac.name);
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountManager.KEY_AUTHTOKEN));
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_TOKEN_TYPE));
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_AUTH_TYPE));
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, "com.vsevolod.swipe.addphoto"));
+                Account account = new Account("Hyper Fax", "com.vsevolod.swipe.addphoto");
+                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(account, "com.vsevolod.swipe.addphoto"));
+            }
         }
         return phoneNumber;
     }
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -112,8 +141,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         mPhoneNumberView.setError(null);
         mPasswordView.setError(null);
         // Store values at the time of the login attempt.
-        String phoneNumber = mPhoneNumberView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        phoneNumber = mPhoneNumberView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -130,7 +159,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             focusView = mPhoneNumberView;
             cancel = true;
         } else if (!isPhoneNumberValid(phoneNumber)) {
-            mPhoneNumberView.setError(getResources().getString(R.string.phone_nuber_invalid));
+            mPhoneNumberView.setError(getResources().getString(R.string.phone_number_invalid));
             focusView = mPhoneNumberView;
             cancel = true;
         }
@@ -143,9 +172,55 @@ public class LoginActivity extends AccountAuthenticatorActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new AuthTask();
-            String[] s = {phoneNumber, password};
-            mAuthTask.execute(s);
+//            mAuthTask = new AuthTask();
+//            String[] s = {phoneNumber, password};
+//            mAuthTask.execute();
+            new AsyncTask<Void, Void, Intent>() {
+                @Override
+                protected Intent doInBackground(Void... params) {
+                    AuthModel user = new AuthModel(phoneNumber, password);
+                    Response<UserModel> response;
+                    String authToken = null;
+                    final Intent res = new Intent();
+                    try {
+                        response = MyApplication.getApi().authenticate(user).execute();
+                        authToken = response.body().getToken();
+                        Log.e(TAG, "doInBackground: " + authToken);
+                        PreferenceHelper helper = new PreferenceHelper();
+                        helper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, authToken); // TODO: 12.05.17 remove after accManager will be fixed
+                        Log.e(TAG, authToken);
+                        res.putExtra(AccountManager.KEY_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_NAME);
+                        res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
+                        res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
+                        res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
+                        res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber); //todo check it later
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        res.putExtra(AccountGeneral.KEY_ERROR_MESSAGE, e.getMessage());
+                    }
+                    return res;
+                }
+
+                @Override
+                protected void onPostExecute(Intent intent) {
+                    mAuthTask = null;
+                    if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
+                        mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
+                        mPasswordView.requestFocus();
+                    } else {
+                        finishLogin(intent);
+                        // Close the activity, we're done
+                        finish();
+                    }
+                }
+
+                @Override
+                protected void onCancelled() {
+                    Log.d(TAG, "onCancelled");
+                    mAuthTask = null;
+                    showProgress(false);
+                }
+            }.execute();
         }
     }
 
@@ -188,70 +263,27 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         });
     }
 
-    public void onTokenReceived(Account account, String token) {
-        Log.d(TAG, "onTokenReceived");
-        final AccountManager am = AccountManager.get(this);
-        final Bundle result = new Bundle();
-        final String password = mPasswordView.getText().toString();
-        final String number = mPhoneNumberView.getText().toString();
-        if (am.addAccountExplicitly(account, password, new Bundle())) {
-            result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-            result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-            result.putString(AccountManager.KEY_AUTHTOKEN, token);
-            am.setAuthToken(account, account.type, token);
-            am.setPassword(account, password);
-            am.setUserData(account, Constants.KEY_ACCOUNT_PHONE_NUMBER, number);
+    private void finishLogin(Intent intent) {
+        final Account account = new Account(
+                AccountGeneral.ARG_ACCOUNT_NAME,
+                AccountGeneral.ARG_ACCOUNT_TYPE);
+        Account[] acc = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+        String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+
+        if (acc.length == 0) {
+            Log.e(TAG, "finishLogin: adding new account" );
+            mAccountManager.addAccountExplicitly(account, password, null);
         } else {
-            result.putString(AccountManager.KEY_ERROR_MESSAGE, getString(R.string.account_already_exists));
+            Log.e(TAG, "finishLogin: changing password in existed account");
+            // Password change only
+            mAccountManager.setPassword(account, password);
         }
-        setAccountAuthenticatorResult(result);
-        setResult(RESULT_OK);
-        finish();
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    private class AuthTask extends AsyncTask<String, Void, String> {
-        private final String TAG = com.vsevolod.swipe.addphoto.asyncTask.AuthTask.class.getSimpleName();
-        private String token = null;
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.d(TAG, "doInBackground");
-            String phoneNumber = params[0];
-            String password = params[1];
-            AuthModel user = new AuthModel(phoneNumber, password);
-            Response<UserModel> response = null;
-            try {
-                response = MyApplication.getApi().authenticate(user).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            token = response.body().toString();
-            Log.d(TAG, token);
-            return token;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.d(TAG, "onPostExecute");
-            mAuthTask = null;
-            showProgress(false);
-
-            if (!TextUtils.isEmpty(token)) {
-                Account myAccount = new Account(Constants.ARG_ACCOUNT_NAME, Constants.ARG_ACCOUNT_TYPE);
-                onTokenReceived(myAccount, token);
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            Log.d(TAG, "onCancelled");
-            mAuthTask = null;
-            showProgress(false);
-        }
+        mAccountManager.setAuthToken(account, AccountGeneral.ARG_TOKEN_TYPE, authToken);
+        // Our base class can do what Android requires with the
+        // KEY_ACCOUNT_AUTHENTICATOR_RESPONSE extra that onCreate has
+        // already grabbed
+        setAccountAuthenticatorResult(intent.getExtras());
+        // Tell the account manager settings page that all went well
+        setResult(RESULT_OK, intent);
     }
 }

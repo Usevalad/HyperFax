@@ -14,16 +14,18 @@ import io.realm.annotations.PrimaryKey;
 public class DataModel extends RealmObject {
     @PrimaryKey
     private String uid;
-    private String searchDate;
+    private String searchDate; // TODO: 11.05.17 maybe i need to left only Date date?
     private String viewDate;
     private String prefix;
     private String name;
     private String photoURI;
-    private String serverPhotoURL;
+    private String serverPhotoURL; //// TODO: 11.05.17 maybe i need to left only one photo link
+    /// and change it when i'll get it from server response
+    // TODO: 11.05.17 decide it before i'll finish MVP
     private String comment;
     private double latitude;
     private double longitude;
-    private String stateCode = "Created";
+    private String stateCode = "Created"; // FIXME: 11.05.17 hardcode
     private byte[] photo;
     private String prefixID;
     private Date date;
@@ -46,7 +48,7 @@ public class DataModel extends RealmObject {
     }
 
     public DataModel() {
-        //realm need to add empty constructor
+        //realm needs to add empty constructor
     }
 
     public String getSearchDate() {
@@ -157,7 +159,7 @@ public class DataModel extends RealmObject {
         this.date = date;
     }
 
-    public int getStateIconImage() {
+    public int getStateIconImage() {// FIXME: 11.05.17 hardcode
         switch (stateCode) {
             case "Created":
                 return R.drawable.ic_time;
@@ -168,7 +170,7 @@ public class DataModel extends RealmObject {
             case "Declined":
                 return R.drawable.ic_canceled;
             default:
-                return R.drawable.ic_bomb; //if something wrong you'll see bomb
+                return R.drawable.ic_bomb; //if something went wrong you'll see the bomb
         }
     }
 }

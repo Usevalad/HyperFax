@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.recyclerView;
+package com.vsevolod.swipe.addphoto.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
