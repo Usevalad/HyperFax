@@ -29,7 +29,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
@@ -37,6 +36,7 @@ import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.command.method.GetList;
+import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -62,7 +62,6 @@ import retrofit2.Response;
 // FIXME: 21.04.17 fix memory leak
 // FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
 // FIXME: 21.04.17 check onActivityResult, looks horribly
-// TODO: 21.04.17 add internet connection checker
 // FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
 // TODO: 13.05.17 add feature: когда я нажимаю обновить дерево, но у меня нет токена.аккаунта - я отправляюсь
 // в логин активити, где получаю токен, но после это просто попадаю в мэин активити. Надо сделать так,
@@ -71,7 +70,7 @@ import retrofit2.Response;
 // очередного вмешательства юзера
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
 // TODO: 13.05.17 if creates new account - need to update flowsTree
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
@@ -109,14 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
-        RealmChangeListener realmChangeListener = new RealmChangeListener() {
-            @Override
-            public void onChange(Object element) {
-                setRecyclerViewAdapter();
-                Log.e(TAG, "onChange: invalidate");
-            }
-        };
-        mRealmHelper.getRealm().addChangeListener(realmChangeListener);
+        mRealmHelper.getRealm().addChangeListener(this);
     }
 
     private void setFABAnimation() {
@@ -193,12 +185,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
                 list.execute(model);
-                Toast.makeText(this, "Идет загрузка", Toast.LENGTH_SHORT).show(); // FIXME: 11.05.17 hardcode
                 break;
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
-                Toast.makeText(this, isChecked ? "Вкл" : "Выкл", Toast.LENGTH_SHORT).show();// FIXME: 11.05.17 hardcode
                 mRealmHelper.countData();
                 break;
             case R.id.main_menu_request_flow:
@@ -248,10 +238,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mFABGallery.setClickable(false);
                 // TODO: 21.04.17 wrap this in a method
                 Intent intent = new Intent();
-                intent.setType("image/*");// FIXME: 11.05.17 hardcode
+                intent.setType(Constants.MEDIA_TYPE_IMAGE);
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent,
-                        "Select Picture"), SELECT_PICTURE);// FIXME: 11.05.17 hardcode
+                        Constants.ACTION_SELECT_PICTURE), SELECT_PICTURE);
                 break;
             default:
                 break;
@@ -289,10 +279,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return null;
             }
         }
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.US).format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(new Date());
 
-        return new File(directory.getPath() + File.separator + "IMG_"// FIXME: 11.05.17 hardcode
-                + timeStamp + ".jpg");// FIXME: 11.05.17 hardcode
+        String img = "IMG";
+        return new File(directory.getPath() + File.separator + img
+                + timeStamp + Constants.EXTENSION_JPG);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -305,8 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     photoUri = fileUri;
                 } else {
                     photoUri = data.getData();
-                    Toast.makeText(this, "Image saved successfully in: " + data.getData(),// FIXME: 11.05.17 hardcode
-                            Toast.LENGTH_LONG).show();
                 }
                 startAddingActivity(photoUri.getPath());
 
@@ -315,8 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String path = PathConverter.getFullPath(photoUri);
                 startAddingActivity(path);
             } else {
-                Toast.makeText(this, "Call out for image capture failed!",// FIXME: 11.05.17 hardcode
-                        Toast.LENGTH_LONG).show();
+                Log.e(TAG, "onActivityResult: " + "Call out for image capture failed!");
             }
         }
     }
@@ -324,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void startAddingActivity(String path) {
         Log.d(TAG, "startAddingActivity");
         Intent intent = new Intent(this, AddingActivity.class);
-        intent.putExtra("path", path);// FIXME: 11.05.17 hardcode
+        intent.putExtra(Constants.INTENT_KEY_PATH, path);
         startActivity(intent);
     }
 
@@ -417,6 +405,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // то есть можно все таки написать красивый GetTreeTask, вместо этой кучи кода в активити
         //The last parameter for this method is notifyAuthFailue and if set to “true” it will raise
         // a notification to the user in case there was an authentication problem, such as an invalidated auth token.
+    }
+
+    @Override
+    public void onChange(Object element) {
+        Log.e(TAG, "onChange: invalidate");
+        Log.e(TAG, "onChange: object.toString() " + element.toString());
+        setRecyclerViewAdapter();
+        ContentResolver.requestSync(
+                new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                getResources().getString(R.string.content_authority),
+                new Bundle());
     }
 
     private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {

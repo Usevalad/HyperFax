@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
@@ -19,6 +20,12 @@ import java.util.List;
 public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String, List<FlowsTreeModel>> {
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper = new RealmHelper();
+    private final int MIN_LIST_SIZE = 100;
+    private final int ID_NUMBER = 0;
+    private final int NAME_NUMBER = 1;
+    private final int PREFIX_NUMBER = 2;
+    private final int PARENT_ID_NUMBER = 3;
+    private final int FLOWS_TREE_MODEL_FIELDS_QUANTITY = 4;
 
     @Override
     protected List<FlowsTreeModel> doInBackground(ResponseFlowsTreeModel... params) {
@@ -29,12 +36,16 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
         List<List<String>> list = model.getList();
         List<String> tmp;
 
-        if (list.size() > 100) { // FIXME: 13.05.17 magic numbers
+        if (list.size() > MIN_LIST_SIZE) {
             mRealmHelper.dropRealmTree();
             for (int i = 0; i < list.size(); i++) {
                 tmp = list.get(i);
-                if (tmp.size() == 4) {
-                    mRealmHelper.save(new FlowsTreeModel(tmp.get(0), tmp.get(1), tmp.get(2), tmp.get(3)));
+                if (tmp.size() == FLOWS_TREE_MODEL_FIELDS_QUANTITY) {
+                    String id = tmp.get(ID_NUMBER);
+                    String name = tmp.get(NAME_NUMBER);
+                    String prefix = tmp.get(PREFIX_NUMBER);
+                    String parentId = tmp.get(PARENT_ID_NUMBER);
+                    mRealmHelper.save(new FlowsTreeModel(id, name, prefix, parentId));
                     publishProgress(String.valueOf(i));
                 }
             }
@@ -46,12 +57,13 @@ public class TreeConverterTask extends AsyncTask<ResponseFlowsTreeModel, String,
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        Log.d(TAG, "onProgressUpdate: count = " + values[0].toString());
+        Log.d(TAG, "onProgressUpdate: count = " + values[0]);
     }
 
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
-        super.onPostExecute(flowsTreeModels); // FIXME: 13.05.17 hardcode
-        Toast.makeText(MyApplication.getAppContext(), "Обновлено", Toast.LENGTH_SHORT).show();
+        super.onPostExecute(flowsTreeModels);
+        String message = MyApplication.getAppContext().getResources().getString(R.string.updated);
+        Toast.makeText(MyApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

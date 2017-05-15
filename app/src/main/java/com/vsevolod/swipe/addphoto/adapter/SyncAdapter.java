@@ -59,13 +59,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mRealmHelper.open();
         try {
             final String authToken = mAccountManager.blockingGetAuthToken(account,
-                    AccountGeneral.ARG_TOKEN_TYPE, true);
+                    AccountGeneral.ARG_TOKEN_TYPE, true); // TODO: 15.05.17 wrap in a uploadData method
             List<DataModel> notSyncedData = mRealmHelper.getNotSynced();
+            // TODO: 15.05.17 add some logic to check states (list\getList)
 
             for (int i = 0; i < notSyncedData.size(); i++) {
                 dataModel = notSyncedData.get(i);
                 File imageFile = new File(dataModel.getPhotoURL());
-                RequestBody requestBody = RequestBody.create(MediaType.parse(Constants.MADIA_TYPE_IMAGE), imageFile);
+                RequestBody requestBody = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
                 Response<ResponseBody> postImageResponse = MyApplication.getApi().postImage(requestBody).execute();
                 Log.e(TAG, "onPerformSync: response code " + String.valueOf(postImageResponse.code()));
                 Log.e(TAG, "onPerformSync: response body " + String.valueOf(postImageResponse.body()));

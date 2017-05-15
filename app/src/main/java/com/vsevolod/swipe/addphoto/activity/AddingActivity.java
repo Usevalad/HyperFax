@@ -50,10 +50,10 @@ import it.sephiroth.android.library.picasso.Picasso;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
-// FIXME: 20.04.17 save hardcoded strings to res/values/strings
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
+    private final int IMAGE_QUALITY = 40;
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper = new RealmHelper();
     private AutoCompleteTextView mAutoCompleteTextView;
@@ -80,12 +80,12 @@ public class AddingActivity extends AppCompatActivity {
         String type = intent.getType();
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image/")) { // FIXME: 11.05.17 hardcode
+            if (type.startsWith(Constants.INTENT_KEY_PATH)) {
                 Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
                 path = PathConverter.getFullPath(imageUri);
             }
         } else {
-            path = getIntent().getStringExtra("path"); // FIXME: 11.05.17 hardcode
+            path = getIntent().getStringExtra(Constants.INTENT_KEY_PATH);
         }
 
         ImageView mImageView = (ImageView) findViewById(R.id.adding_image_view);
@@ -174,7 +174,7 @@ public class AddingActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
                     BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, 40, stream); // FIXME: 11.05.17 magic number
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, stream);
             byte[] byteArray = stream.toByteArray();
             try {
                 stream.close();
@@ -189,7 +189,7 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     private void uploadImage(File imageFile) {
-        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MADIA_TYPE_IMAGE), imageFile);
+        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
         CommitTask task = new CommitTask();
         task.execute(reqFile);
     }
@@ -197,7 +197,8 @@ public class AddingActivity extends AppCompatActivity {
     private void prefixValidation() {
         Log.d(TAG, "prefixValidation");
         if (!mRealmHelper.isValid(text)) {
-            mAutoCompleteTextView.setError("Выбери тэг"); // FIXME: 11.05.17 hardcode
+            String error = getResources().getString(R.string.choose_tag);
+            mAutoCompleteTextView.setError(error);
         }
     }
 
@@ -211,10 +212,10 @@ public class AddingActivity extends AppCompatActivity {
         String searchDate = searchDateFormat.format(date.getTime());
         String comment = mEditText.getText().toString();
         text = mAutoCompleteTextView.getText().toString();
-        String prefix = text.substring(text.length() - 4);
-        String name = text.substring(0, text.length() - 6);
+        String prefix = text.substring(text.length() - 4); //4 is a prefix length
+        String name = text.substring(0, text.length() - 6); //6 is a prefix length + @ + space
         String prefixID = mRealmHelper.getPrefixID(prefix);
-        double latitude = mLocation != null ? mLocation.getLatitude() : 404;
+        double latitude = mLocation != null ? mLocation.getLatitude() : 404; // 404 is a random number to set when app can't track location
         double longitude = mLocation != null ? mLocation.getLongitude() : 404;
 
         DataModel model = new DataModel(

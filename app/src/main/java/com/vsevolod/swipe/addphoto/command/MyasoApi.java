@@ -39,7 +39,6 @@ import retrofit2.http.Part;
 
 public class MyasoApi implements Api {
     // FIXME: 17.04.17 need rx
-    // FIXME: 19.04.17 time outs no connection
     // FIXME: 21.04.17 response status checker
     // FIXME: 21.04.17 create new query call order
     // FIXME: 21.04.17 wrap queries in asyncTask
@@ -201,7 +200,12 @@ public class MyasoApi implements Api {
                 try {
                     RealmHelper mRealmHelper = new RealmHelper();
                     mRealmHelper.open();
-                    String token = mPreferenceHelper.getToken(); // FIXME: 13.05.17 get token from account manager
+//                    AccountManager mAccountManager = AccountManager.get(MyApplication.getAppContext());
+                    // TODO: 15.05.17 blockingGetAuthToken only from back ground thread
+//                    String token = mAccountManager.blockingGetAuthToken(new Account(AccountGeneral.ARG_ACCOUNT_NAME,
+//                            AccountGeneral.ARG_ACCOUNT_TYPE), AccountGeneral.ARG_TOKEN_TYPE, true);
+                    PreferenceHelper preferenceHelper = new PreferenceHelper();
+                    String token = preferenceHelper.getToken();
                     String link = response.body().string();
                     DataModel model = mRealmHelper.getLastDataModel();
                     String id = model.getUid();

@@ -16,7 +16,10 @@ public class Constants {
     public static final String STATE_CODE_ACCEPTED = "Accepted";
     public static final String STATE_CODE_REVIEW = "Review";
     public static final String STATE_CODE_DECLINED = "Declined";
-    public static final String MADIA_TYPE_IMAGE = "image/*";
+    public static final String MEDIA_TYPE_IMAGE = "image/*";
+    public static final String INTENT_KEY_PATH = "image/";
+    public static final String ACTION_SELECT_PICTURE = "Select Picture";
+    public static final String EXTENSION_JPG  = ".jpg";
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
