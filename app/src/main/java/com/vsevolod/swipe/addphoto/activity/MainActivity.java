@@ -7,6 +7,7 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -70,12 +71,11 @@ import retrofit2.Response;
 // очередного вмешательства юзера
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
 // TODO: 13.05.17 if creates new account - need to update flowsTree
-// TODO: 13.05.17 set onRealmChangeListener to make recyclerView not static
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private static final int SELECT_PICTURE = 12;
-    public static RecyclerView mRecyclerView; // static recycler can be memory leak
+    public RecyclerView mRecyclerView;
     public static List<DataModel> data;
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
     private FloatingActionButton mFAB;
@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MyasoApi api = new MyasoApi();
     private AccountManager mAccountManager;
     private String mAuthToken;
-    private RealmChangeListener realmChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
-        realmChangeListener = new RealmChangeListener() {
+        RealmChangeListener realmChangeListener = new RealmChangeListener() {
             @Override
             public void onChange(Object element) {
                 setRecyclerViewAdapter();
@@ -206,8 +205,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getTree();
                 break;
             case R.id.main_menu_log_out:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(this, LoginActivity.class);
+//                startActivity(intent);
+                ContentResolver.requestSync(
+                        new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                        getResources().getString(R.string.content_authority),
+                        new Bundle());
                 break;
             default:
                 break;
@@ -408,6 +411,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 callBack,
                 handler
         );
+
+//        mAccountManager.blockingGetAuthToken();
+// делает тоже самое, что и getAuthToken, только синхронно
+        // то есть можно все таки написать красивый GetTreeTask, вместо этой кучи кода в активити
+        //The last parameter for this method is notifyAuthFailue and if set to “true” it will raise
+        // a notification to the user in case there was an authentication problem, such as an invalidated auth token.
     }
 
     private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {

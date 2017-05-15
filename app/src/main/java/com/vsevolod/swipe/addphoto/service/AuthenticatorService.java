@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.accountAuthenticator.HyperFaxAuthenticator;
 
-public class HyperFaxAuthenticatorService extends Service {
+public class AuthenticatorService extends Service {
     private final String TAG = this.getClass().getSimpleName();
     private HyperFaxAuthenticator mAuthenticator;
 

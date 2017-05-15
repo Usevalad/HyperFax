@@ -20,6 +20,7 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
+// TODO: 15.05.17 refactor
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
     private Realm realm;
@@ -254,6 +255,18 @@ public class RealmHelper {
         this.realm.copyToRealmOrUpdate(model);
         this.realm.commitTransaction();
         Log.d(TAG, "setSynced: isSynced " + isSynced);
+    }
+
+    public List<DataModel> getNotSynced() {
+        RealmQuery query = this.realm.where(DataModel.class);
+        query.equalTo("isSynced", false);
+        return query.findAll();
+    }
+
+    public List<DataModel> getNotFinishedStates() {
+        RealmQuery query = this.realm.where(DataModel.class);
+        query.equalTo("isSynced", false);
+        return query.findAll();
     }
 
 

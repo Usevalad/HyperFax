@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="@string/account_type"
+    android:allowParallelSyncs="false"
+    android:contentAuthority="@string/content_authority"
+    android:isAlwaysSyncable="false"
+    android:supportsUploading="true"
+    android:userVisible="true" />
+    <!--isAlwaysSyncable sets the adapter to be syncable=true by default for every new account the user -->
+    <!--adds. This property can be override from code with setIsSyncable()__.-->

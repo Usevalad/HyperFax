@@ -39,7 +39,7 @@ public interface MyasoApi {
     @POST("ext/apit/check")
     Call<CheckedInfo> verify(@Body TokenModel user);
 
-     //    @Headers("Content-Length: ?")
+     //@Headers("Content-Length: ?")
     //ext/api/upload
     @PUT("ext/apit/upload")
     Call<ResponseBody> postImage(@Body RequestBody body);

@@ -20,8 +20,11 @@
     <uses-permission android:name="ANDROID.PERMISSION.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!--Allows us to read the sync adapter’s settings, such as isSyncable _or _syncAutomatically.-->
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <!--Gives us the right to add a sync adapter to the system.-->
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!--Helps us get the sync state, if it’s currently syncing, pending or idle.-->
     <uses-permission android:name="android.permission.READ_SYNC_STATS" />
 
     <uses-feature
@@ -57,6 +60,12 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <provider
+            android:name="com.vsevolod.swipe.addphoto.provider.StubProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.SearchResultsActivity" />
@@ -73,17 +82,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
+
         <activity
             android:name=".activity.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".activity.AddingActivity"
             android:screenOrientation="portrait"
@@ -101,6 +113,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+
         <activity
             android:name=".activity.SearchResultsActivity"
             android:label="@string/app_name"
@@ -121,7 +134,7 @@
         </activity>
 
         <service
-            android:name=".service.HyperFaxAuthenticatorService"
+            android:name=".service.AuthenticatorService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -135,16 +148,16 @@
 
         <service
             android:name=".service.SyncService"
-            android:exported="true"
-            android:process=":sync">
+            android:exported="true">
+            <!--android:process=":sync"-->
+
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
             <meta-data
                 android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                android:resource="@xml/sync_adapter" />
         </service>
     </application>
-
 </manifest>

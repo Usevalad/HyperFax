@@ -202,7 +202,7 @@ public class MyasoApi implements Api {
                     RealmHelper mRealmHelper = new RealmHelper();
                     mRealmHelper.open();
                     String token = mPreferenceHelper.getToken(); // FIXME: 13.05.17 get token from account manager
-                    String link = response.body().string().toString();
+                    String link = response.body().string();
                     DataModel model = mRealmHelper.getLastDataModel();
                     String id = model.getUid();
                     mRealmHelper.updatePhotoURL(id, link);
@@ -240,13 +240,13 @@ public class MyasoApi implements Api {
                 Log.d(TAG, "onResponse");
                 if (response.isSuccessful()) {
                     try {
-                        Log.e(TAG, "response.body().string().toString(): " + response.body().string().toString());
+                        Log.e(TAG, "response.body().string().toString(): " + response.body().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string().toString());
+                        Log.e(TAG, "response.errorBody().string().toString(): " + response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -290,7 +290,6 @@ public class MyasoApi implements Api {
                     }
 
                     realmHelper.close();
-//                    MainActivity.setRecyclerViewAdapter();
                 }
             }
 

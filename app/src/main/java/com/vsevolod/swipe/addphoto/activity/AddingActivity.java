@@ -54,11 +54,8 @@ import okhttp3.RequestBody;
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
-    private final int THUMB_SIZE = Constants.THUMB_SIZE;
-    private Toolbar toolbar;
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper = new RealmHelper();
-    private ImageView mImageView;
     private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
     private String path = null;
@@ -73,7 +70,7 @@ public class AddingActivity extends AppCompatActivity {
         mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
-        toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -90,9 +87,8 @@ public class AddingActivity extends AppCompatActivity {
         } else {
             path = getIntent().getStringExtra("path"); // FIXME: 11.05.17 hardcode
         }
-        path.toString();
 
-        mImageView = (ImageView) findViewById(R.id.adding_image_view);
+        ImageView mImageView = (ImageView) findViewById(R.id.adding_image_view);
         Picasso.with(this).load(path).into(mImageView);
 
 //        setFlowsTree(savedInstanceState);
@@ -120,11 +116,9 @@ public class AddingActivity extends AppCompatActivity {
 
     private void setLocationTracker() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
+                == PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // You need to ask the user to enable the permissions
-        } else {
+                == PackageManager.PERMISSION_GRANTED) {
             TrackerSettings settings =
                     new TrackerSettings()
                             .setUseGPS(true)
@@ -135,7 +129,7 @@ public class AddingActivity extends AppCompatActivity {
             mTracker = new LocationTracker(MyApplication.getAppContext(), settings) {
 
                 @Override
-                public void onLocationFound(Location location) {
+                public void onLocationFound(@NonNull Location location) {
                     // Do some stuff when a new GPS Location has been found
                     Log.d(TAG, "onLocationFound");
                     mLocation = location;
@@ -173,6 +167,7 @@ public class AddingActivity extends AppCompatActivity {
         Log.d(TAG, "decodeImage");
         File imageFile = new File(path);
         text = mAutoCompleteTextView.getText().toString();
+        final int THUMB_SIZE = Constants.THUMB_SIZE;
         if (imageFile.exists()) {
             prefixValidation();
 
@@ -194,7 +189,7 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     private void uploadImage(File imageFile) {
-        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageFile); // FIXME: 11.05.17 hardcode
+        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MADIA_TYPE_IMAGE), imageFile);
         CommitTask task = new CommitTask();
         task.execute(reqFile);
     }
