@@ -35,13 +35,11 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.command.MyasoApi;
-import com.vsevolod.swipe.addphoto.command.method.GetList;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.query.ListModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
@@ -172,35 +170,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
                 mRealmHelper.dropRealmData();
-                setRecyclerViewAdapter();
                 break;
             case R.id.main_menu_repeat_download:
-                GetList list = new GetList(api);
-                if (mRealmHelper.dataQueue().size() < 1) {
-                    break;
-                }
-                String[] ids = new String[mRealmHelper.dataQueue().size()];
-                for (int i = 0; i < mRealmHelper.dataQueue().size(); i++) {
-                    ids[i] = mRealmHelper.dataQueue().get(i);
-                }
-                ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
-                list.execute(model);
+                //this sample getting new state codes from ERP
+//                GetList list = new GetList(api);
+//                if (mRealmHelper.dataQueue().size() < 1) {
+//                    break;
+//                }
+//                String[] ids = new String[mRealmHelper.dataQueue().size()];
+//                for (int i = 0; i < mRealmHelper.dataQueue().size(); i++) {
+//                    ids[i] = mRealmHelper.dataQueue().get(i);
+//                }
+//                ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
+//                list.execute(model);
+
+                // syncing data
+                ContentResolver.requestSync(
+                        new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                        getResources().getString(R.string.content_authority),
+                        new Bundle());
                 break;
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
+                //for debug only
                 mRealmHelper.countData();
                 break;
             case R.id.main_menu_request_flow:
                 getTree();
                 break;
             case R.id.main_menu_log_out:
-//                Intent intent = new Intent(this, LoginActivity.class);
-//                startActivity(intent);
-                ContentResolver.requestSync(
-                        new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
-                        getResources().getString(R.string.content_authority),
-                        new Bundle());
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;
@@ -401,7 +402,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         );
 
 //        mAccountManager.blockingGetAuthToken();
-// делает тоже самое, что и getAuthToken, только синхронно
+// делает тоже самое, что и getAuthToken, только синхронно .вызывать только в бэк граунде
         // то есть можно все таки написать красивый GetTreeTask, вместо этой кучи кода в активити
         //The last parameter for this method is notifyAuthFailue and if set to “true” it will raise
         // a notification to the user in case there was an authentication problem, such as an invalidated auth token.
@@ -411,11 +412,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onChange(Object element) {
         Log.e(TAG, "onChange: invalidate");
         Log.e(TAG, "onChange: object.toString() " + element.toString());
-        setRecyclerViewAdapter();
         ContentResolver.requestSync(
                 new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
                 new Bundle());
+        setRecyclerViewAdapter();
     }
 
     private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
