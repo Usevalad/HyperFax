@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("EXIT", false)) {
+        if (getIntent().getExtras() != null && getIntent().getExtras()
+                .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
             finish();
         }
         mRealmHelper.open();

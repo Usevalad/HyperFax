@@ -21,7 +21,7 @@ public class Constants {
     public static final String DATA_MODEL_STATE_REVIEW = "Review";
     public static final String DATA_MODEL_STATE_DECLINED = "Declined";
     public static final String DATA_MODEL_STATE_NEED_SYNC = "Need sync";
-    public static final String INTENT_KEY_GET_TREE = "com.vsevolod.swipe.addphoto.getTree";
+    public static final String INTENT_KEY_EXIT = "com.vsevolod.swipe.addphoto.EXIT";
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
