@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
+import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -127,6 +128,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         }
         return phoneNumber;
     }
+
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -209,6 +211,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
                         mPasswordView.requestFocus();
                     } else {
                         finishLogin(intent);
+                        new TreeConverterTask().execute();
                         // Close the activity, we're done
                         finish();
                     }
@@ -271,7 +274,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
 
         if (acc.length == 0) {
-            Log.e(TAG, "finishLogin: adding new account" );
+            Log.e(TAG, "finishLogin: adding new account");
             mAccountManager.addAccountExplicitly(account, password, null);
         } else {
             Log.e(TAG, "finishLogin: changing password in existed account");

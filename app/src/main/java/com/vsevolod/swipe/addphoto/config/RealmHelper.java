@@ -65,10 +65,12 @@ public class RealmHelper {
         Log.d(TAG, "dropRealmTree");
         RealmResults<FlowsTreeModel> results = this.realm.where(FlowsTreeModel.class).findAll();
         // All changes to data must happen in a transaction
-        this.realm.beginTransaction();
-        // Delete all matches
-        results.deleteAllFromRealm();
-        this.realm.commitTransaction();
+        if (results.size() > 0) {
+            this.realm.beginTransaction();
+            // Delete all matches
+            results.deleteAllFromRealm();
+            this.realm.commitTransaction();
+        }
     }
 
 

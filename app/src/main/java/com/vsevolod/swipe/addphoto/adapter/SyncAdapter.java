@@ -9,9 +9,11 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
+import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
@@ -36,6 +38,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private final String TAG = this.getClass().getSimpleName();
     private AccountManager mAccountManager;
     private RealmHelper mRealmHelper;
+    private long mLastSyncTime = 0L;
+    private long mLastTreeSync = 0L;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -51,24 +55,35 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "SyncAdapter: constructor 2");
     }
 
-
     @Override
     public void onPerformSync(Account account, Bundle extras,
                               String authority, ContentProviderClient provider,
                               SyncResult syncResult) {
         Log.d(TAG, "onPerformSync");
-        mRealmHelper.open();
-        List<DataModel> dataModels = mRealmHelper.getNotSyncedData();
-        Log.d(TAG, "onPerformSync: dataModels.size() " + dataModels.size());
-        String[] dataIds = mRealmHelper.getNotSyncedDataStatesIds();
-        Log.d(TAG, "onPerformSync: dataIds.length " + dataIds.length);
-        if (dataModels.size() > 0) {
-            uploadData(getToken(account), dataModels);
+        if (SystemClock.elapsedRealtime() - mLastSyncTime > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
+            mLastSyncTime = SystemClock.elapsedRealtime();
+            mRealmHelper.open();
+            List<DataModel> dataModels = mRealmHelper.getNotSyncedData();
+            Log.d(TAG, "onPerformSync: dataModels.size() " + dataModels.size());
+            String[] dataIds = mRealmHelper.getNotSyncedDataStatesIds();
+            Log.d(TAG, "onPerformSync: dataIds.length " + dataIds.length);
+            if (dataModels.size() > 0) {
+                uploadData(getToken(account), dataModels);
+            }
+            if (dataIds.length > 0) {
+                getStateCodesFromServer(getToken(account), dataIds);
+            }
+            mRealmHelper.close();
+            if (SystemClock.elapsedRealtime() - mLastTreeSync > Constants.MILLISECONDS_DAY) {
+                mLastTreeSync = SystemClock.elapsedRealtime();
+                updateFlowsTree();
+            }
         }
-        if (dataIds.length > 0) {
-            getStateCodesFromServer(getToken(account), dataIds);
-        }
-        mRealmHelper.close();
+    }
+
+    private void updateFlowsTree() {
+        TreeConverterTask task = new TreeConverterTask();
+        task.execute();
     }
 
     private String getToken(Account account) {

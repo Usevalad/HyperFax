@@ -253,7 +253,6 @@ public class AddingActivity extends AppCompatActivity {
         }
         mLastClickTime = SystemClock.elapsedRealtime();
         decodeImage();
-
     }
 
     private TreeNode.TreeNodeClickListener nodeClickListener = new TreeNode.TreeNodeClickListener() {

@@ -2,10 +2,6 @@ package com.vsevolod.swipe.addphoto.activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -39,22 +35,15 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
-import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import io.realm.RealmChangeListener;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 // FIXME: 21.04.17 find memory leak
 // FIXME: 21.04.17 fix memory leak
@@ -70,11 +59,12 @@ import retrofit2.Response;
 // TODO: 13.05.17 if creates new account - need to update flowsTree
 // TODO: 16.05.17 add some message if no internet connection
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
-    private static final int SELECT_PICTURE = 12;
+    private final String TAG = MainActivity.class.getSimpleName();
+    private final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
+    private final int SELECT_PICTURE = 12;
+    private long mLastOnchangeAction = 0L;
     public RecyclerView mRecyclerView;
-    public static List<DataModel> data;
+    public List<DataModel> data;
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
@@ -86,8 +76,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper mRealmHelper = new RealmHelper();
-    private AccountManager mAccountManager;
-    private String mAuthToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +94,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setRecyclerViewAdapter();
         setFabHidingAbility();
         mRealmHelper.getRealm().addChangeListener(this);
+        setPeriodicSync();
+    }
+
+    private void setPeriodicSync() {
+        int syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
+                Constants.MILLISECONDS_FIVE_MIN : Constants.MILLISECONDS_HOUR;
+        ContentResolver.addPeriodicSync(
+                new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                getResources().getString(R.string.content_authority),
+                new Bundle(),
+                syncTime);
     }
 
     private void setFABAnimation() {
@@ -171,18 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mRealmHelper.dropRealmData();
                 break;
             case R.id.main_menu_repeat_download:
-                //this sample getting new state codes from ERP
-//                GetList list = new GetList(api);
-//                if (mRealmHelper.dataQueue().size() < 1) {
-//                    break;
-//                }
-//                String[] ids = new String[mRealmHelper.dataQueue().size()];
-//                for (int i = 0; i < mRealmHelper.dataQueue().size(); i++) {
-//                    ids[i] = mRealmHelper.dataQueue().get(i);
-//                }
-//                ListModel model = new ListModel(mPreferenceHelper.getToken(), ids);
-//                list.execute(model);
-
                 // syncing data
                 ContentResolver.requestSync(
                         new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
@@ -195,7 +182,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mRealmHelper.countData();//for debug only
                 break;
             case R.id.main_menu_request_flow:
-                getTree();
+                AccountManager am = AccountManager.get(this);
+                if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
+                    new TreeConverterTask().execute();
+                } else {
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    startActivity(intent);
+                }
                 break;
             case R.id.main_menu_log_out:
                 Intent intent = new Intent(this, LoginActivity.class);
@@ -367,47 +360,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void getTree() {
-        Log.d(TAG, "getTree");
-        mAccountManager = AccountManager.get(this);
-        Account[] acc = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-
-        if (acc.length == 0) {
-            Log.e(TAG, "No accounts of type " + AccountGeneral.ARG_ACCOUNT_TYPE + " found");
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, true);
-            startActivity(intent);
-            return;
-        }
-        Account account = acc[0];
-        startAuthTokenFetch(account);
-    }
-
-    private void startAuthTokenFetch(Account account) {
-        Log.d(TAG, "startAuthTokenFetch");
-        Bundle options = new Bundle();
-        android.os.Handler handler = new android.os.Handler();
-        OnAccountManagerComplete callBack = new OnAccountManagerComplete();
-        mAccountManager.getAuthToken(
-                account,
-                AccountGeneral.ARG_TOKEN_TYPE,
-                options,
-                this,
-                callBack,
-                handler
-        );
-
-//        mAccountManager.blockingGetAuthToken();
-// делает тоже самое, что и getAuthToken, только синхронно .вызывать только в бэк граунде
-        // то есть можно все таки написать красивый GetTreeTask, вместо этой кучи кода в активити
-        //The last parameter for this method is notifyAuthFailue and if set to “true” it will raise
-        // a notification to the user in case there was an authentication problem, such as an invalidated auth token.
-    }
+//    private void startAuthTokenFetch(Account account) {
+//        Log.d(TAG, "startAuthTokenFetch");
+//        Bundle options = new Bundle();
+//        android.os.Handler handler = new android.os.Handler();
+//        OnAccountManagerComplete callBack = new OnAccountManagerComplete();
+//        mAccountManager.getAuthToken(
+//                account,
+//                AccountGeneral.ARG_TOKEN_TYPE,
+//                options,
+//                this,
+//                callBack,
+//                handler
+//        );
+//    }
 
     @Override
     public void onChange(Object element) {
-        Log.e(TAG, "onChange: invalidate");
-        if (!TextUtils.equals(element.getClass().getName(), FlowsTreeModel.class.getName())) {
+        Log.e(TAG, "onChange");
+        if (SystemClock.elapsedRealtime() - mLastOnchangeAction > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
+            Log.e(TAG, "onChange: invalidate");
+            Log.e(TAG, "onChange: last onchange " + mLastOnchangeAction);
+
+            mLastOnchangeAction = SystemClock.elapsedRealtime();
             ContentResolver.requestSync(
                     new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
                     getResources().getString(R.string.content_authority),
@@ -417,48 +392,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
-        private final String TAG = this.getClass().getSimpleName();
-
-        @Override
-        public void run(AccountManagerFuture<Bundle> result) {
-            Bundle bundle;
-            Log.e(TAG, "run");
-            try {
-                bundle = result.getResult();
-            } catch (OperationCanceledException e) {
-                e.printStackTrace();
-                return;
-            } catch (AuthenticatorException e) {
-                e.printStackTrace();
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            mAuthToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-            Log.e(TAG, "Received authentication token " + mAuthToken);
-            MyApplication.getApi().getTree(new TokenModel(mAuthToken)).enqueue(new Callback<ResponseFlowsTreeModel>() {
-                @Override
-                public void onResponse(Call<ResponseFlowsTreeModel> call, Response<ResponseFlowsTreeModel> response) {
-                    if (response.isSuccessful()) {
-                        List<List<String>> list = response.body().getList();
-                        if (list != null) {
-                            Log.d(TAG, list.toString());
-                            Log.d(TAG, list.get(0).toString());
-
-                            TreeConverterTask task = new TreeConverterTask();
-                            task.execute(response.body());
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseFlowsTreeModel> call, Throwable t) {
-                    Log.e(TAG, "onFailure: ", t);
-                }
-            });
-        }
-    }
+//    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
+//        private final String TAG = this.getClass().getSimpleName();
+//
+//        @Override
+//        public void run(AccountManagerFuture<Bundle> result) {
+//            Bundle bundle;
+//            Log.e(TAG, "run");
+//            try {
+//                bundle = result.getResult();
+//            } catch (OperationCanceledException e) {
+//                e.printStackTrace();
+//                return;
+//            } catch (AuthenticatorException e) {
+//                e.printStackTrace();
+//                return;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return;
+//            }
+//        }
+//    }
 }
