@@ -35,6 +35,7 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.io.File;
@@ -50,13 +51,7 @@ import io.realm.RealmChangeListener;
 // FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
 // FIXME: 21.04.17 check onActivityResult, looks horribly
 // FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
-// TODO: 13.05.17 add feature: когда я нажимаю обновить дерево, но у меня нет токена.аккаунта - я отправляюсь
-// в логин активити, где получаю токен, но после это просто попадаю в мэин активити. Надо сделать так,
-// что бы после получения токена продолжилось действие, которое проверяло наличие этого токена.
-// то есть если я нажимал обновить дерево, то после получения токена оно начало обновляться без
-// очередного вмешательства юзера
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
-// TODO: 13.05.17 if creates new account - need to update flowsTree
 // TODO: 16.05.17 add some message if no internet connection
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
     private final String TAG = MainActivity.class.getSimpleName();
@@ -392,7 +387,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
+    @Override
+    public void onBackPressed() {
+        QuitFragment fragment = new QuitFragment();
+        fragment.show(getFragmentManager(), "MyDialog");
+    }
+
+    //    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
 //        private final String TAG = this.getClass().getSimpleName();
 //
 //        @Override

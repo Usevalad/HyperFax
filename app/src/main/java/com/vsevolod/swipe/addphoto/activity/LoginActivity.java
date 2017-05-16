@@ -26,6 +26,7 @@ import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
@@ -95,6 +96,12 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    public void onBackPressed() {
+        QuitFragment fragment = new QuitFragment();
+        fragment.show(getFragmentManager(), "MyDialog");
     }
 
     @NonNull
