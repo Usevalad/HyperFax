@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        if (getIntent().getExtras() != null && getIntent().getExtras().getBoolean("EXIT", false)) {
+            finish();
+        }
         mRealmHelper.open();
         data = mRealmHelper.getData();
         setContentView(R.layout.activity_main);
@@ -187,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_log_out:
                 Intent intent = new Intent(this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
             default:
