@@ -189,9 +189,10 @@ public class AddingActivity extends AppCompatActivity {
     }
 
     private void uploadImage(File imageFile) {
-        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
-        CommitTask task = new CommitTask();
-        task.execute(reqFile);
+        //image uploading task
+//        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
+//        CommitTask task = new CommitTask();
+//        task.execute(reqFile);
     }
 
     private void prefixValidation() {

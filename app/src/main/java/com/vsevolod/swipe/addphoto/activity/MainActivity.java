@@ -38,7 +38,6 @@ import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
-import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int SELECT_PICTURE = 12;
     public RecyclerView mRecyclerView;
     public static List<DataModel> data;
-    private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper mRealmHelper = new RealmHelper();
-    private MyasoApi api = new MyasoApi();
     private AccountManager mAccountManager;
     private String mAuthToken;
 
@@ -193,8 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
                 item.setChecked(isChecked);
-                //for debug only
-                mRealmHelper.countData();
+                mRealmHelper.countData();//for debug only
                 break;
             case R.id.main_menu_request_flow:
                 getTree();
@@ -231,13 +227,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_camera:
                 mFABCamera.setClickable(false);
                 mFABGallery.setClickable(false);
-                // TODO: 21.04.17 wrap in a method
                 startCameraActivity();
                 break;
             case R.id.fab_gallery:
                 mFABCamera.setClickable(false);
                 mFABGallery.setClickable(false);
-                // TODO: 21.04.17 wrap this in a method
                 Intent intent = new Intent();
                 intent.setType(Constants.MEDIA_TYPE_IMAGE);
                 intent.setAction(Intent.ACTION_GET_CONTENT);

@@ -1,12 +1,10 @@
 package com.vsevolod.swipe.addphoto.config;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,12 +18,16 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
-// TODO: 15.05.17 refactor
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
+    private final String FIELD_DATE = "date";
+    private final String FIELD_SEARCH_DATE = "searchDate";
+    private final String FIELD_NAME = "name";
+    private final String FIELD_PREFIX = "prefix";
+    private final String FIELD_UID = "uid";
+    private final String FIELD_IS_SYNCED = "isSynced";
     private Realm realm;
-    public List<DataModel> data = new ArrayList<>();
-    public List<FlowsTreeModel> tree = new ArrayList<>();
+
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
@@ -37,7 +39,6 @@ public class RealmHelper {
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         this.realm = Realm.getDefaultInstance();
-        initRealm();
     }
 
     public void close() {
@@ -47,18 +48,6 @@ public class RealmHelper {
 
     public Realm getRealm() {
         return realm;
-    }
-
-    private void initRealm() {
-        Log.d(TAG, "initRealmData");
-        //data
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> dataResults = dataQuery.findAllSorted("date", Sort.DESCENDING);
-        this.data = dataResults;
-        //tree
-        RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
-        RealmResults<FlowsTreeModel> treeResults = treeQuery.findAll();
-        this.tree = treeResults;
     }
 
     public void dropRealmData() {
@@ -84,11 +73,18 @@ public class RealmHelper {
 
     public List<DataModel> getData() {
         Log.d(TAG, "getData");
-        return this.data;
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        return dataQuery.findAllSorted(FIELD_DATE, Sort.DESCENDING);
+    }
+
+    public List<FlowsTreeModel> getTree() {
+        RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
+        return treeQuery.findAll();
     }
 
     public boolean isValid(String text) {
         Log.d(TAG, "isValid");
+        List<FlowsTreeModel> tree = getTree();
         String tmp;
 
         for (int i = 0; i < tree.size(); i++) {
@@ -103,18 +99,18 @@ public class RealmHelper {
 
     public List<DataModel> search(String queryString) {
         RealmQuery query = this.realm.where(DataModel.class);
-        query.contains("searchDate", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.or().contains("name", queryString, Case.INSENSITIVE);
-        query.or().equalTo("name", queryString, Case.INSENSITIVE);
-        query.or().beginsWith("prefix", queryString);
+        query.contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.or().contains(FIELD_NAME, queryString, Case.INSENSITIVE);
+        query.or().equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
+        query.or().beginsWith(FIELD_PREFIX, queryString);
         return query.findAll();
     }
 
     public List<FlowsTreeModel> searchTree(String queryString) {
         RealmQuery query = this.realm.where(FlowsTreeModel.class);
-        query.contains("name", queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.or().beginsWith("prefix", queryString);
-        query.or().equalTo("prefix", queryString);
+        query.contains(FIELD_NAME, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.or().beginsWith(FIELD_PREFIX, queryString);
+        query.or().equalTo(FIELD_PREFIX, queryString);
         return query.findAll();
     }
 
@@ -175,21 +171,21 @@ public class RealmHelper {
     public DataModel getLastDataModel() {
         Log.d(TAG, "getLastDataModel");
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> models = dataQuery.findAllSorted("date", Sort.DESCENDING);
+        RealmResults<DataModel> models = dataQuery.findAllSorted(FIELD_DATE, Sort.DESCENDING);
         return models.first();
     }
 
     public String getPrefixID(String prefix) {
         Log.d(TAG, "getPrefixID");
         RealmQuery idQuery = this.realm.where(FlowsTreeModel.class);
-        idQuery.equalTo("prefix", prefix, Case.INSENSITIVE);
+        idQuery.equalTo(FIELD_PREFIX, prefix, Case.INSENSITIVE);
         FlowsTreeModel model;
         try {
             model = (FlowsTreeModel) idQuery.findFirst();
             return model.getId();
         } catch (NullPointerException e) {
             e.printStackTrace();
-            Toast.makeText(MyApplication.getAppContext(), "Can't find prefix", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "getPrefixID: " + "Can't find prefix");
             return "no id";
         }
     }
@@ -198,7 +194,7 @@ public class RealmHelper {
         Log.d(TAG, "updateStateCode");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo("uid", id);
+        dataQuery.equalTo(FIELD_UID, id);
         DataModel model;
         try {
             model = (DataModel) dataQuery.findFirst();
@@ -219,7 +215,7 @@ public class RealmHelper {
         Log.d(TAG, "updateServerPhotoURL");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo("uid", id);
+        dataQuery.equalTo(FIELD_UID, id);
         DataModel model;
         try {
             model = (DataModel) dataQuery.findFirst();
@@ -240,7 +236,7 @@ public class RealmHelper {
         Log.d(TAG, "setSynced");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo("uid", id);
+        dataQuery.equalTo(FIELD_UID, id);
         DataModel model;
         try {
             model = (DataModel) dataQuery.findFirst();
@@ -258,33 +254,22 @@ public class RealmHelper {
     }
 
     public List<DataModel> getNotSynced() {
+        Log.d(TAG, "getNotSynced");
         RealmQuery query = this.realm.where(DataModel.class);
-        query.equalTo("isSynced", false);
+        query.equalTo(FIELD_IS_SYNCED, false);
         return query.findAll();
     }
 
     public List<DataModel> getNotFinishedStates() {
+        Log.d(TAG, "getNotFinishedStates:");
         RealmQuery query = this.realm.where(DataModel.class);
-        query.equalTo("isSynced", false);
+        query.equalTo(FIELD_IS_SYNCED, false);
         return query.findAll();
     }
 
-
-    public List<String> dataQueue() {
-        Log.d(TAG, "dataQueue");
-        List<String> ids = new ArrayList<>();
-        for (int i = 0; i < data.size(); i++) {
-            String stateCode = data.get(i).getStateCode();
-            if (stateCode.equals(Constants.STATE_CODE_CREATED) ||
-                    stateCode.equals(Constants.STATE_CODE_REVIEW)) {
-                ids.add(data.get(i).getUid());
-            }
-        }
-        return ids;
-    }
-
     public void countData() {
-        Log.d(TAG, "countData" + "data.size() is " + data.size());
+        Log.d(TAG, "countData");
+        List<DataModel> data = getData();
         for (int i = 0; i < data.size(); i++) {
             String searchDate = data.get(i).getSearchDate();
             String prefix = data.get(i).getPrefix();
@@ -312,5 +297,7 @@ public class RealmHelper {
                             "stateCode = " + stateCode + "\n" +
                             "isSynced = " + isSync);
         }
+        Log.i(TAG, "countData: data.size is " + data.size());
+        Log.i(TAG, "countData: not synced size is  " + getNotSynced().size());
     }
 }
