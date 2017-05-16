@@ -29,7 +29,6 @@ import android.widget.TextView;
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
-import com.vsevolod.swipe.addphoto.asyncTask.CommitTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
@@ -47,8 +46,6 @@ import java.util.TimeZone;
 import fr.quentinklein.slt.LocationTracker;
 import fr.quentinklein.slt.TrackerSettings;
 import it.sephiroth.android.library.picasso.Picasso;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
@@ -182,17 +179,9 @@ public class AddingActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             saveDataToRealm(byteArray, path);
-            uploadImage(imageFile);
         } else {
             Log.d(TAG, "addImage: file is not exist");
         }
-    }
-
-    private void uploadImage(File imageFile) {
-        //image uploading task
-//        RequestBody reqFile = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
-//        CommitTask task = new CommitTask();
-//        task.execute(reqFile);
     }
 
     private void prefixValidation() {

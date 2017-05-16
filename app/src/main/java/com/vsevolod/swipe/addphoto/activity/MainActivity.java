@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -34,13 +35,13 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
-import com.vsevolod.swipe.addphoto.command.MyasoApi;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 
 import java.io.File;
@@ -67,6 +68,7 @@ import retrofit2.Response;
 // очередного вмешательства юзера
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
 // TODO: 13.05.17 if creates new account - need to update flowsTree
+// TODO: 16.05.17 add some message if no internet connection
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
@@ -405,12 +407,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onChange(Object element) {
         Log.e(TAG, "onChange: invalidate");
-        Log.e(TAG, "onChange: object.toString() " + element.toString());
-        ContentResolver.requestSync(
-                new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
-                getResources().getString(R.string.content_authority),
-                new Bundle());
-        setRecyclerViewAdapter();
+        if (!TextUtils.equals(element.getClass().getName(), FlowsTreeModel.class.getName())) {
+            ContentResolver.requestSync(
+                    new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                    getResources().getString(R.string.content_authority),
+                    new Bundle());
+
+            setRecyclerViewAdapter();
+        }
     }
 
     private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {

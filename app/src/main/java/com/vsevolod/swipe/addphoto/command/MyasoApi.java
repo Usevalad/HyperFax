@@ -13,7 +13,6 @@ import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.ListModel;
-import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
 import com.vsevolod.swipe.addphoto.model.query.TokenModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
@@ -22,7 +21,6 @@ import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.RequestBody;
@@ -36,19 +34,11 @@ import retrofit2.http.Part;
 /**
  * Created by vsevolod on 11.04.17.
  */
-
-public class MyasoApi implements Api {
-    // FIXME: 17.04.17 need rx
-    // FIXME: 21.04.17 response status checker
-    // FIXME: 21.04.17 create new query call order
-    // FIXME: 21.04.17 wrap queries in asyncTask
+// TODO: 16.05.17 remove later
+public class MyasoApi {
     private final String TAG = this.getClass().getSimpleName();
     private PreferenceHelper mPreferenceHelper = new PreferenceHelper();
 
-    public MyasoApi() {
-    }
-
-    @Override
     public void getTree(@Body TokenModel model) {
         Log.d(TAG, "getTree");
         MyApplication.getApi().getTree(model).enqueue(new Callback<ResponseFlowsTreeModel>() {
@@ -78,7 +68,6 @@ public class MyasoApi implements Api {
         });
     }
 
-    @Override
     public void authenticate(@Body AuthModel user) {
         Log.d(TAG, "authenticate");
         MyApplication.getApi().authenticate(user).enqueue(new Callback<UserModel>() {
@@ -106,7 +95,6 @@ public class MyasoApi implements Api {
                                     "протокол выдачи конкретной задачи");
                             String token = response.body().getToken().toString();
                             mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, token);
-                            // FIXME: 15.04.17  token = not found
                             startMainActivity();
                             break;
                         case Constants.RESPONSE_STATUS_BAD:
@@ -133,12 +121,6 @@ public class MyasoApi implements Api {
         Log.d(TAG, "authenticate");
     }
 
-    @Override
-    public void authenticate(@Body SimpleAuthModel user) {
-        Log.d(TAG, "authenticate");
-    }
-
-    @Override
     public void verify(@Body TokenModel token) {
         Log.d(TAG, "verify");
         MyApplication.getApi().verify(token).enqueue(new Callback<CheckedInfo>() {
@@ -189,7 +171,6 @@ public class MyasoApi implements Api {
         });
     }
 
-    @Override
     public void uploadImage(@Part("body") RequestBody body) {
         Log.d(TAG, "uploadImage");
         MyApplication.getApi().postImage(body).enqueue(new Callback<ResponseBody>() {
@@ -201,7 +182,6 @@ public class MyasoApi implements Api {
                     RealmHelper mRealmHelper = new RealmHelper();
                     mRealmHelper.open();
 //                    AccountManager mAccountManager = AccountManager.get(MyApplication.getAppContext());
-                    // TODO: 15.05.17 blockingGetAuthToken only from back ground thread
 //                    String token = mAccountManager.blockingGetAuthToken(new Account(AccountGeneral.ARG_ACCOUNT_NAME,
 //                            AccountGeneral.ARG_ACCOUNT_TYPE), AccountGeneral.ARG_TOKEN_TYPE, true);
                     PreferenceHelper preferenceHelper = new PreferenceHelper();
@@ -209,7 +189,7 @@ public class MyasoApi implements Api {
                     String link = response.body().string();
                     DataModel model = mRealmHelper.getLastDataModel();
                     String id = model.getUid();
-                    mRealmHelper.updatePhotoURL(id, link);
+                    mRealmHelper.setPhotoURL(id, link);
                     mRealmHelper.setSynced(id, true);
                     CommitModel commitModel = new CommitModel(
                             token,
@@ -235,7 +215,6 @@ public class MyasoApi implements Api {
         });
     }
 
-    @Override
     public void commit(@Body CommitModel commitModel) {
         Log.d(TAG, "commit");
         MyApplication.getApi().commit(commitModel).enqueue(new Callback<ResponseBody>() {
@@ -264,7 +243,6 @@ public class MyasoApi implements Api {
         });
     }
 
-    @Override
     public void list(@Body ListModel listModel) {
         Log.d(TAG, "list");
         MyApplication.getApi().list(listModel).enqueue(new Callback<ListResponse>() {
@@ -272,10 +250,8 @@ public class MyasoApi implements Api {
             public void onResponse(Call<ListResponse> call, Response<ListResponse> response) {
                 if (response.isSuccessful()) {
                     Log.e(TAG, "onResponse: ");
-                    List<String> ids = new ArrayList<String>();
-                    List<String> states = new ArrayList<String>();
-                    ids = response.body().getIds();
-                    states = response.body().stateCodes();
+                    List<String> ids = response.body().getIds();
+                    List<String> states = response.body().stateCodes();
                     Log.d(TAG, "onResponse: id = " + ids.get(0));
                     Log.d(TAG, "onResponse: state = " + states.get(0));
 
@@ -283,7 +259,7 @@ public class MyasoApi implements Api {
                     realmHelper.open();
                     for (int i = 0; i < ids.size(); i++) {
 
-                        realmHelper.updateStateCode(ids.get(i), states.get(i));
+                        realmHelper.setStateCode(ids.get(i), states.get(i));
                     }
 
 

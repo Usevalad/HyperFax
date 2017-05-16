@@ -1,5 +1,6 @@
 package com.vsevolod.swipe.addphoto.config;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -26,8 +27,8 @@ public class RealmHelper {
     private final String FIELD_PREFIX = "prefix";
     private final String FIELD_UID = "uid";
     private final String FIELD_IS_SYNCED = "isSynced";
+    private final String FIELD_STATE_CODE = "stateCode";
     private Realm realm;
-
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
@@ -190,28 +191,7 @@ public class RealmHelper {
         }
     }
 
-    public void updateStateCode(String id, String stateCode) {
-        Log.d(TAG, "updateStateCode");
-
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo(FIELD_UID, id);
-        DataModel model;
-        try {
-            model = (DataModel) dataQuery.findFirst();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Log.d(TAG, "getDataById: no data with such id");
-            return;
-        }
-
-        this.realm.beginTransaction();
-        model.setStateCode(stateCode);
-        this.realm.copyToRealmOrUpdate(model);
-        this.realm.commitTransaction();
-        Log.d(TAG, "updateStateCode: updated " + stateCode);
-    }
-
-    public void updatePhotoURL(String id, String imageUrl) {
+    public void setPhotoURL(String id, String imageUrl) {
         Log.d(TAG, "updateServerPhotoURL");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
@@ -253,18 +233,31 @@ public class RealmHelper {
         Log.d(TAG, "setSynced: isSynced " + isSynced);
     }
 
-    public List<DataModel> getNotSynced() {
+    public List<DataModel> getNotSyncedData() {
         Log.d(TAG, "getNotSynced");
         RealmQuery query = this.realm.where(DataModel.class);
         query.equalTo(FIELD_IS_SYNCED, false);
         return query.findAll();
     }
 
-    public List<DataModel> getNotFinishedStates() {
+    public String[] getNotSyncedDataStatesIds() {
         Log.d(TAG, "getNotFinishedStates:");
         RealmQuery query = this.realm.where(DataModel.class);
-        query.equalTo(FIELD_IS_SYNCED, false);
-        return query.findAll();
+        query.equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_CREATED);
+        query.or().equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_REVIEW);
+        List<DataModel> list = query.findAll();
+        String[] ids = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            ids[i] = list.get(i).getUid();
+        }
+        return ids;
+    }
+
+    public boolean isStateCodeEqual(String uid, String stateCode) {
+        RealmQuery query = this.realm.where(DataModel.class);
+        query.equalTo(FIELD_UID, uid);
+        DataModel dataModel = (DataModel) query.findFirst();
+        return TextUtils.equals(dataModel.getStateCode(), stateCode);
     }
 
     public void countData() {
@@ -298,6 +291,25 @@ public class RealmHelper {
                             "isSynced = " + isSync);
         }
         Log.i(TAG, "countData: data.size is " + data.size());
-        Log.i(TAG, "countData: not synced size is  " + getNotSynced().size());
+        Log.i(TAG, "countData: not synced size is  " + getNotSyncedData().size());
+    }
+
+    public void setStateCode(String id, String stateCode) {
+        Log.d(TAG, "setStateCode");
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        dataQuery.equalTo(FIELD_UID, id);
+        DataModel model;
+        try {
+            model = (DataModel) dataQuery.findFirst();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getDataById: no data with such id");
+            return;
+        }
+        this.realm.beginTransaction();
+        model.setStateCode(stateCode);
+        this.realm.copyToRealmOrUpdate(model);
+        this.realm.commitTransaction();
+        Log.d(TAG, "updateStateCode: updated " + stateCode);
     }
 }

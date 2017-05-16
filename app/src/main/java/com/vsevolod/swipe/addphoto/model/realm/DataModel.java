@@ -1,6 +1,7 @@
 package com.vsevolod.swipe.addphoto.model.realm;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.config.Constants;
 
 import java.util.Date;
 
@@ -21,7 +22,7 @@ public class DataModel extends RealmObject {
     private String comment;
     private double latitude;
     private double longitude;
-    private String stateCode = "Created"; // FIXME: 11.05.17 hardcode
+    private String stateCode = Constants.DATA_MODEL_STATE_NEED_SYNC;
     private byte[] photo;
     private String prefixID;
     private Date date;
@@ -147,16 +148,18 @@ public class DataModel extends RealmObject {
     }
 
 
-    public int getStateIconImage() {// FIXME: 11.05.17 hardcode
+    public int getStateIconImage() {
         switch (stateCode) {
-            case "Created":
+            case Constants.DATA_MODEL_STATE_CREATED:
                 return R.drawable.ic_time;
-            case "Accepted":
+            case Constants.DATA_MODEL_STATE_ACCEPTED:
                 return R.drawable.ic_all_checked;
-            case "Review":
+            case Constants.DATA_MODEL_STATE_REVIEW:
                 return R.drawable.ic_bomb;
-            case "Declined":
+            case Constants.DATA_MODEL_STATE_DECLINED:
                 return R.drawable.ic_canceled;
+            case Constants.DATA_MODEL_STATE_NEED_SYNC:
+                return R.drawable.ic_time;
             default:
                 return R.drawable.ic_bomb; //if something went wrong you'll see the bomb
         }
