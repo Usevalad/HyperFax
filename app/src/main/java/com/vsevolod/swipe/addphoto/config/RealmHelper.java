@@ -1,5 +1,6 @@
 package com.vsevolod.swipe.addphoto.config;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ import io.realm.Sort;
  * Created by vsevolod on 26.03.17.
  */
 public class RealmHelper {
+    private Context mContext;
     private final String TAG = this.getClass().getSimpleName();
     private final String FIELD_DATE = "date";
     private final String FIELD_SEARCH_DATE = "searchDate";
@@ -30,13 +32,14 @@ public class RealmHelper {
     private final String FIELD_STATE_CODE = "stateCode";
     private Realm realm;
 
-    public RealmHelper() {
+    public RealmHelper(Context context) {
+        this.mContext = context;
         Log.d(TAG, "Realm constructor");
     }
 
     public void open() {
         Log.d(TAG, "open");
-        Realm.init(MyApplication.getAppContext());
+        Realm.init(mContext);
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         this.realm = Realm.getDefaultInstance();

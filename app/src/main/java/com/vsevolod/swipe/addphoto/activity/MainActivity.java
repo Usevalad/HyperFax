@@ -32,7 +32,6 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
@@ -50,7 +49,6 @@ import io.realm.RealmChangeListener;
 // FIXME: 21.04.17 fix memory leak
 // FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
 // FIXME: 21.04.17 check onActivityResult, looks horribly
-// FIXME: 21.04.17 handle hardware back button onClick (show dialog fragment: "do you really want quit?")
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
 // TODO: 16.05.17 add some message if no internet connection
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
@@ -70,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Boolean isFabOpen = false;
     private boolean isChecked = false;
     private Uri fileUri = null;
-    private RealmHelper mRealmHelper = new RealmHelper();
+    private RealmHelper mRealmHelper;
+    private PathConverter mPathConverter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +79,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
             finish();
         }
+        mRealmHelper = new RealmHelper(this);
         mRealmHelper.open();
         data = mRealmHelper.getData();
+        mPathConverter = new PathConverter(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.logo);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setPeriodicSync() {
-        int syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
+        long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
                 Constants.MILLISECONDS_FIVE_MIN : Constants.MILLISECONDS_HOUR;
         ContentResolver.addPeriodicSync(
                 new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
@@ -124,7 +125,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         mRealmHelper.close();
+        mFAB.setOnClickListener(null);
+        mFABCamera.setOnClickListener(null);
+        mFABGallery.setOnClickListener(null);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        mRealmHelper.close();
+        mFAB.setOnClickListener(null);
+        mFABCamera.setOnClickListener(null);
+        mFABGallery.setOnClickListener(null);
+        super.onPause();
     }
 
     @Override
@@ -134,6 +148,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isFabOpen = true;
         mFABCamera.setClickable(true);
         mFABGallery.setClickable(true);
+        mFAB.setOnClickListener(this);
+        mFABCamera.setOnClickListener(this);
+        mFABGallery.setOnClickListener(this);
         animateFAB();
         setRecyclerViewAdapter();
         super.onResume();
@@ -183,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_request_flow:
                 AccountManager am = AccountManager.get(this);
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
-                    new TreeConverterTask().execute();
+                    new TreeConverterTask(this).execute();
                 } else {
                     Intent intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);
@@ -205,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (data != null) {
             Log.d(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(MyApplication.getAppContext(), data));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -288,13 +305,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     photoUri = data.getData();
                 }
                 startAddingActivity(photoUri.getPath());
-
             } else if (requestCode == SELECT_PICTURE) {
                 photoUri = data.getData();
-                String path = PathConverter.getFullPath(photoUri);
+                String path = mPathConverter.getFullPath(photoUri);
                 startAddingActivity(path);
             } else {
-                Log.e(TAG, "onActivityResult: " + "Call out for image capture failed!");
+                Log.e(TAG, "onActivityResult: Call out for image capture failed!");
             }
         }
     }

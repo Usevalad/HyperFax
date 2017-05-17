@@ -33,7 +33,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        mRealmHelper = new RealmHelper();
+        mRealmHelper = new RealmHelper(this);
         mRealmHelper.open();
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);

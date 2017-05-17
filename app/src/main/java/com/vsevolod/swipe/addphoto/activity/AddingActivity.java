@@ -30,7 +30,6 @@ import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.config.Constants;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
@@ -50,9 +49,8 @@ import it.sephiroth.android.library.picasso.Picasso;
 // TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
-    private final int IMAGE_QUALITY = 40;
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
-    private RealmHelper mRealmHelper = new RealmHelper();
+    private RealmHelper mRealmHelper;
     private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
     private String path = null;
@@ -60,10 +58,12 @@ public class AddingActivity extends AppCompatActivity {
     private long mLastClickTime = 0;
     private LocationTracker mTracker;
     private Location mLocation = null;
+    private PathConverter mPathConverter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
+        mRealmHelper = new RealmHelper(this);
         mRealmHelper.open();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding2);
@@ -75,11 +75,12 @@ public class AddingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
+        mPathConverter = new PathConverter(this);
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if (type.startsWith(Constants.INTENT_KEY_PATH)) {
                 Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                path = PathConverter.getFullPath(imageUri);
+                path = mPathConverter.getFullPath(imageUri);
             }
         } else {
             path = getIntent().getStringExtra(Constants.INTENT_KEY_PATH);
@@ -91,7 +92,7 @@ public class AddingActivity extends AppCompatActivity {
 //        setFlowsTree(savedInstanceState);
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
-        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter());
+        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(this));
         mAutoCompleteTextView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         mAutoCompleteTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText = (EditText) findViewById(R.id.adding_edit_text);
@@ -123,7 +124,7 @@ public class AddingActivity extends AppCompatActivity {
                             .setUsePassive(true)
                             .setTimeBetweenUpdates(1);
 
-            mTracker = new LocationTracker(MyApplication.getAppContext(), settings) {
+            mTracker = new LocationTracker(this, settings) {
 
                 @Override
                 public void onLocationFound(@NonNull Location location) {
@@ -155,7 +156,7 @@ public class AddingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
-        setLocationTracker();
+//        setLocationTracker();
         mRealmHelper.open();
         super.onResume();
     }
@@ -171,9 +172,12 @@ public class AddingActivity extends AppCompatActivity {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
                     BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, IMAGE_QUALITY, stream);
+            int imageQuality = 40;
+            thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
             byte[] byteArray = stream.toByteArray();
             try {
+                thumbImage.recycle();
+                thumbImage = null;
                 stream.close();
             } catch (IOException e) {
                 e.printStackTrace();

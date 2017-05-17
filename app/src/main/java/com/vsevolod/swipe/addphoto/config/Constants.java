@@ -12,6 +12,7 @@ public class Constants {
     public static final String RESPONSE_STATUS_AUTH = "AUTH";
     public static final String RESPONSE_STATUS_PARAM = "PARAM";
     public static final String RESPONSE_STATUS_FAIL = "FAIL";
+    public static final String BASE_URL = "http://crm.myaso.net.ua/";
     public static final String MEDIA_TYPE_IMAGE = "image/*";
     public static final String INTENT_KEY_PATH = "image/";
     public static final String ACTION_SELECT_PICTURE = "Select Picture";

@@ -25,8 +25,10 @@ import java.util.List;
 public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 
     private List<FlowsTreeModel> mResult = new ArrayList<>();
+    private Context mContext;
 
-    public AutoCompleteAdapter() {
+    public AutoCompleteAdapter(Context context) {
+        this.mContext = context;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) MyApplication.getAppContext()
+            LayoutInflater inflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.drop_down_item, parent, false);
         }
@@ -85,7 +87,7 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
 
     @NonNull
     private List<FlowsTreeModel> filterTreeNode(String query) {
-        RealmHelper realmHelper = new RealmHelper();
+        RealmHelper realmHelper = new RealmHelper(mContext);
         realmHelper.open();
         List<FlowsTreeModel> list = realmHelper.searchTree(query);
         realmHelper.close();

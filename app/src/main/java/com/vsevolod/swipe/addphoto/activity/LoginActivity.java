@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -25,7 +26,6 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
-import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
@@ -40,7 +40,8 @@ import retrofit2.Response;
 // FIXME: 21.04.17 handle hardware back button onCLick (quit from app)
 // TODO: 21.04.17 add phone number finding library
 // TODO: 13.05.17 refactor
-public class LoginActivity extends AccountAuthenticatorActivity {
+public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
+        OnClickListener {
     private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
     private EditText mPhoneNumberView;
@@ -76,23 +77,8 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setText("user");//admin пароль Mаксима
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        findViewById(R.id.login_button).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        mPasswordView.setOnEditorActionListener(this);
+        findViewById(R.id.login_button).setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -100,8 +86,33 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         QuitFragment fragment = new QuitFragment();
-        fragment.show(getFragmentManager(), "MyDialog");
+        fragment.show(getFragmentManager(), "MyDialog"); // FIXME: 16.05.17 hardcode
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        mPasswordView.setOnEditorActionListener(null);
+        findViewById(R.id.login_button).setOnClickListener(null);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        mPasswordView.setOnEditorActionListener(this);
+        findViewById(R.id.login_button).setOnClickListener(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        mPasswordView.setOnEditorActionListener(null);
+        findViewById(R.id.login_button).setOnClickListener(null);
+        super.onDestroy();
     }
 
     @NonNull
@@ -184,53 +195,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
 //            mAuthTask = new AuthTask();
 //            String[] s = {phoneNumber, password};
 //            mAuthTask.execute();
-            new AsyncTask<Void, Void, Intent>() {
-                @Override
-                protected Intent doInBackground(Void... params) {
-                    AuthModel user = new AuthModel(phoneNumber, password);
-                    Response<UserModel> response;
-                    String authToken = null;
-                    final Intent res = new Intent();
-                    try {
-                        response = MyApplication.getApi().authenticate(user).execute();
-                        authToken = response.body().getToken();
-                        Log.e(TAG, "doInBackground: " + authToken);
-                        PreferenceHelper helper = new PreferenceHelper();
-                        helper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, authToken); // TODO: 12.05.17 remove after accManager will be fixed
-                        Log.e(TAG, authToken);
-                        res.putExtra(AccountManager.KEY_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_NAME);
-                        res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
-                        res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
-                        res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
-                        res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber); //todo check it later
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        res.putExtra(AccountGeneral.KEY_ERROR_MESSAGE, e.getMessage());
-                    }
-                    return res;
-                }
-
-                @Override
-                protected void onPostExecute(Intent intent) {
-                    mAuthTask = null;
-                    if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
-                        mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
-                        mPasswordView.requestFocus();
-                    } else {
-                        finishLogin(intent);
-                        new TreeConverterTask().execute();
-                        // Close the activity, we're done
-                        finish();
-                    }
-                }
-
-                @Override
-                protected void onCancelled() {
-                    Log.d(TAG, "onCancelled");
-                    mAuthTask = null;
-                    showProgress(false);
-                }
-            }.execute();
+            new LoginTask(this).execute();
         }
     }
 
@@ -295,5 +260,74 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         setAccountAuthenticatorResult(intent.getExtras());
         // Tell the account manager settings page that all went well
         setResult(RESULT_OK, intent);
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == R.id.login || actionId == EditorInfo.IME_NULL) {
+            attemptLogin();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        attemptLogin();
+    }
+
+
+    private class LoginTask extends AsyncTask<Void, Void, Intent> {
+        private Context mContext;
+
+        public LoginTask(Context context) {
+            this.mContext = context;
+        }
+
+        @Override
+        protected Intent doInBackground(Void... params) {
+            AuthModel user = new AuthModel(phoneNumber, password);
+            Response<UserModel> response;
+            String authToken = null;
+            final Intent res = new Intent();
+            try {
+                response = MyApplication.getApi().authenticate(user).execute();
+                authToken = response.body().getToken();
+                Log.e(TAG, "pturesBackground: " + authToken);
+//                        PreferenceHelper helper = new PreferenceHelper(this);
+//                        helper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, authToken); // TODO: 12.05.17 remove after accManager will be fixed
+                Log.e(TAG, authToken);
+                res.putExtra(AccountManager.KEY_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_NAME);
+                res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
+                res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
+                res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
+                res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber); //todo check it later
+            } catch (IOException e) {
+                e.printStackTrace();
+                res.putExtra(AccountGeneral.KEY_ERROR_MESSAGE, e.getMessage());
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(Intent intent) {
+            mAuthTask = null;
+            if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
+                mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
+                mPasswordView.requestFocus();
+            } else {
+                finishLogin(intent);
+                new TreeConverterTask(mContext).execute();
+                // Close the activity, we're done
+                finish();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            Log.d(TAG, "onCancelled");
+            mAuthTask = null;
+            showProgress(false);
+        }
     }
 }

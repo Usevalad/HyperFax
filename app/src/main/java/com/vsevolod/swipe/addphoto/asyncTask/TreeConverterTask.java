@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -28,14 +29,25 @@ import retrofit2.Response;
 
 public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeModel>> {
     private final String TAG = this.getClass().getSimpleName();
-    private RealmHelper mRealmHelper = new RealmHelper();
-    private AccountManager mAccountManager = AccountManager.get(MyApplication.getAppContext());
+    private RealmHelper mRealmHelper;
+    private AccountManager mAccountManager;
+    private Context mContext;
     private final int MIN_LIST_SIZE = 100;
     private final int ID_NUMBER = 0;
     private final int NAME_NUMBER = 1;
     private final int PREFIX_NUMBER = 2;
     private final int PARENT_ID_NUMBER = 3;
     private final int FLOWS_TREE_MODEL_FIELDS_QUANTITY = 4;
+
+    public TreeConverterTask(Context context) {
+        this.mContext = context;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        mAccountManager = AccountManager.get(mContext);
+        mRealmHelper = new RealmHelper(mContext);
+    }
 
     @Override
     protected List<FlowsTreeModel> doInBackground(Void... params) {
@@ -96,7 +108,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
         super.onPostExecute(flowsTreeModels);
-        String message = MyApplication.getAppContext().getResources().getString(R.string.updated);
-        Toast.makeText(MyApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
+        String message = mContext.getString(R.string.updated);
+        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
 }

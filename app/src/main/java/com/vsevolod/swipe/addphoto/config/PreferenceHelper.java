@@ -9,19 +9,17 @@ import android.util.Log;
  */
 
 public class PreferenceHelper {
-    private static final String TAG = "PreferenceHelper";
-    public static final String APP_PREFERENCES = "myUser";
-    public static final String APP_PREFERENCES_TOKEN = "token";
-    public static final String APP_PREFERENCES_NAME = "user name";
-    public static final String APP_PREFERENCES_TITLE = "user title";
-    public static final String APP_PREFERENCES_PHONE = "user phone";
-    public static final String APP_PREFERENCES_PASSWORD = "user password";
-    private static SharedPreferences mUserSettings;
-    private Context context;
+    private final String TAG = "PreferenceHelper";
+    public final String APP_PREFERENCES = "myUser";
+    public final String APP_PREFERENCES_TOKEN = "token";
+    public final String APP_PREFERENCES_NAME = "user name";
+    public final String APP_PREFERENCES_TITLE = "user title";
+    public final String APP_PREFERENCES_PHONE = "user phone";
+    public final String APP_PREFERENCES_PASSWORD = "user password";
+    private SharedPreferences mUserSettings;
 
-    public PreferenceHelper() {
+    public PreferenceHelper(Context context) {
         Log.d(TAG, "PreferenceHelper");
-        this.context = MyApplication.getAppContext();
         this.mUserSettings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 

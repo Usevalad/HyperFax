@@ -14,23 +14,32 @@ import android.util.Log;
  */
 
 public class PathConverter {
-    private static final String TAG = "PathConverter";
+    private final String TAG = this.getClass().getSimpleName();
+    private Context mContext;
+    private String mResult;
 
-    public static String getFullPath(@NonNull Uri uri) {
+    public PathConverter(Context context) {
+        this.mContext = context;
+    }
+
+    public String getFullPath(@NonNull Uri uri) {
         Log.d(TAG, "getFullPath");
         Cursor cursor = null;
         try {
             String[] projection = {MediaStore.Images.Media.DATA};
-            Context context = MyApplication.getAppContext();
-            cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
+            assert cursor != null;
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
-            return cursor.getString(column_index);
+            mResult = cursor.getString(columnIndex);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         } finally {
             if (cursor != null) {
                 cursor.close();
                 cursor = null;
             }
         }
+        return mResult;
     }
 }
