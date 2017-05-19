@@ -39,14 +39,15 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     private final int PARENT_ID_NUMBER = 3;
     private final int FLOWS_TREE_MODEL_FIELDS_QUANTITY = 4;
 
-    public TreeConverterTask(Context context) {
-        this.mContext = context;
+    public TreeConverterTask() {
+
     }
 
     @Override
     protected void onPreExecute() {
+        mContext = MyApplication.getAppContext();
         mAccountManager = AccountManager.get(mContext);
-        mRealmHelper = new RealmHelper(mContext);
+        mRealmHelper = new RealmHelper();
     }
 
     @Override

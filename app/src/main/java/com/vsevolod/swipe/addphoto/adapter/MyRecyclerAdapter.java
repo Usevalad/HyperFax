@@ -27,6 +27,7 @@ import java.util.List;
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.MyRecyclerViewHolder> {
     private final String TAG = this.getClass().getSimpleName();
+    private final String INTENT_KEY_PHOTO_URL = "photo url";
     private Context context;
     public static List<DataModel> data;
 
@@ -41,7 +42,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         Log.d(TAG, "onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.recycler_view_item, parent, false);
-        return new MyRecyclerViewHolder(view);
+        return new MyRecyclerViewHolder(context, view);
     }
 
     @Override
@@ -58,8 +59,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.mDateTextView.setText(viewDate);
         holder.mPathTextView.setText(model.getName() + " @" + model.getPrefix());
         holder.mComment.setText(model.getComment());
-        holder.mLocation.setText("lat: " +
-                String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
+//        holder.mLocation.setText("lat: " +
+//                String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
     }
 
     @Override
@@ -69,7 +70,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     }
 
     class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private final String PHOTO_URL = "photo url";// FIXME: 11.05.17 hardcode
         TextView mDateTextView;
         TextView mPathTextView;
         TextView mComment;
@@ -79,8 +79,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         CardView mCardView;
         Context context;
 
-        private MyRecyclerViewHolder(View itemView) {
+        private MyRecyclerViewHolder(final Context context, View itemView) {
             super(itemView);
+            this.context = context;
             mCardView = (CardView) itemView.findViewById(R.id.my_card_view);
             mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo_image_view);
             mPhotoImageView.setOnClickListener(this);
@@ -88,7 +89,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
             mComment = (TextView) itemView.findViewById(R.id.comment_text_view);
-            mLocation = (TextView) itemView.findViewById(R.id.location_text_view);
+//            mLocation = (TextView) itemView.findViewById(R.id.location_text_view);
         }
 
         @Override
@@ -96,7 +97,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             String photoUri = data.get(getAdapterPosition()).getPhotoURL();
             Intent intent = new Intent(context, FullscreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(PHOTO_URL, photoUri);
+            intent.putExtra(INTENT_KEY_PHOTO_URL, photoUri);
             context.startActivity(intent);
         }
     }

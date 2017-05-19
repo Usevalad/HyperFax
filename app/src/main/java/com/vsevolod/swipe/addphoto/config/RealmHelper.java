@@ -32,14 +32,13 @@ public class RealmHelper {
     private final String FIELD_STATE_CODE = "stateCode";
     private Realm realm;
 
-    public RealmHelper(Context context) {
-        this.mContext = context;
+    public RealmHelper() {
         Log.d(TAG, "Realm constructor");
     }
 
     public void open() {
         Log.d(TAG, "open");
-        Realm.init(mContext);
+        Realm.init(MyApplication.getAppContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         this.realm = Realm.getDefaultInstance();
@@ -94,12 +93,12 @@ public class RealmHelper {
         String tmp;
 
         for (int i = 0; i < tree.size(); i++) {
+            // TODO: 17.05.17 improve validation
             tmp = tree.get(i).getName() + " @" + tree.get(i).getPrefix();
             if (tmp.equals(text)) {
                 return true;
             }
         }
-
         return false;
     }
 

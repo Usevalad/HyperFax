@@ -317,7 +317,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 mPasswordView.requestFocus();
             } else {
                 finishLogin(intent);
-                new TreeConverterTask(mContext).execute();
+                new TreeConverterTask().execute();
                 // Close the activity, we're done
                 finish();
             }

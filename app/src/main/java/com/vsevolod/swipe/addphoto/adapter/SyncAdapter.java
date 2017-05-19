@@ -45,7 +45,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mAccountManager = AccountManager.get(context);
-        mRealmHelper = new RealmHelper(context);
+        mRealmHelper = new RealmHelper();
         mContext = context;
         Log.d(TAG, "SyncAdapter: constructor");
     }
@@ -53,7 +53,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mAccountManager = AccountManager.get(context);
-        mRealmHelper = new RealmHelper(context);
+        mRealmHelper = new RealmHelper();
         Log.d(TAG, "SyncAdapter: constructor 2");
     }
 
@@ -84,7 +84,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void updateFlowsTree() {
-        TreeConverterTask task = new TreeConverterTask(mContext);
+        TreeConverterTask task = new TreeConverterTask();
         task.execute();
     }
 

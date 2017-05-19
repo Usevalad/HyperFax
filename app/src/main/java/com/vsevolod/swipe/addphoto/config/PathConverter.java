@@ -19,11 +19,12 @@ public class PathConverter {
     private String mResult;
 
     public PathConverter(Context context) {
+        Log.e(TAG, "PathConverter: constructor");
         this.mContext = context;
     }
 
     public String getFullPath(@NonNull Uri uri) {
-        Log.d(TAG, "getFullPath");
+        Log.e(TAG, "getFullPath");
         Cursor cursor = null;
         try {
             String[] projection = {MediaStore.Images.Media.DATA};
@@ -40,6 +41,7 @@ public class PathConverter {
                 cursor = null;
             }
         }
+        mContext = null;
         return mResult;
     }
 }

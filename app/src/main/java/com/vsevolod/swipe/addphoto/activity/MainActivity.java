@@ -32,6 +32,7 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
@@ -70,26 +71,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Uri fileUri = null;
     private RealmHelper mRealmHelper;
     private PathConverter mPathConverter;
+    private Context mContext = MyApplication.getAppContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Log.e(TAG, "onCreate");
         if (getIntent().getExtras() != null && getIntent().getExtras()
                 .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
             finish();
         }
-        mRealmHelper = new RealmHelper(this);
+        mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
-        mPathConverter = new PathConverter(this);
+        mPathConverter = new PathConverter(mContext);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.drawable.logo);
+        toolbar.setLogo(R.drawable.tool_bar_logo);
         setSupportActionBar(toolbar);
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setPeriodicSync() {
+        Log.e(TAG, "setPeriodicSync");
         long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
                 Constants.MILLISECONDS_FIVE_MIN : Constants.MILLISECONDS_HOUR;
         ContentResolver.addPeriodicSync(
@@ -105,10 +108,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getResources().getString(R.string.content_authority),
                 new Bundle(),
                 syncTime);
+        Log.e(TAG, "setPeriodicSync: time = " + syncTime);
     }
 
     private void setFABAnimation() {
-        Log.d(TAG, "setFABAnimation");
+        Log.e(TAG, "setFABAnimation");
         mFAB = (FloatingActionButton) findViewById(R.id.fab);
         mFABCamera = (FloatingActionButton) findViewById(R.id.fab_camera);
         mFABGallery = (FloatingActionButton) findViewById(R.id.fab_gallery);
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Log.e(TAG, "onDestroy");
         mRealmHelper.close();
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
@@ -133,8 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
-        mRealmHelper.close();
+        Log.e(TAG, "onPause");
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
         mFABGallery.setOnClickListener(null);
@@ -143,8 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
-        mRealmHelper.open();
+        Log.e(TAG, "onResume");
         isFabOpen = true;
         mFABCamera.setClickable(true);
         mFABGallery.setClickable(true);
@@ -152,13 +154,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABCamera.setOnClickListener(this);
         mFABGallery.setOnClickListener(this);
         animateFAB();
-        setRecyclerViewAdapter();
+//        setRecyclerViewAdapter();
         super.onResume();
     }
 
     @Override
+    protected void onStop() {
+        Log.e(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.d(TAG, "onPrepareOptionsMenu");
+        Log.e(TAG, "onPrepareOptionsMenu");
         MenuItem checkable = menu.findItem(R.id.main_menu_notifications);
         checkable.setChecked(isChecked);
         return true;
@@ -166,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
+        Log.e(TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -180,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected");
+        Log.e(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
                 mRealmHelper.dropRealmData();
@@ -198,16 +206,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mRealmHelper.countData();//for debug only
                 break;
             case R.id.main_menu_request_flow:
-                AccountManager am = AccountManager.get(this);
+                AccountManager am = AccountManager.get(mContext);
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
-                    new TreeConverterTask(this).execute();
+                    new TreeConverterTask().execute();
                 } else {
-                    Intent intent = new Intent(this, LoginActivity.class);
+                    Intent intent = new Intent(mContext, LoginActivity.class);
                     startActivity(intent);
                 }
                 break;
             case R.id.main_menu_log_out:
-                Intent intent = new Intent(this, LoginActivity.class);
+                Intent intent = new Intent(mContext, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
@@ -218,11 +226,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setRecyclerViewAdapter() {
-        Log.d(TAG, "setRecyclerViewAdapter");
+        Log.e(TAG, "setRecyclerViewAdapter");
         if (data != null) {
-            Log.d(TAG, "setRecyclerViewAdapter: true");
+            Log.e(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(mContext, data));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -231,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "onClick");
+        Log.e(TAG, "onClick");
         switch (v.getId()) {
             case R.id.fab:
                 animateFAB();
@@ -257,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d(TAG, "onCreateContextMenu");
+        Log.e(TAG, "onCreateContextMenu");
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
@@ -265,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Log.d(TAG, "onContextItemSelected");
+        Log.e(TAG, "onContextItemSelected");
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch (item.getItemId()) {
             case R.id.delete:
@@ -277,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private File getOutputPhotoFile() {
-        Log.d(TAG, "getOutputPhotoFile");
+        Log.e(TAG, "getOutputPhotoFile");
         File directory = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getPackageName());
         if (!directory.exists()) {
@@ -294,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult");
+        Log.e(TAG, "onActivityResult");
         if (resultCode != RESULT_CANCELED) {
             Uri photoUri;
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
@@ -316,14 +324,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startAddingActivity(String path) {
-        Log.d(TAG, "startAddingActivity");
-        Intent intent = new Intent(this, AddingActivity.class);
+        Log.e(TAG, "startAddingActivity");
+        Intent intent = new Intent(mContext, AddingActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PATH, path);
         startActivity(intent);
     }
 
     private void startCameraActivity() {
-        Log.d(TAG, "startCameraActivity");
+        Log.e(TAG, "startCameraActivity");
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         fileUri = Uri.fromFile(getOutputPhotoFile());
         i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
@@ -331,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setFabHidingAbility() {
-        Log.d(TAG, "setFabHidingAbility");
+        Log.e(TAG, "setFabHidingAbility");
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -364,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mFABCamera.setClickable(false);
             mFABGallery.setClickable(false);
             isFabOpen = false;
-            Log.d(TAG, "animateFAB: close");
+            Log.e(TAG, "animateFAB: close");
         } else {
             mFAB.startAnimation(rotate_forward);
             mFABCamera.startAnimation(fab_open);
@@ -372,12 +380,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mFABCamera.setClickable(true);
             mFABGallery.setClickable(true);
             isFabOpen = true;
-            Log.d(TAG, "animateFAB: open");
+            Log.e(TAG, "animateFAB: open");
         }
     }
 
 //    private void startAuthTokenFetch(Account account) {
-//        Log.d(TAG, "startAuthTokenFetch");
+//        Log.e(TAG, "startAuthTokenFetch");
 //        Bundle options = new Bundle();
 //        android.os.Handler handler = new android.os.Handler();
 //        OnAccountManagerComplete callBack = new OnAccountManagerComplete();
