@@ -5,7 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/HyperFax.iml" filepath="$PROJECT_DIR$/HyperFax.iml" />
       <module fileurl="file://$PROJECT_DIR$/HyperFax.iml" filepath="$PROJECT_DIR$/HyperFax.iml" />
       <module fileurl="file://$PROJECT_DIR$/HyperFax.iml" filepath="$PROJECT_DIR$/HyperFax.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HyperFax.iml" filepath="$PROJECT_DIR$/HyperFax.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flowstreelibrary/flowstreelibrary.iml" filepath="$PROJECT_DIR$/flowstreelibrary/flowstreelibrary.iml" />
     </modules>
   </component>
 </project>

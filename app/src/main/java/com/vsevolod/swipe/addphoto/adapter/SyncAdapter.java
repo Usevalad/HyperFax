@@ -40,13 +40,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private RealmHelper mRealmHelper;
     private long mLastSyncTime = 0L;
     private long mLastTreeSync = 0L;
-    private Context mContext;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mAccountManager = AccountManager.get(context);
         mRealmHelper = new RealmHelper();
-        mContext = context;
         Log.d(TAG, "SyncAdapter: constructor");
     }
 
@@ -108,7 +106,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "getStateCodesFromServer");
         try {
             ListModel listModel = new ListModel(authToken, dataIds);
-            Response<ListResponse> response = MyApplication.getApi().list(listModel).execute();
+            Response<ListResponse> response = MyApplication.getApi().getList(listModel).execute();
             Log.e(TAG, "onPerformSync: response code " + String.valueOf(response.code()));
             Log.e(TAG, "onPerformSync: response body " + String.valueOf(response.body()));
             List<String> ids = response.body().getIds();

@@ -34,7 +34,6 @@
 ///**
 // * Created by vsevolod on 11.04.17.
 // */
-//// TODO: 16.05.17 remove later
 //public class MyasoApi {
 //    private final String TAG = this.getClass().getSimpleName();
 //    private PreferenceHelper mPreferenceHelper = new PreferenceHelper();

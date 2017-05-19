@@ -297,7 +297,6 @@ public class AndroidTreeView {
 
     public void setSelectionModeEnabled(boolean selectionModeEnabled) {
         if (!selectionModeEnabled) {
-            // TODO fix double iteration over tree
             deselectAll();
         }
         mSelectionModeEnabled = selectionModeEnabled;
@@ -341,7 +340,6 @@ public class AndroidTreeView {
         }
     }
 
-    // TODO Do we need to go through whole tree? Save references or consider collapsed nodes as not selected
     private List<TreeNode> getSelected(TreeNode parent) {
         List<TreeNode> result = new ArrayList<>();
         for (TreeNode n : parent.getChildren()) {

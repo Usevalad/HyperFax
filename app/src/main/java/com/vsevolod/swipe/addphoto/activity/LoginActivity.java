@@ -6,7 +6,6 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
@@ -30,6 +30,9 @@ import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
+import org.xdty.phone.number.PhoneNumber;
+import org.xdty.phone.number.model.INumber;
+
 import java.io.IOException;
 
 import retrofit2.Response;
@@ -37,7 +40,6 @@ import retrofit2.Response;
 /**
  * A login screen that offers login via phone number/password.
  */
-// FIXME: 21.04.17 handle hardware back button onCLick (quit from app)
 // TODO: 21.04.17 add phone number finding library
 // TODO: 13.05.17 refactor
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
@@ -51,27 +53,23 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private String password;
     private String phoneNumber;
     private AccountManager mAccountManager;
-    private String mAccountName;
-    private String mAccountType;
-    private String mAuthType;
-    private boolean isAddingNewAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_login);
         mAccountManager = AccountManager.get(this);
-        mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
+        String mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
         Log.e(TAG, "onCreate: mAccountName " + mAccountName);
-        mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
+        String mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
         Log.e(TAG, "onCreate: mAccountType " + mAccountType);
-        mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
+        String mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
         Log.e(TAG, "onCreate: mAuthType " + mAuthType);
-        isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
+        boolean isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
         Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
 
-        String phoneNumber = getPhoneNumber();
+        final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
         mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона Mаксима
 
@@ -82,13 +80,15 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
     }
 
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
         QuitFragment fragment = new QuitFragment();
-        fragment.show(getFragmentManager(), "MyDialog"); // FIXME: 16.05.17 hardcode
+        String MY_DIALOG = "MyDialog";
+        fragment.show(getFragmentManager(), MY_DIALOG);
     }
 
     @Override
@@ -195,7 +195,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 //            mAuthTask = new AuthTask();
 //            String[] s = {phoneNumber, password};
 //            mAuthTask.execute();
-            new LoginTask(this).execute();
+            new LoginTask().execute();
         }
     }
 
@@ -254,7 +254,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             mAccountManager.setPassword(account, password);
         }
         mAccountManager.setAuthToken(account, AccountGeneral.ARG_TOKEN_TYPE, authToken);
-        // Our base class can do what Android requires with the
+        // base class can do what Android requires with the
         // KEY_ACCOUNT_AUTHENTICATOR_RESPONSE extra that onCreate has
         // already grabbed
         setAccountAuthenticatorResult(intent.getExtras());
@@ -278,30 +278,22 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
 
     private class LoginTask extends AsyncTask<Void, Void, Intent> {
-        private Context mContext;
-
-        public LoginTask(Context context) {
-            this.mContext = context;
-        }
 
         @Override
         protected Intent doInBackground(Void... params) {
             AuthModel user = new AuthModel(phoneNumber, password);
             Response<UserModel> response;
-            String authToken = null;
+            String authToken;
             final Intent res = new Intent();
             try {
                 response = MyApplication.getApi().authenticate(user).execute();
                 authToken = response.body().getToken();
                 Log.e(TAG, "pturesBackground: " + authToken);
-//                        PreferenceHelper helper = new PreferenceHelper(this);
-//                        helper.saveString(PreferenceHelper.APP_PREFERENCES_TOKEN, authToken); // TODO: 12.05.17 remove after accManager will be fixed
-                Log.e(TAG, authToken);
                 res.putExtra(AccountManager.KEY_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_NAME);
                 res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
                 res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
                 res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
-                res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber); //todo check it later
+                res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber);
             } catch (IOException e) {
                 e.printStackTrace();
                 res.putExtra(AccountGeneral.KEY_ERROR_MESSAGE, e.getMessage());

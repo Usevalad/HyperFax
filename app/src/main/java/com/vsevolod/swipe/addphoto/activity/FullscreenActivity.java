@@ -14,7 +14,6 @@ import java.io.File;
 import it.sephiroth.android.library.picasso.Picasso;
 
 public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener {
-    private final String PHOTO_URI = "photo uri";
     private final String PHOTO_URL = "photo url";
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
@@ -60,7 +59,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, 0);
         if (photoURL != null) { // TODO: 13.05.17 change this test to valid one
-            Picasso.with(this)
+            Picasso.with(getApplicationContext())
                     .load(photoURL)
                     .into(mTouchImageView);
         } else {
@@ -68,10 +67,16 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        mTouchImageView.setOnClickListener(null);
+        super.onDestroy();
+    }
+
     private void setImageFromStorage(String path) {
         File imageFile = new File(path);
         if (imageFile.exists()) {
-            Picasso.with(this)
+            Picasso.with(getApplicationContext())
                     .load(imageFile)
                     .into(mTouchImageView);
         } else {

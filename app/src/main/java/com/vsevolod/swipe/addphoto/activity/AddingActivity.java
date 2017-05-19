@@ -1,9 +1,7 @@
 package com.vsevolod.swipe.addphoto.activity;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -12,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -43,11 +40,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import fr.quentinklein.slt.LocationTracker;
-import fr.quentinklein.slt.TrackerSettings;
 import it.sephiroth.android.library.picasso.Picasso;
 
-// TODO: 15.04.17 handle intents getting (camera photo, gallery photo, share  photo)
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
@@ -57,7 +51,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private String path = null;
     private String text;
     private long mLastClickTime = 0;
-    private LocationTracker mTracker;
     private Location mLocation = null;
     private Context mContext = MyApplication.getAppContext();
 
@@ -73,7 +66,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         toolbar.setLogo(R.drawable.tool_bar_logo);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
         PathConverter mPathConverter = new PathConverter(mContext);
@@ -100,47 +93,14 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-        setLocationTracker();
+//        setLocationTracker();
     }
 
-    private void setLocationTracker() {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            TrackerSettings settings =
-                    new TrackerSettings()
-                            .setUseGPS(true)
-                            .setUseNetwork(true)
-                            .setUsePassive(true)
-                            .setTimeBetweenUpdates(100);
-
-            mTracker = new LocationTracker(mContext, settings) {
-
-                @Override
-                public void onLocationFound(@NonNull Location location) {
-                    Log.e(TAG, "onLocationFound");
-                    mLocation = location;
-                    stopListening();
-                }
-
-                @Override
-                public void onTimeout() {
-                    Log.e(TAG, "onTimeout");
-                }
-            };
-            mTracker.startListening();
-        }
-    }
 
     @Override
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
-        if (mTracker != null) {
-            mTracker.stopListening();
-        }
         mEditText.setOnEditorActionListener(null);
-        mTracker = null;
         mRealmHelper.close();
         super.onDestroy();
     }
@@ -167,7 +127,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             byte[] byteArray = stream.toByteArray();
             try {
                 thumbImage.recycle();
-                thumbImage = null;
                 stream.close();
             } catch (IOException e) {
                 e.printStackTrace();

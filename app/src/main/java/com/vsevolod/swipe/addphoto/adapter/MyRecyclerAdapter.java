@@ -27,9 +27,8 @@ import java.util.List;
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.MyRecyclerViewHolder> {
     private final String TAG = this.getClass().getSimpleName();
-    private final String INTENT_KEY_PHOTO_URL = "photo url";
     private Context context;
-    public static List<DataModel> data;
+    public List<DataModel> data;
 
     public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
@@ -97,6 +96,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             String photoUri = data.get(getAdapterPosition()).getPhotoURL();
             Intent intent = new Intent(context, FullscreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            String INTENT_KEY_PHOTO_URL = "photo url";
             intent.putExtra(INTENT_KEY_PHOTO_URL, photoUri);
             context.startActivity(intent);
         }

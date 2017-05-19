@@ -16,8 +16,6 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 /**
  * Created by vsevolod on 16.05.17.
  */
-// TODO: 16.05.17 refactor
-// TODO: 16.05.17 hardcode
 public class QuitFragment extends DialogFragment {
 
     @Override

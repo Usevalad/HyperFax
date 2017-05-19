@@ -38,7 +38,6 @@ public class PathConverter {
         } finally {
             if (cursor != null) {
                 cursor.close();
-                cursor = null;
             }
         }
         mContext = null;

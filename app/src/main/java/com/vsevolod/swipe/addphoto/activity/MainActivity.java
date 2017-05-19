@@ -46,12 +46,8 @@ import java.util.Locale;
 
 import io.realm.RealmChangeListener;
 
-// FIXME: 21.04.17 find memory leak
-// FIXME: 21.04.17 fix memory leak
 // FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
-// FIXME: 21.04.17 check onActivityResult, looks horribly
 // TODO: 13.05.17 add some settings in account menu (shared prefs)
-// TODO: 16.05.17 add some message if no internet connection
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
     private final String TAG = MainActivity.class.getSimpleName();
     private final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
@@ -210,12 +206,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
                     new TreeConverterTask().execute();
                 } else {
-                    Intent intent = new Intent(mContext, LoginActivity.class);
+                    Intent intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);
                 }
                 break;
             case R.id.main_menu_log_out:
-                Intent intent = new Intent(mContext, LoginActivity.class);
+                Intent intent = new Intent(this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
                 break;
@@ -325,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startAddingActivity(String path) {
         Log.e(TAG, "startAddingActivity");
-        Intent intent = new Intent(mContext, AddingActivity.class);
+        Intent intent = new Intent(this, AddingActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PATH, path);
         startActivity(intent);
     }

@@ -12,7 +12,7 @@ public class Constants {
     public static final String RESPONSE_STATUS_AUTH = "AUTH";
     public static final String RESPONSE_STATUS_PARAM = "PARAM";
     public static final String RESPONSE_STATUS_FAIL = "FAIL";
-    public static final String BASE_URL = "http://crm.myaso.net.ua/";
+    static final String BASE_URL = "http://crm.myaso.net.ua/";
     public static final String MEDIA_TYPE_IMAGE = "image/*";
     public static final String INTENT_KEY_PATH = "image/";
     public static final String ACTION_SELECT_PICTURE = "Select Picture";
@@ -26,8 +26,8 @@ public class Constants {
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
-    public static final int MILLISECONDS_SEC = 1000;
-    public static final int MILLISECONDS_MINUTE = MILLISECONDS_SEC * 60;
+    private static final int MILLISECONDS_SEC = 1000;
+    private static final int MILLISECONDS_MINUTE = MILLISECONDS_SEC * 60;
     public static final int MILLISECONDS_HOUR = MILLISECONDS_MINUTE * 60;
     public static final int MILLISECONDS_DAY = MILLISECONDS_HOUR * 24;
     public static final int MIN_TIME_BEFORE_NEXT_SYNC = MILLISECONDS_SEC * 5; // 5 sec

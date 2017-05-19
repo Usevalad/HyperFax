@@ -32,12 +32,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     private RealmHelper mRealmHelper;
     private AccountManager mAccountManager;
     private Context mContext;
-    private final int MIN_LIST_SIZE = 100;
-    private final int ID_NUMBER = 0;
-    private final int NAME_NUMBER = 1;
-    private final int PREFIX_NUMBER = 2;
-    private final int PARENT_ID_NUMBER = 3;
-    private final int FLOWS_TREE_MODEL_FIELDS_QUANTITY = 4;
 
     public TreeConverterTask() {
 
@@ -81,14 +75,21 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
         mRealmHelper.open();
         List<String> tmp;
 
+        assert list != null;
+        int MIN_LIST_SIZE = 100;
         if (list.size() > MIN_LIST_SIZE) {
             mRealmHelper.dropRealmTree();
             for (int i = 0; i < list.size(); i++) {
                 tmp = list.get(i);
+                int FLOWS_TREE_MODEL_FIELDS_QUANTITY = 4;
                 if (tmp.size() == FLOWS_TREE_MODEL_FIELDS_QUANTITY) {
+                    int ID_NUMBER = 0;
                     String id = tmp.get(ID_NUMBER);
+                    int NAME_NUMBER = 1;
                     String name = tmp.get(NAME_NUMBER);
+                    int PREFIX_NUMBER = 2;
                     String prefix = tmp.get(PREFIX_NUMBER);
+                    int PARENT_ID_NUMBER = 3;
                     String parentId = tmp.get(PARENT_ID_NUMBER);
                     mRealmHelper.save(new FlowsTreeModel(id, name, prefix, parentId));
                     publishProgress(String.valueOf(i));

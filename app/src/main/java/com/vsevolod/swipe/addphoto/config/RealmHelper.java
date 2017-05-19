@@ -1,6 +1,5 @@
 package com.vsevolod.swipe.addphoto.config;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,15 +20,11 @@ import io.realm.Sort;
  * Created by vsevolod on 26.03.17.
  */
 public class RealmHelper {
-    private Context mContext;
     private final String TAG = this.getClass().getSimpleName();
     private final String FIELD_DATE = "date";
-    private final String FIELD_SEARCH_DATE = "searchDate";
     private final String FIELD_NAME = "name";
     private final String FIELD_PREFIX = "prefix";
     private final String FIELD_UID = "uid";
-    private final String FIELD_IS_SYNCED = "isSynced";
-    private final String FIELD_STATE_CODE = "stateCode";
     private Realm realm;
 
     public RealmHelper() {
@@ -76,13 +71,13 @@ public class RealmHelper {
     }
 
 
-    public List<DataModel> getData() {
+    public RealmResults getData() {
         Log.d(TAG, "getData");
         RealmQuery dataQuery = this.realm.where(DataModel.class);
         return dataQuery.findAllSorted(FIELD_DATE, Sort.DESCENDING);
     }
 
-    public List<FlowsTreeModel> getTree() {
+    private RealmResults getTree() {
         RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
         return treeQuery.findAll();
     }
@@ -93,7 +88,6 @@ public class RealmHelper {
         String tmp;
 
         for (int i = 0; i < tree.size(); i++) {
-            // TODO: 17.05.17 improve validation
             tmp = tree.get(i).getName() + " @" + tree.get(i).getPrefix();
             if (tmp.equals(text)) {
                 return true;
@@ -102,8 +96,9 @@ public class RealmHelper {
         return false;
     }
 
-    public List<DataModel> search(String queryString) {
+    public RealmResults search(String queryString) {
         RealmQuery query = this.realm.where(DataModel.class);
+        String FIELD_SEARCH_DATE = "searchDate";
         query.contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains(FIELD_NAME, queryString, Case.INSENSITIVE);
         query.or().equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
@@ -111,7 +106,7 @@ public class RealmHelper {
         return query.findAll();
     }
 
-    public List<FlowsTreeModel> searchTree(String queryString) {
+    public RealmResults searchTree(String queryString) {
         RealmQuery query = this.realm.where(FlowsTreeModel.class);
         query.contains(FIELD_NAME, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().beginsWith(FIELD_PREFIX, queryString);
@@ -237,9 +232,10 @@ public class RealmHelper {
         Log.d(TAG, "setSynced: isSynced " + isSynced);
     }
 
-    public List<DataModel> getNotSyncedData() {
+    public RealmResults getNotSyncedData() {
         Log.d(TAG, "getNotSynced");
         RealmQuery query = this.realm.where(DataModel.class);
+        String FIELD_IS_SYNCED = "isSynced";
         query.equalTo(FIELD_IS_SYNCED, false);
         return query.findAll();
     }
@@ -247,6 +243,7 @@ public class RealmHelper {
     public String[] getNotSyncedDataStatesIds() {
         Log.d(TAG, "getNotFinishedStates:");
         RealmQuery query = this.realm.where(DataModel.class);
+        String FIELD_STATE_CODE = "stateCode";
         query.equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_CREATED);
         query.or().equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_REVIEW);
         List<DataModel> list = query.findAll();
