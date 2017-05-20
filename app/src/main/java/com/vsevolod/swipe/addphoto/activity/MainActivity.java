@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setPeriodicSync() {
         Log.e(TAG, "setPeriodicSync");
         long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
-                Constants.MILLISECONDS_FIVE_MIN : Constants.MILLISECONDS_HOUR;
+                10000 : Constants.MILLISECONDS_HOUR;
         ContentResolver.addPeriodicSync(
                 new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
@@ -398,18 +398,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onChange(Object element) {
         Log.e(TAG, "onChange");
-        if (SystemClock.elapsedRealtime() - mLastOnchangeAction > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
-            Log.e(TAG, "onChange: invalidate");
-            Log.e(TAG, "onChange: last onchange " + mLastOnchangeAction);
-
-            mLastOnchangeAction = SystemClock.elapsedRealtime();
-            ContentResolver.requestSync(
-                    new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
-                    getResources().getString(R.string.content_authority),
-                    new Bundle());
-
-            setRecyclerViewAdapter();
-        }
+//        if (SystemClock.elapsedRealtime() - mLastOnchangeAction > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
+//            Log.e(TAG, "onChange: invalidate");
+//            Log.e(TAG, "onChange: last onchange " + mLastOnchangeAction);
+//
+//            mLastOnchangeAction = SystemClock.elapsedRealtime();
+//            ContentResolver.requestSync(
+//                    new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+//                    getResources().getString(R.string.content_authority),
+//                    new Bundle());
+//
+//            setRecyclerViewAdapter();
+//        }
     }
 
     @Override

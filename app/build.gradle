@@ -8,6 +8,7 @@ android {
         applicationId "com.vsevolod.swipe.addphoto"
         minSdkVersion 19
         targetSdkVersion 25
+        multiDexEnabled true
         versionCode 1
         versionName "0.1 - demo"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -41,10 +42,10 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
-    compile 'com.github.quentin7b:android-location-tracker:3.2'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'junit:junit:4.12'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
+    compile 'com.github.safetysystemtechnology:location-tracker-background:v1.0'
 }

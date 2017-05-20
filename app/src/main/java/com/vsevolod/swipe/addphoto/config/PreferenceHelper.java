@@ -10,13 +10,17 @@ import android.util.Log;
 
 public class PreferenceHelper {
     private final String TAG = this.getClass().getSimpleName();
+    public static final String APP_PREFERENCES = "myUser";
+    public static final String APP_PREFERENCES_TOKEN = "token";
+    public static final String APP_PREFERENCES_NAME = "user name";
+    public static final String APP_PREFERENCES_TITLE = "user title";
+    public static final String APP_PREFERENCES_PHONE = "user phone";
+    public static final String APP_PREFERENCES_PASSWORD = "user password";
     private SharedPreferences mUserSettings;
-    private final String NOT_FOUND = "not found";
 
-    public PreferenceHelper(Context context) {
+    public PreferenceHelper() {
         Log.d(TAG, "PreferenceHelper");
-        String APP_PREFERENCES = "myUser";
-        this.mUserSettings = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        this.mUserSettings = MyApplication.getAppContext().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     public void saveString(String key, String value) {
@@ -27,27 +31,22 @@ public class PreferenceHelper {
     }
 
     public String getUserName() {
-        String APP_PREFERENCES_NAME = "user name";
-        return mUserSettings.getString(APP_PREFERENCES_NAME, NOT_FOUND);
+        return mUserSettings.getString(APP_PREFERENCES_NAME, "not found");
     }
 
-    public String getUserTitle() {
-        String APP_PREFERENCES_TITLE = "user title";
-        return mUserSettings.getString(APP_PREFERENCES_TITLE, NOT_FOUND);
+    public String getUserTitlte() {
+        return mUserSettings.getString(APP_PREFERENCES_TITLE, "not found");
     }
 
     public String getToken() {
-        String APP_PREFERENCES_TOKEN = "token";
-        return mUserSettings.getString(APP_PREFERENCES_TOKEN, NOT_FOUND);
+        return mUserSettings.getString(APP_PREFERENCES_TOKEN, "not found");
     }
 
     public String getPhone() {
-        String APP_PREFERENCES_PHONE = "user phone";
-        return mUserSettings.getString(APP_PREFERENCES_PHONE, NOT_FOUND);
+        return mUserSettings.getString(APP_PREFERENCES_PHONE, "not found");
     }
 
     public String getPassword() {
-        String APP_PREFERENCES_PASSWORD = "user password";
-        return mUserSettings.getString(APP_PREFERENCES_PASSWORD, NOT_FOUND);
+        return mUserSettings.getString(APP_PREFERENCES_PASSWORD, "not found");
     }
 }

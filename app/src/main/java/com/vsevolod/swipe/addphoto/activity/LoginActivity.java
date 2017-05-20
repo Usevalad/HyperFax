@@ -30,8 +30,6 @@ import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
 
-import org.xdty.phone.number.PhoneNumber;
-import org.xdty.phone.number.model.INumber;
 
 import java.io.IOException;
 

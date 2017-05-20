@@ -2,6 +2,7 @@ package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -58,5 +59,11 @@ public class MyApplication extends Application {
 
     public static Context getAppContext() {
         return MyApplication.context;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

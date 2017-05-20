@@ -160,5 +160,11 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_adapter" />
         </service>
+
+        <receiver android:name=".receiver.LocationReceiver">
+            <intent-filter>
+                <action android:name="my.action"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

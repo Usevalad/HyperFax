@@ -151,7 +151,7 @@ public class DataModel extends RealmObject {
     public int getStateIconImage() {
         switch (stateCode) {
             case Constants.DATA_MODEL_STATE_CREATED:
-                return R.drawable.ic_time;
+                return R.drawable.ic_checked;
             case Constants.DATA_MODEL_STATE_ACCEPTED:
                 return R.drawable.ic_all_checked;
             case Constants.DATA_MODEL_STATE_REVIEW:
@@ -160,6 +160,9 @@ public class DataModel extends RealmObject {
                 return R.drawable.ic_canceled;
             case Constants.DATA_MODEL_STATE_NEED_SYNC:
                 return R.drawable.ic_time;
+            case Constants.ACTION_SELECT_PICTURE:
+                return R.drawable.leak_canary_icon; // TODO: 19.05.17 если при ответе на отправку фото приходит статус
+            // PARAM, то поставить такую иконку
             default:
                 return R.drawable.ic_bomb; //if something went wrong you'll see the bomb
         }

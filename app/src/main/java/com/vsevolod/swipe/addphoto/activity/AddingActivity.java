@@ -1,5 +1,7 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.accounts.Account;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
@@ -40,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import br.com.safety.locationlistenerhelper.core.LocationTracker;
 import it.sephiroth.android.library.picasso.Picasso;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
@@ -53,6 +57,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private long mLastClickTime = 0;
     private Location mLocation = null;
     private Context mContext = MyApplication.getAppContext();
+    private LocationTracker locationTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +98,23 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-//        setLocationTracker();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new LocationTracker("my.action")
+                .setInterval(50000)
+                .setGps(true)
+                .setNetWork(false)
+                .start(getBaseContext(), this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        locationTracker.onRequestPermission(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     @Override
     protected void onDestroy() {
@@ -158,8 +177,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         String prefix = text.substring(text.length() - 4); //4 is a prefix length
         String name = text.substring(0, text.length() - 6); //6 is a prefix length + @ + space
         String prefixID = mRealmHelper.getPrefixID(prefix);
-        double latitude = mLocation != null ? mLocation.getLatitude() : 404; // 404 is a random number
-        double longitude = mLocation != null ? mLocation.getLongitude() : 404;// to set when app can't track location
+        double latitude = mLocation != null ? mLocation.getLatitude() : 0.0; // 404 is a random number
+        double longitude = mLocation != null ? mLocation.getLongitude() : 0.0;// to set when app can't track location
 
         DataModel model = new DataModel(
                 searchDate,
@@ -175,6 +194,12 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         );
 
         mRealmHelper.save(model);
+        Account account = new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE);
+        if (ContentResolver.isSyncActive(account, getString(R.string.content_authority))) {
+            if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
+                ContentResolver.requestSync(account, getString(R.string.content_authority), new Bundle());
+            }
+        }
         finish();
     }
 
