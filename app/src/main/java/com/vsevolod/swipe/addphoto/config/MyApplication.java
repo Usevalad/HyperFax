@@ -2,7 +2,6 @@ package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -13,6 +12,8 @@ import com.vsevolod.swipe.addphoto.api.MyasoApi;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+
+//import android.support.multidex.MultiDex;
 
 /**
  * Created by vsevolod on 13.03.17.
@@ -61,9 +62,9 @@ public class MyApplication extends Application {
         return MyApplication.context;
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
+//    @Override
+//    protected void attachBaseContext(Context base) {
+//        super.attachBaseContext(base);
+//        MultiDex.install(this);//?
+//    }
 }

@@ -6,10 +6,11 @@ import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PathConverter mPathConverter;
     private Context mContext = MyApplication.getAppContext();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPathConverter = new PathConverter(mContext);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.drawable.tool_bar_logo);
+        toolbar.setLogo(R.drawable.round_logo48x48);
+        toolbar.setTitle(" HyperFax");
         setSupportActionBar(toolbar);
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -150,8 +154,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABCamera.setOnClickListener(this);
         mFABGallery.setOnClickListener(this);
         animateFAB();
-//        setRecyclerViewAdapter();
+        setRecyclerViewAdapter();
         super.onResume();
+    }
+
+    public static int persistence(long n) {
+        // your code
+        int result = 0;
+        if (n < 10) return result;
+        char[] chars = String.valueOf(n).toCharArray();
+        for (Character ch : chars) {
+
+        }
+
+        return result;
     }
 
     @Override
@@ -195,6 +211,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
                         getResources().getString(R.string.content_authority),
                         new Bundle());
+                if (!isOnline()) {
+                    // TODO: 24.05.17 change to a dialog fragment
+                    Toast.makeText(mContext, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.main_menu_notifications:
                 isChecked = !item.isChecked();
@@ -398,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onChange(Object element) {
         Log.e(TAG, "onChange");
+        setRecyclerViewAdapter();
 //        if (SystemClock.elapsedRealtime() - mLastOnchangeAction > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
 //            Log.e(TAG, "onChange: invalidate");
 //            Log.e(TAG, "onChange: last onchange " + mLastOnchangeAction);
@@ -416,6 +437,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onBackPressed() {
         QuitFragment fragment = new QuitFragment();
         fragment.show(getFragmentManager(), "MyDialog");
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     //    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {

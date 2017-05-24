@@ -32,4 +32,5 @@ public class Constants {
     public static final int MILLISECONDS_DAY = MILLISECONDS_HOUR * 24;
     public static final int MIN_TIME_BEFORE_NEXT_SYNC = MILLISECONDS_SEC * 5; // 5 sec
     public static final int MILLISECONDS_FIVE_MIN = MILLISECONDS_MINUTE * 5; // 5 min
+    public static final int MILLISECONDS_TEN_SEC = MILLISECONDS_SEC * 10; // 10  sec
 }

@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.media.ThumbnailUtils;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -24,6 +26,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vsevolod.flowstreelibrary.model.TreeNode;
 import com.vsevolod.swipe.addphoto.R;
@@ -43,7 +46,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import br.com.safety.locationlistenerhelper.core.LocationTracker;
 import it.sephiroth.android.library.picasso.Picasso;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
@@ -57,7 +59,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private long mLastClickTime = 0;
     private Location mLocation = null;
     private Context mContext = MyApplication.getAppContext();
-    private LocationTracker locationTracker;
+//    private LocationTracker locationTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setLogo(R.drawable.tool_bar_logo);
+        toolbar.setLogo(R.drawable.round_logo48x48);
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -98,22 +100,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        new LocationTracker("my.action")
-                .setInterval(50000)
-                .setGps(true)
-                .setNetWork(false)
-                .start(getBaseContext(), this);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        locationTracker.onRequestPermission(requestCode, permissions, grantResults);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -195,10 +181,14 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
 
         mRealmHelper.save(model);
         Account account = new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE);
-        if (ContentResolver.isSyncActive(account, getString(R.string.content_authority))) {
-            if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
-                ContentResolver.requestSync(account, getString(R.string.content_authority), new Bundle());
-            }
+        Log.e(TAG, "saveDataToRealm: ContentResolver.isSyncActive");
+        if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
+            Log.e(TAG, "saveDataToRealm: !ContentResolver.isSyncPending ");
+            ContentResolver.requestSync(account, getString(R.string.content_authority), new Bundle());
+        }
+        if (!isOnline()) {
+            // TODO: 24.05.17 change to a dialog fragment or snack bar
+            Toast.makeText(mContext, getString(R.string.no_internet_data_later), Toast.LENGTH_SHORT).show();
         }
         finish();
     }
@@ -251,6 +241,13 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             handled = true;
         }
         return handled;
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 //    private void setFlowsTree(Bundle savedInstanceState) {

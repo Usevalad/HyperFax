@@ -44,9 +44,9 @@
     <application
         android:name=".config.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/launcher_logo"
+        android:icon="@drawable/round_logo96x96"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/round_logo96x96"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -163,7 +163,7 @@
 
         <receiver android:name=".receiver.LocationReceiver">
             <intent-filter>
-                <action android:name="my.action"/>
+                <action android:name="my.action" />
             </intent-filter>
         </receiver>
     </application>

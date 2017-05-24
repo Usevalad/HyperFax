@@ -6,7 +6,10 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +32,6 @@ import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.UserModel;
-
 
 import java.io.IOException;
 
@@ -66,6 +68,10 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onCreate: mAuthType " + mAuthType);
         boolean isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
         Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
+
+        if (!isOnline()) {
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+        }
 
         final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
@@ -272,6 +278,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     public void onClick(View v) {
         attemptLogin();
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 

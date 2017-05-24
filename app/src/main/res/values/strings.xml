@@ -29,5 +29,7 @@
     <string name="really_want_to_quit">Вы действительно хотите выйти?</string>
     <string name="ok">Да</string>
     <string name="cancel">Отмена</string>
+    <string name="no_internet_connection">Нет интернет соединения</string>
+    <string name="no_internet_data_later">Нет интернет соединения. Данные будут отправлены позже</string>
 
 </resources>

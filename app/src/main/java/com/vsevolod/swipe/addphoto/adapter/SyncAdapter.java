@@ -59,7 +59,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras,
                               String authority, ContentProviderClient provider,
                               SyncResult syncResult) {
-        Log.d(TAG, "onPerformSync");
+        Log.e(TAG, "onPerformSync");
         if (SystemClock.elapsedRealtime() - mLastSyncTime > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
             mLastSyncTime = SystemClock.elapsedRealtime();
             mRealmHelper.open();

@@ -33,10 +33,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     private AccountManager mAccountManager;
     private Context mContext;
 
-    public TreeConverterTask() {
-
-    }
-
     @Override
     protected void onPreExecute() {
         mContext = MyApplication.getAppContext();
@@ -60,6 +56,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             Log.e(TAG, "doInBackground: getTree()");
             Response<ResponseFlowsTreeModel> response = MyApplication.getApi()
                     .getTree(new TokenModel(token)).execute();
+
             // TODO: 16.05.17 check response code and status here
             Log.e(TAG, "doInBackground: response.body().getList()");
             list = response.body().getList();
@@ -76,7 +73,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
         List<String> tmp;
 
         assert list != null;
-        int MIN_LIST_SIZE = 100;
+        int MIN_LIST_SIZE = 100; //проверка на количество
         if (list.size() > MIN_LIST_SIZE) {
             mRealmHelper.dropRealmTree();
             for (int i = 0; i < list.size(); i++) {
