@@ -71,20 +71,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PathConverter mPathConverter;
     private Context mContext = MyApplication.getAppContext();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
-        if (getIntent().getExtras() != null && getIntent().getExtras()
-                .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
-            finish();
-        }
+        checkQuitIntent();
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
         mPathConverter = new PathConverter(mContext);
         setContentView(R.layout.activity_main);
+        setViews();
+        mRealmHelper.getRealm().addChangeListener(this);
+        checkAccountAvailability();
+        ContentResolver.setMasterSyncAutomatically(true);
+        setPeriodicSync();
+    }
+
+    private void setViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.round_logo48x48);
         toolbar.setTitle(" HyperFax");
@@ -95,8 +99,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
-        mRealmHelper.getRealm().addChangeListener(this);
-        setPeriodicSync();
+    }
+
+    /*
+    when activity getting intent from QuitFragment to
+    close up
+     */
+    private void checkQuitIntent() {
+        if (getIntent().getExtras() != null && getIntent().getExtras()
+                .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
+            finish();
+        }
+    }
+
+    /*
+    Check account exists. If no HyperFax account in AccManager - app needs to create one
+     */
+    private void checkAccountAvailability() {
+        AccountManager manager = AccountManager.get(this);
+        Account[] ac = manager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+        if (ac.length < 1) {
+            Log.e(TAG, "onCreate: no such accs");
+            startLoginActivity();
+        }
     }
 
     private void setPeriodicSync() {
@@ -156,18 +181,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         animateFAB();
         setRecyclerViewAdapter();
         super.onResume();
-    }
-
-    public static int persistence(long n) {
-        // your code
-        int result = 0;
-        if (n < 10) return result;
-        char[] chars = String.valueOf(n).toCharArray();
-        for (Character ch : chars) {
-
-        }
-
-        return result;
     }
 
     @Override
@@ -231,9 +244,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.main_menu_log_out:
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
+                startLoginActivity();
                 break;
             default:
                 break;
@@ -352,6 +363,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fileUri = Uri.fromFile(getOutputPhotoFile());
         i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     private void setFabHidingAbility() {

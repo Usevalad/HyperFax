@@ -11,7 +11,7 @@
     <item
         android:id="@+id/main_menu_notifications"
         android:checkable="true"
-        android:title="Вкл/выкл уведомления" />
+        android:title="@string/notifications" />
     <item
         android:id="@+id/main_menu_request_flow"
         android:title="Обновить дерево каталогов" />

@@ -64,7 +64,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount");
+//        Log.d(TAG, "getItemCount");
         return data.size();
     }
 

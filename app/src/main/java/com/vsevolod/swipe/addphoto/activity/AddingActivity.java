@@ -59,7 +59,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private long mLastClickTime = 0;
     private Location mLocation = null;
     private Context mContext = MyApplication.getAppContext();
-//    private LocationTracker locationTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -264,6 +265,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         setAccountAuthenticatorResult(intent.getExtras());
         // Tell the account manager settings page that all went well
         setResult(RESULT_OK, intent);
+//        ContentResolver.setIsSyncable(account, getString(R.string.content_authority), 1);
+        ContentResolver.setSyncAutomatically(account, getString(R.string.content_authority), true);
+        new TreeConverterTask().execute();// update tree after creating account
     }
 
     @Override

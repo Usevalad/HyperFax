@@ -3,7 +3,7 @@
     android:accountType="@string/account_type"
     android:allowParallelSyncs="false"
     android:contentAuthority="@string/content_authority"
-    android:isAlwaysSyncable="false"
+    android:isAlwaysSyncable="true"
     android:supportsUploading="true"
     android:userVisible="true" />
     <!--isAlwaysSyncable sets the adapter to be syncable=true by default for every new account the user -->
