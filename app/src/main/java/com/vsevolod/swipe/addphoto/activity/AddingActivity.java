@@ -103,6 +103,22 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+//        new LocationTracker("my.action")
+//                .setInterval(50000)
+//                .setGps(true)
+//                .setNetWork(false)
+//                .start(getBaseContext(), this);
+    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        locationTracker.onRequestPermission(requestCode, permissions, grantResults);
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//    }
+
+    @Override
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         mEditText.setOnEditorActionListener(null);
@@ -187,8 +203,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             ContentResolver.requestSync(account, getString(R.string.content_authority), new Bundle());
         }
         if (!isOnline()) {
-            // TODO: 24.05.17 change to a dialog fragment or snack bar
-            Toast.makeText(mContext, getString(R.string.no_internet_data_later), Toast.LENGTH_SHORT).show();
+            // TODO: 24.05.17 change to a dialog fragment
+            Toast.makeText(mContext, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
         }
         finish();
     }
