@@ -16,9 +16,11 @@ public class ListResponse {
     @SerializedName("columns")
     @Expose
     private List<String> columns = null;
+
     @SerializedName("list")
     @Expose
     private List<List<String>> list = null;
+
     @SerializedName("status")
     @Expose
     private String status;

@@ -377,7 +377,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             } else if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_PASS)) {
                 mPasswordView.setError(notify);
             }
-            // TODO: 28.05.17 send notification 
+            // TODO: 28.05.17 send notification
         }
     }
 }

@@ -45,14 +45,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         mAccountManager = AccountManager.get(context);
         mRealmHelper = new RealmHelper();
-        Log.d(TAG, "SyncAdapter: constructor");
+        Log.e(TAG, "SyncAdapter: constructor");
     }
 
     public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
         super(context, autoInitialize, allowParallelSyncs);
         mAccountManager = AccountManager.get(context);
         mRealmHelper = new RealmHelper();
-        Log.d(TAG, "SyncAdapter: constructor 2");
+        Log.e(TAG, "SyncAdapter: constructor 2");
     }
 
     @Override
@@ -64,9 +64,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             mLastSyncTime = SystemClock.elapsedRealtime();
             mRealmHelper.open();
             List<DataModel> dataModels = mRealmHelper.getNotSyncedData();
-            Log.d(TAG, "onPerformSync: dataModels.size() " + dataModels.size());
+            Log.e(TAG, "onPerformSync: dataModels.size() " + dataModels.size());
             String[] dataIds = mRealmHelper.getNotSyncedDataStatesIds();
-            Log.d(TAG, "onPerformSync: dataIds.length " + dataIds.length);
+            Log.e(TAG, "onPerformSync: dataIds.length " + dataIds.length);
             if (dataModels.size() > 0) {
                 uploadData(getToken(account), dataModels);
             }
@@ -87,7 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private String getToken(Account account) {
-        Log.d(TAG, "getToken");
+        Log.e(TAG, "getToken");
         String token = null;
         try {
             token = mAccountManager.blockingGetAuthToken(account,
@@ -103,19 +103,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void getStateCodesFromServer(String authToken, String[] dataIds) {
-        Log.d(TAG, "getStateCodesFromServer");
+        Log.e(TAG, "getStateCodesFromServer");
         try {
             ListQueryModel listQueryModel = new ListQueryModel(authToken, dataIds);
             Response<ListResponse> response = MyApplication.getApi().getList(listQueryModel).execute();
-            Log.e(TAG, "onPerformSync: response code " + String.valueOf(response.code()));
-            Log.e(TAG, "onPerformSync: response body " + String.valueOf(response.body()));
+            Log.e(TAG, "getList: response code " + String.valueOf(response.code()));
+            Log.e(TAG, "getList: response body " + String.valueOf(response.body()));
             List<String> ids = response.body().getIds();
             List<String> states = response.body().stateCodes();
             for (int i = 0; i < states.size(); i++) {
                 if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
                     mRealmHelper.setStateCode(ids.get(i), states.get(i));
-                    Log.d(TAG, "onResponse: id = " + ids.get(i));
-                    Log.d(TAG, "onResponse: state = " + states.get(i));
+                    Log.e(TAG, "onResponse: id = " + ids.get(i));
+                    Log.e(TAG, "onResponse: state = " + states.get(i));
                 }
             }
         } catch (IOException e) {
@@ -124,7 +124,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void uploadData(String authToken, List<DataModel> notSyncedData) {
-        Log.d(TAG, "uploadData");
+        Log.e(TAG, "uploadData");
         try {
             for (int i = 0; i < notSyncedData.size(); i++) {
                 DataModel dataModel = notSyncedData.get(i);
