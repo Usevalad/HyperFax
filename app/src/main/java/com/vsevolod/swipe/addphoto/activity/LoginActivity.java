@@ -6,6 +6,9 @@ import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -55,21 +59,20 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private String password;
     private String phoneNumber;
     private AccountManager mAccountManager;
+    private Context mContext;
+    private NotificationCompat.Builder mBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_login);
+        mContext = getApplicationContext();
+        mBuilder = new NotificationCompat.Builder(this);
+
         mAccountManager = AccountManager.get(this);
-        String mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
-        Log.e(TAG, "onCreate: mAccountName " + mAccountName);
-        String mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
-        Log.e(TAG, "onCreate: mAccountType " + mAccountType);
-        String mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
-        Log.e(TAG, "onCreate: mAuthType " + mAuthType);
-        boolean isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
-        Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
+
+        logs();
 
         if (!isOnline()) {
             Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
@@ -86,7 +89,17 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
 
+    private void logs() {
+        String mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
+        Log.e(TAG, "onCreate: mAccountName " + mAccountName);
+        String mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
+        Log.e(TAG, "onCreate: mAccountType " + mAccountType);
+        String mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
+        Log.e(TAG, "onCreate: mAuthType " + mAuthType);
+        boolean isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
+        Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
     }
 
     @Override
@@ -151,6 +164,21 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             }
         }
         return phoneNumber;
+    }
+
+    private void checkAccountAvailability() {
+        Account[] ac = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+        if (ac.length < 1) {
+            Log.e(TAG, "onCreate: no such accs");
+
+        } else {
+            startMainActivity();
+        }
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -378,6 +406,23 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 mPasswordView.setError(notify);
             }
             // TODO: 28.05.17 send notification
+
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
+            Notification n = new Notification.Builder(mContext)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(notify)
+                    .setSmallIcon(R.drawable.round_logo96x96)
+                    .setContentIntent(pIntent)
+                    .setAutoCancel(true)
+//                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)
+//                    .addAction(R.drawable.round_logo96x96, "More", pIntent)
+//                    .addAction(R.drawable.round_logo96x96, "And more", pIntent)
+                    .build();
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+            notificationManager.notify(0, n);
         }
     }
 }

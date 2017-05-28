@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
         checkQuitIntent();
+        checkAccountAvailability();
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
@@ -84,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         setViews();
         mRealmHelper.getRealm().addChangeListener(this);
-        checkAccountAvailability();
-        ContentResolver.setMasterSyncAutomatically(true);
-        setPeriodicSync();
     }
 
     private void setViews() {
@@ -122,19 +120,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (ac.length < 1) {
             Log.e(TAG, "onCreate: no such accs");
             startLoginActivity();
+        } else {
+            ContentResolver.setMasterSyncAutomatically(true);
+            setPeriodicSync();
         }
     }
 
     private void setPeriodicSync() {
         Log.e(TAG, "setPeriodicSync");
-        long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
-                10000 : Constants.MILLISECONDS_HOUR;
+//            long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
+//                    10000 : Constants.MILLISECONDS_HOUR;
+
+        String accountName = new PreferenceHelper().getAccountName();
         ContentResolver.addPeriodicSync(
-                new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE),
+                new Account(accountName , AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
                 new Bundle(),
-                syncTime);
-        Log.e(TAG, "setPeriodicSync: time = " + syncTime);
+                10000);
+        Log.e(TAG, "setPeriodicSync: time = " + 10000);
     }
 
     private void setFABAnimation() {
