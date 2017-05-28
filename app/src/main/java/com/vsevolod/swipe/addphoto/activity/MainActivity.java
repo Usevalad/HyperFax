@@ -36,6 +36,7 @@ import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.drawable.round_logo48x48);
+        toolbar.setLogo(R.drawable.hf_icon48x48_4);
         toolbar.setTitle(" HyperFax");
         setSupportActionBar(toolbar);
         setFABAnimation();
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
                 10000 : Constants.MILLISECONDS_HOUR;
         ContentResolver.addPeriodicSync(
-                new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
                 new Bundle(),
                 syncTime);
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_repeat_download:
                 // syncing data
                 ContentResolver.requestSync(
-                        new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
+                        new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE),
                         getResources().getString(R.string.content_authority),
                         new Bundle());
                 if (!isOnline()) {
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_request_flow:
                 AccountManager am = AccountManager.get(mContext);
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
-                    new TreeConverterTask().execute();
+                    new TreeConverterTask(false).execute();
                 } else {
                     Intent intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);

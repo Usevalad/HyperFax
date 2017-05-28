@@ -30,9 +30,10 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
-import com.vsevolod.swipe.addphoto.model.responce.UserModel;
+import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
 
 import java.io.IOException;
 
@@ -137,7 +138,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 phoneNumber = accountName;
             }
             System.out.println("Accounts : " + accountName + ", " + accountType + " describe:" + accountDescribe);
-            if (TextUtils.equals(ac.name, AccountGeneral.ARG_ACCOUNT_NAME)) {
+            if (TextUtils.equals(ac.name, new PreferenceHelper().getAccountName())) {
                 Log.e(TAG, "getPhoneNumber: " + ac.name);
                 Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountManager.KEY_AUTHTOKEN));
                 Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_TOKEN_TYPE));
@@ -197,9 +198,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-//            mAuthTask = new AuthTask();
-//            String[] s = {phoneNumber, password};
-//            mAuthTask.execute();
             new LoginTask().execute();
         }
     }
@@ -245,7 +243,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     private void finishLogin(Intent intent) {
         final Account account = new Account(
-                AccountGeneral.ARG_ACCOUNT_NAME,
+                new PreferenceHelper().getAccountName(),
                 AccountGeneral.ARG_ACCOUNT_TYPE);
         Account[] acc = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
         String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
@@ -265,9 +263,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         setAccountAuthenticatorResult(intent.getExtras());
         // Tell the account manager settings page that all went well
         setResult(RESULT_OK, intent);
-//        ContentResolver.setIsSyncable(account, getString(R.string.content_authority), 1);
         ContentResolver.setSyncAutomatically(account, getString(R.string.content_authority), true);
-        new TreeConverterTask().execute();// update tree after creating account
     }
 
     @Override
@@ -285,6 +281,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     }
 
     public boolean isOnline() {
+        Log.e(TAG, "isOnline");
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
@@ -293,22 +290,57 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
 
     private class LoginTask extends AsyncTask<Void, Void, Intent> {
+        private final String TAG = this.getClass().getSimpleName();
+        private String notify;
+        private String resultCode;
 
         @Override
         protected Intent doInBackground(Void... params) {
+            Log.e(TAG, "doInBackground");
             AuthModel user = new AuthModel(phoneNumber, password);
-            Response<UserModel> response;
+            Response<AuthResponseModel> response;
             String authToken;
             final Intent res = new Intent();
             try {
                 response = MyApplication.getApi().authenticate(user).execute();
-                authToken = response.body().getToken();
-                Log.e(TAG, "pturesBackground: " + authToken);
-                res.putExtra(AccountManager.KEY_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_NAME);
-                res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
-                res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
-                res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
-                res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber);
+
+                if (response.code() == 201 || response.code() == 200) {
+                    switch (response.body().getStatus()) {
+                        case Constants.RESPONSE_STATUS_FAIL:
+                            Log.e(TAG, "Status FAIL. error message: " + response.body().getError());
+                            break;
+                        case Constants.RESPONSE_STATUS_OK:
+                            notify = response.body().getNotify();
+                            resultCode = response.body().getResult();
+                            Log.e(TAG, "Status OK. notify: " + notify);
+                            Log.e(TAG, "Status OK. result: " + resultCode);
+
+                            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_VALID)) {
+                                //all right
+                                authToken = response.body().getToken();
+                                String name = response.body().getName();
+                                Log.e(TAG, "token : " + authToken);
+                                new PreferenceHelper().saveString(PreferenceHelper.APP_PREFERENCES_ACCOUNT_NAME, name);
+                                res.putExtra(AccountManager.KEY_ACCOUNT_NAME, name);
+                                res.putExtra(AccountManager.KEY_ACCOUNT_TYPE, AccountGeneral.ARG_ACCOUNT_TYPE);
+                                res.putExtra(AccountManager.KEY_AUTHTOKEN, authToken);
+                                res.putExtra(AccountGeneral.PARAM_USER_PASS, password);
+                                res.putExtra(AccountGeneral.KEY_ACCOUNT_PHONE_NUMBER, phoneNumber);
+
+                                return res;
+                            } else return null;
+
+                        case Constants.RESPONSE_STATUS_PARAM:
+                            Log.e(TAG, "Status PARAM");
+                            // TODO: 28.05.17 add getLog
+                            break;
+                        default:
+                            break;
+                    }
+                } else {
+                    Log.e(TAG, "response code = " + response.code());
+                    Log.e(TAG, "response message = " + response.message());
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 res.putExtra(AccountGeneral.KEY_ERROR_MESSAGE, e.getMessage());
@@ -319,14 +351,19 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         @Override
         protected void onPostExecute(Intent intent) {
             mAuthTask = null;
-            if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
-                mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
-                mPasswordView.requestFocus();
+            if (intent != null) {
+                if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
+                    mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
+                    mPasswordView.requestFocus();
+                } else {
+                    finishLogin(intent);
+                    new TreeConverterTask(true).execute();
+                    Log.e(TAG, "onPostExecute: isFirst = true");
+                    // Close the activity, we're done
+                    finish();
+                }
             } else {
-                finishLogin(intent);
-                new TreeConverterTask().execute();
-                // Close the activity, we're done
-                finish();
+                onCancelled();
             }
         }
 
@@ -335,6 +372,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             Log.d(TAG, "onCancelled");
             mAuthTask = null;
             showProgress(false);
+            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_TEL)) {
+                mPhoneNumberView.setError(notify);
+            } else if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_PASS)) {
+                mPasswordView.setError(notify);
+            }
+            // TODO: 28.05.17 send notification 
         }
     }
 }

@@ -35,6 +35,7 @@ import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.holder.IconTreeItemHolder;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -71,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setLogo(R.drawable.round_logo48x48);
+        toolbar.setLogo(R.drawable.hf_icon48x48_4);
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -195,7 +196,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         );
 
         mRealmHelper.save(model);
-        Account account = new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE);
+        Account account = new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE);
         Log.e(TAG, "saveDataToRealm: ContentResolver.isSyncActive");
         if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
             Log.e(TAG, "saveDataToRealm: !ContentResolver.isSyncPending ");

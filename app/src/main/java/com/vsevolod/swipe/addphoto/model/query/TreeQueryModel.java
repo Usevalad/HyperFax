@@ -2,28 +2,29 @@ package com.vsevolod.swipe.addphoto.model.query;
 
 import com.google.gson.annotations.SerializedName;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 
 /**
- * Created by vsevolod on 07.04.17.
+ * Created by vsevolod on 08.04.17.
  */
 
-public class AuthModel {
+public class TreeQueryModel {
     @SerializedName("version")
     private final double version;
 
     @SerializedName("release")
     private final String release;
 
-    @SerializedName("phone")
-    final String phone;
+    @SerializedName("token")
+    private final String token;
 
-    @SerializedName("password")
-    final String password;
+    @SerializedName("modified")
+    private final String modified;
 
-    public AuthModel(String phone, String password) {
+    public TreeQueryModel(String token) {
         this.version = MyApplication.getVersionCode();
         this.release = MyApplication.getBuildDate();
-        this.phone = phone;
-        this.password = password;
+        this.token = token;
+        this.modified = new PreferenceHelper().getModified();
     }
 }

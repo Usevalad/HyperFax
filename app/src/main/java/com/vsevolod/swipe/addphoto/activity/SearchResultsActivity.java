@@ -16,9 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
-        toolbar.setLogo(R.drawable.round_logo48x48);
+        toolbar.setLogo(R.drawable.hf_icon48x48_4);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

@@ -26,6 +26,7 @@
     <string name="content_authority">com.vsevolod.swipe.addphoto.provider.StubProvider</string>
     <string name="choose_tag">Выбери тег</string>
     <string name="updated">Обновлено</string>
+    <string name="already_have_last_version">Последняя версия актуальна</string>
     <string name="really_want_to_quit">Вы действительно хотите выйти?</string>
     <string name="ok">Да</string>
     <string name="cancel">Отмена</string>

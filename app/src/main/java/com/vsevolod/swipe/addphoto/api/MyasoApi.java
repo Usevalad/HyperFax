@@ -2,14 +2,12 @@ package com.vsevolod.swipe.addphoto.api;
 
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
-import com.vsevolod.swipe.addphoto.model.query.ListModel;
-import com.vsevolod.swipe.addphoto.model.query.SimpleAuthModel;
-import com.vsevolod.swipe.addphoto.model.query.TokenModel;
-import com.vsevolod.swipe.addphoto.model.responce.CheckedInfo;
+import com.vsevolod.swipe.addphoto.model.query.FirstTreeQueryModel;
+import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
+import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
-import com.vsevolod.swipe.addphoto.model.responce.UserInfoModel;
-import com.vsevolod.swipe.addphoto.model.responce.UserModel;
+import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -22,29 +20,23 @@ import retrofit2.http.PUT;
  * Created by vsevolod on 07.04.17.
  */
 public interface MyasoApi {
-    @POST("ext/apit/tree")
-    Call<ResponseFlowsTreeModel> getTree(@Body TokenModel model);
+    @POST("ext/apin/auth")
+    Call<AuthResponseModel> authenticate(@Body AuthModel user);
 
-    @POST("ext/apit/auth")
-    Call<UserModel> authenticate(@Body AuthModel user);
+    @POST("ext/apin/items")
+    Call<ResponseFlowsTreeModel> getFirstTree(@Body FirstTreeQueryModel model);
 
-    @POST("ext/apit/auth")
-    Call<UserInfoModel> authenticate(@Body SimpleAuthModel user);
+    @POST("ext/apin/tree")
+    Call<ResponseFlowsTreeModel> getTree(@Body TreeQueryModel model);
 
-    @POST("ext/apit/check")
-    Call<CheckedInfo> verify(@Body TokenModel user);
-
-    //@Headers("Content-Length: ?")
-    //ext/api/upload
-    @PUT("ext/apit/upload")
+    @PUT("ext/apin/upload")
     Call<ResponseBody> postImage(@Body RequestBody body);
 
-    @POST("ext/apit/commit")
-//ext/api/commit
+    @POST("ext/apin/commit")
     Call<ResponseBody> commit(@Body CommitModel commitModel);
 
-    @POST("ext/apit/list")
-    Call<ListResponse> getList(@Body ListModel listModel);
+    @POST("ext/apin/list")
+    Call<ListResponse> getList(@Body ListQueryModel listQueryModel);
 }
 
 

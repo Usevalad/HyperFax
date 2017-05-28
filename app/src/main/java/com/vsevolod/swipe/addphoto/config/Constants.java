@@ -12,6 +12,12 @@ public class Constants {
     public static final String RESPONSE_STATUS_AUTH = "AUTH";
     public static final String RESPONSE_STATUS_PARAM = "PARAM";
     public static final String RESPONSE_STATUS_FAIL = "FAIL";
+    public static final String RESPONSE_TREE_SUB_STATUS_NM = "NM";//not modified
+    public static final String RESPONSE_TREE_SUB_STATUS_CH = "CH";// ?
+    public static final String RESPONSE_TREE_SUB_STATUS_NT = "NT";//not tested
+    public static final String RESPONSE_AUTH_SUB_STATUS_TEL = "TEL";//number not valid
+    public static final String RESPONSE_AUTH_SUB_STATUS_PASS = "PASS";//password not valid
+    public static final String RESPONSE_AUTH_SUB_STATUS_VALID = "VALID";
     static final String BASE_URL = "http://crm.myaso.net.ua/";
     public static final String MEDIA_TYPE_IMAGE = "image/*";
     public static final String INTENT_KEY_PATH = "image/";

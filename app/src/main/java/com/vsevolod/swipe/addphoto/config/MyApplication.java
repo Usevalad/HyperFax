@@ -2,11 +2,17 @@ package com.vsevolod.swipe.addphoto.config;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vsevolod.swipe.addphoto.BuildConfig;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,6 +29,9 @@ public class MyApplication extends Application {
     private static Context context;
     private static MyasoApi myasoApi;
     private Retrofit retrofit;
+    private static String mVersionName;
+    private static int mVersionCode;
+    private static String mBuildDate;
 
     @Override
     public void onCreate() {
@@ -50,6 +59,19 @@ public class MyApplication extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
+
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date buildDate = new Date(BuildConfig.TIMESTAMP);
+        mBuildDate = format.format(buildDate);
+        mVersionName = pInfo.versionName;
+        mVersionCode = pInfo.versionCode;
+
     }
 
     public static MyasoApi getApi() {
@@ -66,4 +88,17 @@ public class MyApplication extends Application {
 //        super.attachBaseContext(base);
 //        MultiDex.install(this);//?
 //    }
+
+
+    public static String getVersionName() {
+        return mVersionName;
+    }
+
+    public static int getVersionCode() {
+        return mVersionCode;
+    }
+
+    public static String getBuildDate() {
+        return mBuildDate;
+    }
 }

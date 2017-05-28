@@ -14,7 +14,7 @@ import android.util.Log;
 import com.vsevolod.swipe.addphoto.activity.LoginActivity;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
-import com.vsevolod.swipe.addphoto.model.responce.UserModel;
+import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
 
 import java.io.IOException;
 
@@ -93,7 +93,7 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
             if (password != null && phoneNumber != null) {
                 final AuthModel user = new AuthModel(phoneNumber, password);
                 try {
-                    Response<UserModel> execute = MyApplication.
+                    Response<AuthResponseModel> execute = MyApplication.
                             getApi().
                             authenticate(user).
                             execute();

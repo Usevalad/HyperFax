@@ -6,14 +6,14 @@ import com.google.gson.annotations.SerializedName;
  * Created by vsevolod on 20.04.17.
  */
 
-public class ListModel {
+public class ListQueryModel {
     @SerializedName("token")
     final String token;
 
     @SerializedName("id")
     final String[] id;
 
-    public ListModel(String token, String[] id) {
+    public ListQueryModel(String token, String[] id) {
         this.token = token;
         this.id = id;
     }

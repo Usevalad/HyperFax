@@ -16,6 +16,9 @@ public class PreferenceHelper {
     public static final String APP_PREFERENCES_TITLE = "user title";
     public static final String APP_PREFERENCES_PHONE = "user phone";
     public static final String APP_PREFERENCES_PASSWORD = "user password";
+    public static final String APP_PREFERENCES_MODIFIED = "modified date";
+    public static final String APP_PREFERENCES_NOT_FOUND = "";
+    public static final String APP_PREFERENCES_ACCOUNT_NAME = "Hyper Fax";
     private SharedPreferences mUserSettings;
 
     public PreferenceHelper() {
@@ -31,22 +34,30 @@ public class PreferenceHelper {
     }
 
     public String getUserName() {
-        return mUserSettings.getString(APP_PREFERENCES_NAME, "not found");
+        return mUserSettings.getString(APP_PREFERENCES_NAME, APP_PREFERENCES_NOT_FOUND);
     }
 
     public String getUserTitlte() {
-        return mUserSettings.getString(APP_PREFERENCES_TITLE, "not found");
+        return mUserSettings.getString(APP_PREFERENCES_TITLE, APP_PREFERENCES_NOT_FOUND);
     }
 
     public String getToken() {
-        return mUserSettings.getString(APP_PREFERENCES_TOKEN, "not found");
+        return mUserSettings.getString(APP_PREFERENCES_TOKEN, APP_PREFERENCES_NOT_FOUND);
     }
 
     public String getPhone() {
-        return mUserSettings.getString(APP_PREFERENCES_PHONE, "not found");
+        return mUserSettings.getString(APP_PREFERENCES_PHONE, APP_PREFERENCES_NOT_FOUND);
     }
 
     public String getPassword() {
-        return mUserSettings.getString(APP_PREFERENCES_PASSWORD, "not found");
+        return mUserSettings.getString(APP_PREFERENCES_PASSWORD, APP_PREFERENCES_NOT_FOUND);
+    }
+
+    public String getModified() {
+        return mUserSettings.getString(APP_PREFERENCES_MODIFIED, APP_PREFERENCES_NOT_FOUND);
+    }
+
+    public String getAccountName() {
+        return mUserSettings.getString(APP_PREFERENCES_ACCOUNT_NAME, APP_PREFERENCES_NOT_FOUND);
     }
 }

@@ -18,7 +18,7 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
-import com.vsevolod.swipe.addphoto.model.query.ListModel;
+import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 
@@ -82,7 +82,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void updateFlowsTree() {
-        TreeConverterTask task = new TreeConverterTask();
+        TreeConverterTask task = new TreeConverterTask(false);
         task.execute();
     }
 
@@ -105,8 +105,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private void getStateCodesFromServer(String authToken, String[] dataIds) {
         Log.d(TAG, "getStateCodesFromServer");
         try {
-            ListModel listModel = new ListModel(authToken, dataIds);
-            Response<ListResponse> response = MyApplication.getApi().getList(listModel).execute();
+            ListQueryModel listQueryModel = new ListQueryModel(authToken, dataIds);
+            Response<ListResponse> response = MyApplication.getApi().getList(listQueryModel).execute();
             Log.e(TAG, "onPerformSync: response code " + String.valueOf(response.code()));
             Log.e(TAG, "onPerformSync: response body " + String.valueOf(response.body()));
             List<String> ids = response.body().getIds();

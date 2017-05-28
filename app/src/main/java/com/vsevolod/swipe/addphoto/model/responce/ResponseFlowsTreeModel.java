@@ -14,45 +14,60 @@ public class ResponseFlowsTreeModel {
     @SerializedName("columns")
     @Expose
     private List<String> columns;
+
     @SerializedName("list")
     @Expose
-    private List<List<String>> list ;
+    private List<List<String>> list;
+
     @SerializedName("modified")
     @Expose
     private String modified;
+
     @SerializedName("status")
     @Expose
     private String status;
 
-    public List<String> getColumns() {
-        return columns;
+    @SerializedName("error")
+    private String error;
+
+    @SerializedName("notify")
+    private String notify;
+
+    @SerializedName("log")
+    private String log;
+
+    @SerializedName("result")
+    private String result;
+
+    public String getResult() {
+        return result;
     }
 
-    public void setColumns(List<String> columns) {
-        this.columns = columns;
+    public String getLog() {
+        return log;
+    }
+
+    public List<String> getColumns() {
+        return columns;
     }
 
     public List<List<String>> getList() {
         return list;
     }
 
-    public void setList(List<List<String>> list) {
-        this.list = list;
-    }
-
     public String getModified() {
         return modified;
-    }
-
-    public void setModified(String modified) {
-        this.modified = modified;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public String getError() {
+        return error;
+    }
+
+    public String getNotify() {
+        return notify;
     }
 }
