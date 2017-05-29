@@ -38,7 +38,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
-        toolbar.setLogo(R.drawable.hf_icon48x48_4);
+        toolbar.setLogo(R.drawable.new_logo4);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -94,7 +94,6 @@ public class SearchResultsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     protected void onNewIntent(Intent intent) {

@@ -388,7 +388,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     new TreeConverterTask(true).execute();
                     Log.e(TAG, "onPostExecute: isFirst = true");
                     // Close the activity, we're done
+                    String action = getIntent().getAction();
                     finish();
+                    if (TextUtils.equals(action, "main")) {
+                        startMainActivity();
+                    }
                 }
             } else {
                 onCancelled();
@@ -405,24 +409,25 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             } else if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_PASS)) {
                 mPasswordView.setError(notify);
             }
-            // TODO: 28.05.17 send notification
-
-            Intent intent = new Intent(mContext, LoginActivity.class);
-            PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
-            Notification n = new Notification.Builder(mContext)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText(notify)
-                    .setSmallIcon(R.drawable.round_logo96x96)
-                    .setContentIntent(pIntent)
-                    .setAutoCancel(true)
+            if (!TextUtils.isEmpty(notify)) {
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                intent.setAction("main");
+                PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
+                Notification n = new Notification.Builder(mContext)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(notify)
+                        .setSmallIcon(R.drawable.round_logo96x96)
+                        .setContentIntent(pIntent)
+                        .setAutoCancel(true)
 //                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)
 //                    .addAction(R.drawable.round_logo96x96, "More", pIntent)
 //                    .addAction(R.drawable.round_logo96x96, "And more", pIntent)
-                    .build();
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        .build();
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            notificationManager.notify(0, n);
+                notificationManager.notify(0, n);
+            }
         }
     }
 }

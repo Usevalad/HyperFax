@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.drawable.hf_icon48x48_4);
+        toolbar.setLogo(R.drawable.logo7);
         toolbar.setTitle(" HyperFax");
         setSupportActionBar(toolbar);
         setFABAnimation();
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String accountName = new PreferenceHelper().getAccountName();
         ContentResolver.addPeriodicSync(
-                new Account(accountName , AccountGeneral.ARG_ACCOUNT_TYPE),
+                new Account(accountName, AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
                 new Bundle(),
                 10000);

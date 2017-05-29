@@ -10,23 +10,23 @@ public class CommitModel {
     @SerializedName("token")
     final String token;
 
-    @SerializedName("id")
-    final String id;
-
     @SerializedName("url")
     final String url;
 
     @SerializedName("flow")
     final String flow;
 
-    @SerializedName("comment")
-    final String comment;
+    @SerializedName("id")
+    final String id;
 
     @SerializedName("created")
     final String created;
 
     @SerializedName("location")
     final String location;
+
+    @SerializedName("comment")
+    final String comment;
 
     public CommitModel(String token, String url, String id, String flow,
                        String comment, String created, String location) {
@@ -37,5 +37,16 @@ public class CommitModel {
         this.comment = comment;
         this.created = created;
         this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "token = " + token + "\n" +
+                "url = " + url + "\n" +
+                "id = " + id + "\n" +
+                "flow = " + flow + "\n" +
+                "comment = " + comment + "\n" +
+                "created = " + created + "\n" +
+                "location = " + location;
     }
 }

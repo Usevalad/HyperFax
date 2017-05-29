@@ -5,6 +5,7 @@ import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.FirstTreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
+import com.vsevolod.swipe.addphoto.model.responce.CommitResponseModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
@@ -33,7 +34,7 @@ public interface MyasoApi {
     Call<ResponseBody> postImage(@Body RequestBody body);
 
     @POST("ext/apin/commit")
-    Call<ResponseBody> commit(@Body CommitModel commitModel);
+    Call<CommitResponseModel> commit(@Body CommitModel commitModel);
 
     @POST("ext/apin/list")
     Call<ListResponse> getList(@Body ListQueryModel listQueryModel);

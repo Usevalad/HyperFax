@@ -72,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setLogo(R.drawable.hf_icon48x48_4);
+        toolbar.setLogo(R.drawable.round_logo_wry48x48);
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -105,18 +105,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     @Override
     protected void onStart() {
         super.onStart();
-//        new LocationTracker("my.action")
-//                .setInterval(50000)
-//                .setGps(true)
-//                .setNetWork(false)
-//                .start(getBaseContext(), this);
     }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        locationTracker.onRequestPermission(requestCode, permissions, grantResults);
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//    }
 
     @Override
     protected void onDestroy() {
@@ -135,35 +124,37 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void decodeImage() {
         Log.e(TAG, "decodeImage");
         File imageFile = new File(path);
-        text = mAutoCompleteTextView.getText().toString();
         final int THUMB_SIZE = Constants.THUMB_SIZE;
         if (imageFile.exists()) {
-            prefixValidation();
-
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
-                    BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-            int imageQuality = 40;
-            thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
-            byte[] byteArray = stream.toByteArray();
-            try {
-                thumbImage.recycle();
-                stream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (isPrefixValid()) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+                        BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
+                int imageQuality = 40;
+                thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
+                byte[] byteArray = stream.toByteArray();
+                try {
+                    thumbImage.recycle();
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                saveDataToRealm(byteArray, path);
             }
-            saveDataToRealm(byteArray, path);
         } else {
             Log.e(TAG, "addImage: file is not exist");
         }
     }
 
-    private void prefixValidation() {
-        Log.e(TAG, "prefixValidation");
+    private boolean isPrefixValid() {
+        Log.e(TAG, "isPrefixValid");
+        text = mAutoCompleteTextView.getText().toString();
         if (!mRealmHelper.isValid(text)) {
             String error = getResources().getString(R.string.choose_tag);
             mAutoCompleteTextView.setError(error);
+            return false;
         }
+        return true;
     }
 
     private void saveDataToRealm(@NonNull byte[] byteArray, @NonNull String photoUri) {
@@ -173,25 +164,20 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         Date date = new Date();
         SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         searchDateFormat.setTimeZone(timeZone);
-        String searchDate = searchDateFormat.format(date.getTime());
-        String comment = mEditText.getText().toString();
-        text = mAutoCompleteTextView.getText().toString();
         String prefix = text.substring(text.length() - 4); //4 is a prefix length
-        String name = text.substring(0, text.length() - 6); //6 is a prefix length + @ + space
-        String prefixID = mRealmHelper.getPrefixID(prefix);
-        double latitude = mLocation != null ? mLocation.getLatitude() : 0.0; // 404 is a random number
-        double longitude = mLocation != null ? mLocation.getLongitude() : 0.0;// to set when app can't track location
+        double latitude = mLocation != null ? mLocation.getLatitude() : 0.0;
+        double longitude = mLocation != null ? mLocation.getLongitude() : 0.0;
 
         DataModel model = new DataModel(
-                searchDate,
+                searchDateFormat.format(date.getTime()),
                 prefix,
-                name,
-                comment,
+                text.substring(0, text.length() - 6),//6 is a prefix length + @ + space
+                mEditText.getText().toString(),
                 photoUri,
                 byteArray,
                 latitude,
                 longitude,
-                prefixID,
+                mRealmHelper.getPrefixID(prefix),
                 date
         );
 

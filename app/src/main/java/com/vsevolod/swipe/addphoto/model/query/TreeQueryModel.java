@@ -1,5 +1,7 @@
 package com.vsevolod.swipe.addphoto.model.query;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -26,5 +28,6 @@ public class TreeQueryModel {
         this.release = MyApplication.getBuildDate();
         this.token = token;
         this.modified = new PreferenceHelper().getModified();
+        Log.e("TreeQueryModel", "constructor: modified = " + modified);
     }
 }

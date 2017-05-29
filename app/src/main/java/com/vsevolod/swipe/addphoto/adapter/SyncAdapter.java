@@ -20,6 +20,7 @@ import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.model.responce.CommitResponseModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 
 import java.io.File;
@@ -64,9 +65,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             mLastSyncTime = SystemClock.elapsedRealtime();
             mRealmHelper.open();
             List<DataModel> dataModels = mRealmHelper.getNotSyncedData();
-            Log.e(TAG, "onPerformSync: dataModels.size() " + dataModels.size());
+            Log.e(TAG, "onPerformSync: NotSyncedData.size() " + dataModels.size());
             String[] dataIds = mRealmHelper.getNotSyncedDataStatesIds();
-            Log.e(TAG, "onPerformSync: dataIds.length " + dataIds.length);
+            Log.e(TAG, "onPerformSync: NotSyncedDataStatesIds.length " + dataIds.length);
             if (dataModels.size() > 0) {
                 uploadData(getToken(account), dataModels);
             }
@@ -82,6 +83,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void updateFlowsTree() {
+        Log.e(TAG, "updateFlowsTree");
         TreeConverterTask task = new TreeConverterTask(false);
         task.execute();
     }
@@ -131,13 +133,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 File imageFile = new File(dataModel.getPhotoURL());
                 RequestBody requestBody = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
                 Response<ResponseBody> postImageResponse = MyApplication.getApi().postImage(requestBody).execute();
-                Log.e(TAG, "onPerformSync: response code " + String.valueOf(postImageResponse.code()));
-                Log.e(TAG, "onPerformSync: response body " + String.valueOf(postImageResponse.body()));
+                Log.e(TAG, "uploadData: response code " + String.valueOf(postImageResponse.code()));
+                Log.e(TAG, "uploadData: response body " + String.valueOf(postImageResponse.body()));
                 String link = postImageResponse.body().string();
                 String id = dataModel.getUid();
-                mRealmHelper.setPhotoURL(id, link);
-                mRealmHelper.setSynced(id, true);
-                mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_CREATED);
+                Log.e(TAG, "uploadData: link" + link);
+                Log.e(TAG, "uploadData: id" + id);
                 CommitModel commitModel = new CommitModel(
                         authToken,
                         link,
@@ -148,9 +149,23 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         String.valueOf(dataModel.getLatitude() + "," + dataModel.getLongitude())
                 );
 
-                Response<ResponseBody> commitResponse = MyApplication.getApi().commit(commitModel).execute();
-                Log.e(TAG, "responseBody.body().string().toString(): " + commitResponse.body().string());
-                Log.e(TAG, "responseBody.code() " + commitResponse.code());
+                Response<CommitResponseModel> commitResponse = MyApplication.getApi().commit(commitModel).execute();
+                Log.e(TAG, "commit : commitResponse.status :" + commitResponse.body().getStatus());
+                Log.e(TAG, "commit : commitResponse.code() " + commitResponse.code());
+                Log.e(TAG, "commit : commitResponse.log() " + commitResponse.body().getLog());
+                switch (commitResponse.body().getStatus()) {
+                    case Constants.RESPONSE_STATUS_PARAM:
+                        mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_PARAM);
+                        mRealmHelper.setSynced(id, true);
+                        break;
+                    case Constants.RESPONSE_STATUS_OK:
+                        mRealmHelper.setPhotoURL(id, link);
+                        mRealmHelper.setSynced(id, true);
+                        mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_CREATED);
+                        break;
+                    default:
+                        break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

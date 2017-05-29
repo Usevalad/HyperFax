@@ -94,6 +94,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                         Log.e(TAG, "Status FAIL. error message: " + response.body().getError());
                         break;
                     case Constants.RESPONSE_STATUS_OK:
+                        message = "Обновлено";
                         notify = response.body().getNotify();
                         String resultCode = response.body().getResult();
                         Log.e(TAG, "Status OK. notify: " + notify);
@@ -145,7 +146,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             }
             mRealmHelper.close();
         }
-
         return result;
     }
 
@@ -159,24 +159,28 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     @Override
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
         super.onPostExecute(flowsTreeModels);
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-        // TODO: 28.05.17 send notification
-        Intent intent = new Intent(mContext, MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
-        Notification n = new Notification.Builder(mContext)
-                .setContentTitle(mContext.getString(R.string.app_name))
-                .setContentText(notify)
-                .setSmallIcon(R.drawable.round_logo96x96)
-                .setContentIntent(pIntent)
-                .setAutoCancel(true)
+        Log.e(TAG, "onPostExecute");
+        if (!TextUtils.isEmpty(message)) {
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "onPostExecute: message :" + message);
+        }
+        if (!TextUtils.isEmpty(notify)) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+            PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
+            Notification n = new Notification.Builder(mContext)
+                    .setContentTitle(mContext.getString(R.string.app_name))
+                    .setContentText(notify)
+                    .setSmallIcon(R.drawable.round_logo96x96)
+                    .setContentIntent(pIntent)
+                    .setAutoCancel(true)
 //                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)
 //                    .addAction(R.drawable.round_logo96x96, "More", pIntent)
 //                    .addAction(R.drawable.round_logo96x96, "And more", pIntent)
-                .build();
-        NotificationManager notificationManager =
-                (NotificationManager) (mContext).getSystemService(NOTIFICATION_SERVICE);
+                    .build();
+            NotificationManager notificationManager =
+                    (NotificationManager) (mContext).getSystemService(NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, n);
-
+            notificationManager.notify(0, n);
+        }
     }
 }
