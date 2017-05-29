@@ -84,7 +84,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void updateFlowsTree() {
         Log.e(TAG, "updateFlowsTree");
-        TreeConverterTask task = new TreeConverterTask(false);
+        TreeConverterTask task = new TreeConverterTask();
         task.execute();
     }
 

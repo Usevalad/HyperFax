@@ -20,34 +20,32 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-//import android.support.multidex.MultiDex;
-
 /**
  * Created by vsevolod on 13.03.17.
  */
 
 public class MyApplication extends Application {
     private final static String TAG = "MyApplication";
-    private static Context context;
-    private static MyasoApi myasoApi;
-    private Retrofit retrofit;
-    private static String mHyperFaxVersionName;
-    private static int mHyperFaxVersionCode;
+    private static Context mContext;
+    private static MyasoApi mMyasoApi;
+    private Retrofit mRetrofit;
+    private static String mAppVersionName;
+    private static int mAppVersionCode;
     private static String mBuildDate;
-    private static int mAndroidVersion;
+    private static int mBuildVersion;
     private static String mAndroidVersionRelease;
-    private static String mAndroidModel;
+    private static String mDeviceModel;
 
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");
         super.onCreate();
-        MyApplication.context = getApplicationContext();
+        MyApplication.mContext = getApplicationContext();
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
 
-        retrofit = new Retrofit.Builder()
+        mRetrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
                 //Конвертер, необходимый для преобразования JSON'а в объекты
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -56,7 +54,7 @@ public class MyApplication extends Application {
                 .build();
 
         //Создаем объект, при помощи которого будем выполнять запросы
-        myasoApi = retrofit.create(MyasoApi.class);
+        mMyasoApi = mRetrofit.create(MyasoApi.class);
 
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
@@ -74,9 +72,9 @@ public class MyApplication extends Application {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         mBuildDate = format.format(buildDate);
-        mHyperFaxVersionName = pInfo.versionName;
-        mHyperFaxVersionCode = pInfo.versionCode;
-        mAndroidVersion = Build.VERSION.SDK_INT;
+        mAppVersionName = pInfo.versionName;
+        mAppVersionCode = pInfo.versionCode;
+        mBuildVersion = Build.VERSION.SDK_INT;
 
 
         DeviceName.with(MyApplication.getAppContext()).request(new DeviceName.Callback() {
@@ -89,7 +87,7 @@ public class MyApplication extends Application {
                 String codename = info.codename;          // "hero2lte"
                 String deviceName = info.getName();       // "Galaxy S7 Edge"
                 // FYI: We are on the UI thread.
-                mAndroidModel = manufacturer + " " + marketName;
+                mDeviceModel = manufacturer + " " + marketName;
             }
         });
 
@@ -97,11 +95,11 @@ public class MyApplication extends Application {
 
     public static MyasoApi getApi() {
         Log.d(TAG, "getApi");
-        return myasoApi;
+        return mMyasoApi;
     }
 
     public static Context getAppContext() {
-        return MyApplication.context;
+        return MyApplication.mContext;
     }
 
 //    @Override
@@ -110,19 +108,19 @@ public class MyApplication extends Application {
 //        MultiDex.install(this);//?
 //    }
 
-    public static int getVersionCode() {
-        return mHyperFaxVersionCode;
+    public static int getAppVersionCode() {
+        return mAppVersionCode;
     }
 
     public static String getBuildDate() {
         return mBuildDate;
     }
 
-    public static int getAndroidVersion() {
-        return mAndroidVersion;
+    public static int getBuildVersion() {
+        return mBuildVersion;
     }
 
-    public static String getAndroidModel() {
-        return mAndroidModel;
+    public static String getDeviceModel() {
+        return mDeviceModel;
     }
 }

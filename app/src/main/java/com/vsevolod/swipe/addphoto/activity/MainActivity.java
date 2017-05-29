@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.main_menu_request_flow:
                 AccountManager am = AccountManager.get(mContext);
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
-                    new TreeConverterTask(false).execute();
+                    new TreeConverterTask().execute();
                 } else {
                     Intent intent = new Intent(this, LoginActivity.class);
                     startActivity(intent);

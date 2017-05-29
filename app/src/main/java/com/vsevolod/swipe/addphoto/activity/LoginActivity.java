@@ -393,7 +393,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     mPasswordView.requestFocus();
                 } else {
                     finishLogin(intent);
-                    new TreeConverterTask(true).execute();
+                    new TreeConverterTask().execute();
                     Log.e(TAG, "onPostExecute: isFirst = true");
                     // Close the activity, we're done
                     String action = getIntent().getAction();

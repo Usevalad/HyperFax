@@ -2,13 +2,12 @@ package com.vsevolod.swipe.addphoto.api;
 
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
-import com.vsevolod.swipe.addphoto.model.query.FirstTreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
+import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
 import com.vsevolod.swipe.addphoto.model.responce.CommitResponseModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
-import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -23,9 +22,6 @@ import retrofit2.http.PUT;
 public interface MyasoApi {
     @POST("ext/apin/auth")
     Call<AuthResponseModel> authenticate(@Body AuthModel user);
-
-    @POST("ext/apin/items")
-    Call<ResponseFlowsTreeModel> getFirstTree(@Body FirstTreeQueryModel model);
 
     @POST("ext/apin/tree")
     Call<ResponseFlowsTreeModel> getTree(@Body TreeQueryModel model);

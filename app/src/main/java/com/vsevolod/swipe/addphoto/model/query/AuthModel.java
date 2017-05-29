@@ -5,16 +5,18 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 
+import java.util.HashMap;
+
 /**
  * Created by vsevolod on 07.04.17.
  */
 
 public class AuthModel {
-    @SerializedName("appVersion")
-    private final double appVersion;
+    @SerializedName("version")
+    final String version;
 
-    @SerializedName("appRelease")
-    private final String appRelease;
+    @SerializedName("release")
+    final String release;
 
     @SerializedName("phone")
     final String phone;
@@ -22,29 +24,23 @@ public class AuthModel {
     @SerializedName("password")
     final String password;
 
-    @SerializedName("androidModel")
-    final String androidModel;
-
-    @SerializedName("androidVersion")
-    final int androidVersion;
+    @SerializedName("android")
+    final HashMap<String, String> android;
 
     public AuthModel(String phone, String password) {
-        this.appVersion = MyApplication.getVersionCode();
-        this.appRelease = MyApplication.getBuildDate();
         this.phone = phone;
         this.password = password;
-        this.androidModel = MyApplication.getAndroidModel();
-        this.androidVersion = MyApplication.getAndroidVersion();
+        this.android = new HashMap<>();
+        this.version = String.valueOf(MyApplication.getAppVersionCode());
+        this.release = MyApplication.getBuildDate();
+        this.android.put("build", String.valueOf(MyApplication.getBuildVersion()));
+        this.android.put("model", MyApplication.getDeviceModel());
         Log.e("AuthModel", toString());
     }
 
     @Override
     public String toString() {
-        return "appVersion: " + appVersion + "\n" +
-                "appRelease: " + appRelease + "\n" +
-                "phone: " + phone + "\n" +
-                "password: " + password + "\n" +
-                "androidModel: " + androidModel + "\n" +
-                "androidVersion: " + androidVersion;
+        return "phone: " + phone + "\n" +
+                "password: " + password;
     }
 }

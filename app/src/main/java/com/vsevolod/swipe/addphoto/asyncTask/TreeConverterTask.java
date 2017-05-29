@@ -21,7 +21,6 @@ import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.model.query.FirstTreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
@@ -43,17 +42,12 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     private RealmHelper mRealmHelper;
     private AccountManager mAccountManager;
     private Context mContext;
-    private boolean isFirst;
     private String notify;
     private String message;
     private final int ID_NUMBER = 0;
     private final int NAME_NUMBER = 1;
     private final int PREFIX_NUMBER = 2;
     private final int PARENT_ID_NUMBER = 3;
-
-    public TreeConverterTask(boolean isFirst) {
-        this.isFirst = isFirst;
-    }
 
     @Override
     protected void onPreExecute() {
@@ -77,13 +71,8 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                     AccountGeneral.ARG_TOKEN_TYPE, true);
             Response<ResponseFlowsTreeModel> response;
 
-            if (isFirst) {
-                Log.e(TAG, "doInBackground: firstTree");
-                response = MyApplication.getApi().getFirstTree(new FirstTreeQueryModel(token)).execute();
-            } else {
-                Log.e(TAG, "doInBackground: get tree");
-                response = MyApplication.getApi().getTree(new TreeQueryModel(token)).execute();
-            }
+            Log.e(TAG, "doInBackground: get tree");
+            response = MyApplication.getApi().getTree(new TreeQueryModel(token)).execute();
 
             if (response.code() == 201 || response.code() == 200) {
                 switch (response.body().getStatus()) {

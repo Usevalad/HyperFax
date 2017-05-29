@@ -21,7 +21,7 @@ public class ListQueryModel {
     private final String release;
 
     public ListQueryModel(String token, String[] id) {
-        this.version = MyApplication.getVersionCode();
+        this.version = MyApplication.getAppVersionCode();
         this.release = MyApplication.getBuildDate();
         this.token = token;
         this.id = id;

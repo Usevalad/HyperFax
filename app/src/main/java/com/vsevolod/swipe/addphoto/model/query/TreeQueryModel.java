@@ -24,7 +24,7 @@ public class TreeQueryModel {
     private final String modified;
 
     public TreeQueryModel(String token) {
-        this.version = MyApplication.getVersionCode();
+        this.version = MyApplication.getAppVersionCode();
         this.release = MyApplication.getBuildDate();
         this.token = token;
         this.modified = new PreferenceHelper().getModified();
