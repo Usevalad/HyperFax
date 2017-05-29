@@ -4,10 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jaredrummler.android.device.DeviceName;
 import com.vsevolod.swipe.addphoto.BuildConfig;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
 
@@ -29,9 +31,12 @@ public class MyApplication extends Application {
     private static Context context;
     private static MyasoApi myasoApi;
     private Retrofit retrofit;
-    private static String mVersionName;
-    private static int mVersionCode;
+    private static String mHyperFaxVersionName;
+    private static int mHyperFaxVersionCode;
     private static String mBuildDate;
+    private static int mAndroidVersion;
+    private static String mAndroidVersionRelease;
+    private static String mAndroidModel;
 
     @Override
     public void onCreate() {
@@ -69,8 +74,24 @@ public class MyApplication extends Application {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         mBuildDate = format.format(buildDate);
-        mVersionName = pInfo.versionName;
-        mVersionCode = pInfo.versionCode;
+        mHyperFaxVersionName = pInfo.versionName;
+        mHyperFaxVersionCode = pInfo.versionCode;
+        mAndroidVersion = Build.VERSION.SDK_INT;
+
+
+        DeviceName.with(MyApplication.getAppContext()).request(new DeviceName.Callback() {
+
+            @Override
+            public void onFinished(DeviceName.DeviceInfo info, Exception error) {
+                String manufacturer = info.manufacturer;  // "Samsung"
+                String marketName = info.marketName;            // "Galaxy S7 Edge"
+                String model = info.model;                // "SAMSUNG-SM-G935A"
+                String codename = info.codename;          // "hero2lte"
+                String deviceName = info.getName();       // "Galaxy S7 Edge"
+                // FYI: We are on the UI thread.
+                mAndroidModel = manufacturer + " " + marketName;
+            }
+        });
 
     }
 
@@ -89,16 +110,19 @@ public class MyApplication extends Application {
 //        MultiDex.install(this);//?
 //    }
 
-
-    public static String getVersionName() {
-        return mVersionName;
-    }
-
     public static int getVersionCode() {
-        return mVersionCode;
+        return mHyperFaxVersionCode;
     }
 
     public static String getBuildDate() {
         return mBuildDate;
+    }
+
+    public static int getAndroidVersion() {
+        return mAndroidVersion;
+    }
+
+    public static String getAndroidModel() {
+        return mAndroidModel;
     }
 }

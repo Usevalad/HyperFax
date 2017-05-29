@@ -7,19 +7,11 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class FirstTreeQueryModel {
-//    @SerializedName("version")
-//    private final double version;
-//
-//    @SerializedName("release")
-//    private final String release;
 
     @SerializedName("token")
     private final String token;
 
     public FirstTreeQueryModel(String token) {
-//        this.version = MyApplication.getVersionCode();
-//        this.release = MyApplication.getBuildDate();
         this.token = token;
     }
 }
-

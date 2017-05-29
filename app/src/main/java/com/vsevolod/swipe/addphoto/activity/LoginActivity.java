@@ -89,6 +89,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
     }
 
     private void logs() {
@@ -321,6 +322,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         private final String TAG = this.getClass().getSimpleName();
         private String notify;
         private String resultCode;
+        private String manufacturer;
+        private String name;
+
+        @Override
+        protected void onPreExecute() {
+
+        }
 
         @Override
         protected Intent doInBackground(Void... params) {

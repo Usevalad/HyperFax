@@ -25,6 +25,7 @@ public class RealmHelper {
     private final String FIELD_NAME = "name";
     private final String FIELD_PREFIX = "prefix";
     private final String FIELD_UID = "uid";
+    private final String FIELD_COMMENT = "comment";
     private Realm realm;
 
     public RealmHelper() {
@@ -102,6 +103,7 @@ public class RealmHelper {
         query.contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
         query.or().contains(FIELD_NAME, queryString, Case.INSENSITIVE);
         query.or().equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
+        query.or().equalTo(FIELD_COMMENT, queryString, Case.INSENSITIVE);
         query.or().beginsWith(FIELD_PREFIX, queryString);
         return query.findAll();
     }
