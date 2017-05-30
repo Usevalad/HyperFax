@@ -26,6 +26,7 @@ public class RealmHelper {
     private final String FIELD_PREFIX = "prefix";
     private final String FIELD_UID = "uid";
     private final String FIELD_COMMENT = "comment";
+    private final String FIELD_VIEW_DATE = "viewDate";
     private Realm realm;
 
     public RealmHelper() {
@@ -101,11 +102,16 @@ public class RealmHelper {
         RealmQuery query = this.realm.where(DataModel.class);
         String FIELD_SEARCH_DATE = "searchDate";
         query.contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.or().beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE);
         query.or().contains(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.or().equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.or().equalTo(FIELD_COMMENT, queryString, Case.INSENSITIVE);
-        query.or().beginsWith(FIELD_PREFIX, queryString);
-        return query.findAll();
+        query.or().beginsWith(FIELD_COMMENT, queryString, Case.INSENSITIVE);
+        query.or().contains(FIELD_COMMENT, queryString, Case.INSENSITIVE);
+        query.or().beginsWith(FIELD_PREFIX, queryString, Case.INSENSITIVE);
+        query.or().contains(FIELD_PREFIX, queryString, Case.INSENSITIVE);
+        query.or().beginsWith(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE);
+        query.or().contains(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE);
+
+        return query.findAllSorted(FIELD_SEARCH_DATE, Sort.ASCENDING);
     }
 
     public RealmResults searchTree(String queryString) {
@@ -165,6 +171,7 @@ public class RealmHelper {
         newModel.setName(model.getName());
         newModel.setPrefixID(model.getPrefixID());
         newModel.setDate(model.getDate());
+        newModel.setViewDate(model.getViewDate());
 
         this.realm.commitTransaction();
     }

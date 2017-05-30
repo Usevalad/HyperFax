@@ -20,6 +20,7 @@ public class DataModel extends RealmObject {
     private String name;
     private String photoURL;
     private String comment;
+    private String viewDate;
     private double latitude;
     private double longitude;
     private String stateCode = Constants.DATA_MODEL_STATE_NEED_SYNC;
@@ -28,7 +29,7 @@ public class DataModel extends RealmObject {
     private Date date;
     private boolean isSynced = false;
 
-    public DataModel(String searchDate, String prefix, String name, String comment,
+    public DataModel(String searchDate,String viewDate, String prefix, String name, String comment,
                      String photoURL, byte[] photo, double latitude, double longitude,
                      String prefixID, Date date) {
         this.comment = comment;
@@ -41,6 +42,7 @@ public class DataModel extends RealmObject {
         this.name = name;
         this.prefixID = prefixID;
         this.date = date;
+        this.viewDate = viewDate;
     }
 
     public DataModel() {
@@ -147,6 +149,13 @@ public class DataModel extends RealmObject {
         isSynced = synced;
     }
 
+    public String getViewDate() {
+        return viewDate;
+    }
+
+    public void setViewDate(String viewDate) {
+        this.viewDate = viewDate;
+    }
 
     public int getStateIconImage() {
         switch (stateCode) {

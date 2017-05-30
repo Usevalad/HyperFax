@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri fileUri = null;
     private RealmHelper mRealmHelper;
-    private PathConverter mPathConverter;
     private Context mContext = MyApplication.getAppContext();
 
     @Override
@@ -81,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
-        mPathConverter = new PathConverter(mContext);
         setContentView(R.layout.activity_main);
         setViews();
         mRealmHelper.getRealm().addChangeListener(this);
     }
 
     private void setViews() {
+        Log.e(TAG, "setViews");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.ic_launcher);
         toolbar.setTitle(" HyperFax");
@@ -107,10 +106,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkQuitIntent() {
         if (getIntent().getExtras() != null && getIntent().getExtras()
                 .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
+            Log.e(TAG, "checkQuitIntent quit");
             finish();
         }
     }
-
     /*
     Check account exists. If no HyperFax account in AccManager - app needs to create one
      */
@@ -346,7 +345,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startAddingActivity(photoUri.getPath());
             } else if (requestCode == SELECT_PICTURE) {
                 photoUri = data.getData();
-                String path = mPathConverter.getFullPath(photoUri);
+                PathConverter pathConverter = new PathConverter(mContext);
+                String path = pathConverter.getFullPath(photoUri);
                 startAddingActivity(path);
             } else {
                 Log.e(TAG, "onActivityResult: Call out for image capture failed!");
@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startLoginActivity() {
+        Log.e(TAG, "startLoginActivity");
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);

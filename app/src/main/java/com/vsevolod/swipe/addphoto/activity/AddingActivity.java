@@ -72,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setLogo(R.drawable.round_logo_wry48x48);
+        toolbar.setLogo(R.drawable.ic_launcher);
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
@@ -167,9 +167,12 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         String prefix = text.substring(text.length() - 4); //4 is a prefix length
         double latitude = mLocation != null ? mLocation.getLatitude() : 0.0;
         double longitude = mLocation != null ? mLocation.getLongitude() : 0.0;
+        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        String viewDate = viewDateFormat.format(date); //date format for textView
 
         DataModel model = new DataModel(
                 searchDateFormat.format(date.getTime()),
+                viewDate,
                 prefix,
                 text.substring(0, text.length() - 6),//6 is a prefix length + @ + space
                 mEditText.getText().toString(),

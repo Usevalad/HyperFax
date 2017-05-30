@@ -65,7 +65,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_login);
         mContext = getApplicationContext();
         mBuilder = new NotificationCompat.Builder(this);
@@ -105,7 +105,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed");
+        Log.e(TAG, "onBackPressed");
         QuitFragment fragment = new QuitFragment();
         String MY_DIALOG = "MyDialog";
         fragment.show(getFragmentManager(), MY_DIALOG);
@@ -113,7 +113,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
+        Log.e(TAG, "onPause");
         mPasswordView.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
         super.onPause();
@@ -121,7 +121,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
+        Log.e(TAG, "onResume");
         mPasswordView.setOnEditorActionListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
         super.onResume();
@@ -129,7 +129,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        Log.e(TAG, "onDestroy");
         mPasswordView.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
         super.onDestroy();
@@ -139,7 +139,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private String getPhoneNumber() {
         // FIXME: 10.05.17 improve method
         //костыль, который по аккаунтам находит номер телефона
-        Log.d(TAG, "getPhoneNumber");
+        Log.e(TAG, "getPhoneNumber");
         AccountManager am = AccountManager.get(this);
         Account[] accounts = am.getAccounts();
         String phoneNumber = "oops";
@@ -188,7 +188,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        Log.d(TAG, "attemptLogin");
+        Log.e(TAG, "attemptLogin");
         if (mAuthTask != null) {
             return;
         }
@@ -233,13 +233,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     private boolean isPhoneNumberValid(String phoneNumber) {
         //TODO: improve validation
-        Log.d(TAG, "isPhoneNumberValid");
+        Log.e(TAG, "isPhoneNumberValid");
         return phoneNumber.length() == Constants.PHONE_NUMBER_LENGTH;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: improve validation
-        Log.d(TAG, "isPasswordValid");
+        Log.e(TAG, "isPasswordValid");
         return password.length() > Constants.MIN_PASSWORD_LENGTH;
     }
 
@@ -248,7 +248,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        Log.d(TAG, "showProgress");
+        Log.e(TAG, "showProgress");
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -279,6 +279,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         if (acc.length == 0) {
             Log.e(TAG, "finishLogin: adding new account");
+
             mAccountManager.addAccountExplicitly(account, password, null);
         } else {
             Log.e(TAG, "finishLogin: changing password in existed account");
@@ -409,7 +410,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         @Override
         protected void onCancelled() {
-            Log.d(TAG, "onCancelled");
+            Log.e(TAG, "onCancelled");
             mAuthTask = null;
             showProgress(false);
             if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_TEL)) {
