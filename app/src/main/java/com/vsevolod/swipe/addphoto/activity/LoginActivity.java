@@ -419,7 +419,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 mPasswordView.setError(notify);
             }
             if (!TextUtils.isEmpty(notify)) {
-                Intent intent = new Intent(mContext, LoginActivity.class);
+                Intent intent = new Intent(mContext, NotificationActivity.class);
+                intent.putExtra("notify", notify);
                 intent.setAction("main");
                 PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
                 Notification n = new Notification.Builder(mContext)

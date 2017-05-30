@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.activity.MainActivity;
+import com.vsevolod.swipe.addphoto.activity.NotificationActivity;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -154,7 +155,8 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             Log.e(TAG, "onPostExecute: message :" + message);
         }
         if (!TextUtils.isEmpty(notify)) {
-            Intent intent = new Intent(mContext, MainActivity.class);
+            Intent intent = new Intent(mContext, NotificationActivity.class);
+            intent.putExtra("notify", notify);
             PendingIntent pIntent = PendingIntent.getActivity(mContext, (int) System.currentTimeMillis(), intent, 0);
             Notification n = new Notification.Builder(mContext)
                     .setContentTitle(mContext.getString(R.string.app_name))
