@@ -19,13 +19,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.NotificationCompat;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,11 +52,12 @@ import retrofit2.Response;
 // TODO: 21.04.17 add phone number finding library
 // TODO: 13.05.17 refactor
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
-        OnClickListener {
+        OnClickListener, View.OnTouchListener {
     private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
     private EditText mPhoneNumberView;
     private EditText mPasswordView;
+    private ImageButton mViewPasswordButton;
     private View mProgressView;
     private View mLoginFormView;
     private String password;
@@ -85,6 +89,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setText("user");//admin пароль Mаксима
         mPasswordView.setOnEditorActionListener(this);
+        mViewPasswordButton = (ImageButton) findViewById(R.id.view_password_button);
+        mViewPasswordButton.setOnTouchListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
@@ -318,6 +324,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
+            case MotionEvent.ACTION_UP:
+                mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                break;
+        }
+        return true;
+    }
 
     private class LoginTask extends AsyncTask<Void, Void, Intent> {
         private final String TAG = this.getClass().getSimpleName();
@@ -325,11 +343,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         private String resultCode;
         private String manufacturer;
         private String name;
-
-        @Override
-        protected void onPreExecute() {
-
-        }
 
         @Override
         protected Intent doInBackground(Void... params) {
@@ -397,11 +410,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     new TreeConverterTask().execute();
                     Log.e(TAG, "onPostExecute: isFirst = true");
                     // Close the activity, we're done
-                    String action = getIntent().getAction();
                     finish();
-                    if (TextUtils.equals(action, "main")) {
-                        startMainActivity();
-                    }
                 }
             } else {
                 onCancelled();

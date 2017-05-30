@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
     }
+
     /*
     Check account exists. If no HyperFax account in AccManager - app needs to create one
      */
@@ -238,13 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                mRealmHelper.countData();//for debug only
 //                break;
             case R.id.main_menu_request_flow:
-                AccountManager am = AccountManager.get(mContext);
-                if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
-                    new TreeConverterTask().execute();
-                } else {
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    startActivity(intent);
-                }
+                new TreeConverterTask().execute();
                 break;
             case R.id.main_menu_log_out:
                 startLoginActivity();
