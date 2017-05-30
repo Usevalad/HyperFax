@@ -192,13 +192,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Log.e(TAG, "onPrepareOptionsMenu");
-        MenuItem checkable = menu.findItem(R.id.main_menu_notifications);
-        checkable.setChecked(isChecked);
-        return true;
-    }
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+//        Log.e(TAG, "onPrepareOptionsMenu");
+//        MenuItem checkable = menu.findItem(R.id.main_menu_notifications);
+//        checkable.setChecked(isChecked);
+//        return true;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -232,11 +232,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(mContext, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.main_menu_notifications:
-                isChecked = !item.isChecked();
-                item.setChecked(isChecked);
-                mRealmHelper.countData();//for debug only
-                break;
+//            case R.id.main_menu_notifications:
+//                isChecked = !item.isChecked();
+//                item.setChecked(isChecked);
+//                mRealmHelper.countData();//for debug only
+//                break;
             case R.id.main_menu_request_flow:
                 AccountManager am = AccountManager.get(mContext);
                 if (am.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE).length > 0) {
