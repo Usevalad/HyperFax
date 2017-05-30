@@ -72,7 +72,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setLogo(R.drawable.ic_toolbar_logo);
         final Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();

@@ -44,9 +44,9 @@
     <application
         android:name=".config.MyApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_toolbar_logo"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/round_logo96x96"
+        android:roundIcon="@drawable/ic_toolbar_logo"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

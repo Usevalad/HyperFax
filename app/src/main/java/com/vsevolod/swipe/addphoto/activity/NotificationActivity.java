@@ -20,7 +20,7 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
         Toolbar toolbar = (Toolbar) findViewById(R.id.adding_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setLogo(R.drawable.ic_toolbar_logo);
         mNotificationTextView = (TextView) findViewById(R.id.notify_text_view);
         String text = getIntent().getStringExtra("notify");
         mNotificationTextView.setText(text);

@@ -435,7 +435,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 Notification n = new Notification.Builder(mContext)
                         .setContentTitle(getString(R.string.app_name))
                         .setContentText(notify)
-                        .setSmallIcon(R.drawable.round_logo96x96)
+                        .setSmallIcon(R.drawable.ic_toolbar_logo)
                         .setContentIntent(pIntent)
                         .setAutoCancel(true)
 //                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)

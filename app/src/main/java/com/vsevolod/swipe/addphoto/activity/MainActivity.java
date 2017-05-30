@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setViews() {
         Log.e(TAG, "setViews");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setLogo(R.drawable.ic_toolbar_logo);
         toolbar.setTitle(" HyperFax");
         setSupportActionBar(toolbar);
         setFABAnimation();

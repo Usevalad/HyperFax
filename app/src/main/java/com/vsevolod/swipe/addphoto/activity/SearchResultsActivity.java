@@ -38,7 +38,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         handleIntent(getIntent());
         setContentView(R.layout.activity_search_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_search);
-        toolbar.setLogo(R.drawable.ic_launcher);
+        toolbar.setLogo(R.drawable.ic_toolbar_logo);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
