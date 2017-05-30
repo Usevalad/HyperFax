@@ -78,10 +78,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         logs();
 
-        if (!isOnline()) {
-            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
-        }
-
         final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
         mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона Mаксима
@@ -122,6 +118,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onPause");
         mPasswordView.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
+        mViewPasswordButton.setOnTouchListener(null);
         super.onPause();
     }
 
@@ -130,6 +127,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onResume");
         mPasswordView.setOnEditorActionListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
+        mViewPasswordButton.setOnTouchListener(this);
         super.onResume();
     }
 
@@ -138,6 +136,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onDestroy");
         mPasswordView.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
+        mViewPasswordButton.setOnTouchListener(null);
         super.onDestroy();
     }
 
@@ -232,8 +231,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            new LoginTask().execute();
+            if (isOnline()) {
+                showProgress(true);
+                new LoginTask().execute();
+            } else {
+                Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
