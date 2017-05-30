@@ -18,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -115,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Check account exists. If no HyperFax account in AccManager - app needs to create one
      */
     private void checkAccountAvailability() {
-        AccountManager manager = AccountManager.get(this);
-        Account[] ac = manager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-        if (ac.length < 1) {
+        AccountManager mAccountManager = AccountManager.get(this);
+        Account[] ac = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+        if (ac.length < 1 || TextUtils.equals(new PreferenceHelper().getAccountState(), Constants.APP_STATE_OUT)) {
             Log.e(TAG, "onCreate: no such accs");
             startLoginActivity();
         } else {
@@ -366,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startLoginActivity() {
         Log.e(TAG, "startLoginActivity");
+        new PreferenceHelper().saveString(PreferenceHelper.APP_STATE, Constants.APP_STATE_OUT);
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);

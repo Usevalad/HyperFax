@@ -19,6 +19,7 @@ public class PreferenceHelper {
     public static final String APP_PREFERENCES_MODIFIED = "modified date";
     public static final String APP_PREFERENCES_NOT_FOUND = "";
     public static final String APP_PREFERENCES_ACCOUNT_NAME = "Hyper Fax";
+    public static final String APP_STATE = "application state";
     private SharedPreferences mUserSettings;
 
     public PreferenceHelper() {
@@ -59,5 +60,9 @@ public class PreferenceHelper {
 
     public String getAccountName() {
         return mUserSettings.getString(APP_PREFERENCES_ACCOUNT_NAME, APP_PREFERENCES_NOT_FOUND);
+    }
+
+    public String getAccountState() {
+        return mUserSettings.getString(APP_STATE, APP_PREFERENCES_NOT_FOUND);
     }
 }

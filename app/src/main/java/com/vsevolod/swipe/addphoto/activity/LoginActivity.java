@@ -413,6 +413,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     new TreeConverterTask().execute();
                     Log.e(TAG, "onPostExecute: isFirst = true");
                     // Close the activity, we're done
+                    new PreferenceHelper().saveString(PreferenceHelper.APP_STATE, Constants.APP_STATE_IN);
                     finish();
                 }
             } else {
