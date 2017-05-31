@@ -80,10 +80,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
-        mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона Mаксима
+//        mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона Mаксима
+        mPhoneNumberView.setText(phoneNumber);
+        mPhoneNumberView.setSelection(mPhoneNumberView
+                .getText().length());
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setText("user");//admin пароль Mаксима
+//        mPasswordView.setText("user");//admin пароль Mаксима
         mPasswordView.setOnEditorActionListener(this);
         mViewPasswordButton = (ImageButton) findViewById(R.id.view_password_button);
         mViewPasswordButton.setOnTouchListener(this);
@@ -91,7 +94,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
     }
 
     private void logs() {
@@ -147,13 +149,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "getPhoneNumber");
         AccountManager am = AccountManager.get(this);
         Account[] accounts = am.getAccounts();
-        String phoneNumber = "oops";
+        String phoneNumber = "+380";
         for (Account ac : accounts) {
             String accountName = ac.name;
             String accountType = ac.type;
             String accountDescribe = String.valueOf(ac.describeContents());
             // Take your time to look at all available accounts
-            if (accountName.startsWith("+380")) { //viber acc name is phone number
+            if (accountName.startsWith(phoneNumber)) { //viber acc name is phone number
                 phoneNumber = accountName;
             }
             System.out.println("Accounts : " + accountName + ", " + accountType + " describe:" + accountDescribe);
@@ -368,7 +370,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                             Log.e(TAG, "Status OK. notify: " + notify);
                             Log.e(TAG, "Status OK. result: " + resultCode);
 
-                            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_VALID)) {
+
+                            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_VALID)
+                                    && response.isSuccessful()) {
                                 //all right
                                 authToken = response.body().getToken();
                                 String name = response.body().getName();

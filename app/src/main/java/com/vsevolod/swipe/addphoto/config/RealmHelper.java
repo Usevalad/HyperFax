@@ -117,6 +117,8 @@ public class RealmHelper {
     public RealmResults searchTree(String queryString) {
         RealmQuery query = this.realm.where(FlowsTreeModel.class);
         query.contains(FIELD_NAME, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
+        query.beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE);
+        query.equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
         query.or().beginsWith(FIELD_PREFIX, queryString);
         query.or().equalTo(FIELD_PREFIX, queryString);
         return query.findAll();
@@ -302,6 +304,14 @@ public class RealmHelper {
         }
         Log.i(TAG, "countData: data.size is " + data.size());
         Log.i(TAG, "countData: not synced size is  " + getNotSyncedData().size());
+    }
+
+    public void countTree() {
+        List<FlowsTreeModel> treeModels = getTree();
+        for (FlowsTreeModel tree : treeModels) {
+            Log.e(TAG, "countTree: getName " + tree.getName());
+            Log.e(TAG, "countTree: getPrefix " + tree.getPrefix());
+        }
     }
 
     public void setStateCode(String id, String stateCode) {

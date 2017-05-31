@@ -241,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                break;
             case R.id.main_menu_request_flow:
                 new TreeConverterTask().execute();
+                mRealmHelper.countTree();
                 break;
             case R.id.main_menu_log_out:
                 startLoginActivity();
