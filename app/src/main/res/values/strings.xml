@@ -33,5 +33,10 @@
     <string name="no_internet_connection">Нет интернет соединения</string>
     <string name="no_internet_data_later">Нет интернет соединения. Данные будут отправлены позже</string>
     <string name="notifications">Включить уведомления</string>
+    <string name="synchronize">Синхронизация</string>
+    <string name="update_tree">Обновить дерево</string>
+    <string name="quit">Выйти</string>
+    <string name="search">Поиск</string>
+    <string name="clear_cache">Очистить кеш</string>
 
 </resources>
