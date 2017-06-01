@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
+import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.text.SimpleDateFormat;
@@ -64,7 +65,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount");
         return data.size();
     }
 
@@ -93,11 +93,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
         @Override
         public void onClick(View v) {
-            String photoUri = data.get(getAdapterPosition()).getPhotoURL();
+            String serverPhotoURL = data.get(getAdapterPosition()).getServerPhotoURL();
+            String storagePhotoURL = data.get(getAdapterPosition()).getStoragePhotoURL();
             Intent intent = new Intent(context, FullscreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            String INTENT_KEY_PHOTO_URL = "photo url";
-            intent.putExtra(INTENT_KEY_PHOTO_URL, photoUri);
+            intent.putExtra(Constants.INTENT_KEY_SERVER_PHOTO_URL, serverPhotoURL);
+            intent.putExtra(Constants.INTENT_KEY_STORAGE_PHOTO_URL, storagePhotoURL);
             context.startActivity(intent);
         }
     }

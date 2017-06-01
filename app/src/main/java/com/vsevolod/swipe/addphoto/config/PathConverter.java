@@ -29,7 +29,6 @@ public class PathConverter {
         try {
             String[] projection = {MediaStore.Images.Media.DATA};
             cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
-            assert cursor != null;
             int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
             cursor.moveToFirst();
             mResult = cursor.getString(columnIndex);

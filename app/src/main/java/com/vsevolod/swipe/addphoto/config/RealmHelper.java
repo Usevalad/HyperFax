@@ -173,7 +173,7 @@ public class RealmHelper {
         newModel.setLongitude(model.getLongitude());
         newModel.setComment(model.getComment());
         newModel.setStateCode(model.getStateCode());
-        newModel.setPhotoURL(model.getPhotoURL());
+        newModel.setStoragePhotoURL(model.getStoragePhotoURL());
         newModel.setName(model.getName());
         newModel.setPrefixID(model.getPrefixID());
         newModel.setDate(model.getDate());
@@ -205,7 +205,7 @@ public class RealmHelper {
         }
     }
 
-    public void setPhotoURL(String id, String imageUrl) {
+    public void setPhotoURL(String id, String serverPhotoURL) {
         Log.d(TAG, "updateServerPhotoURL");
 
         RealmQuery dataQuery = this.realm.where(DataModel.class);
@@ -220,10 +220,10 @@ public class RealmHelper {
         }
 
         this.realm.beginTransaction();
-        model.setPhotoURL(imageUrl);
+        model.setServerPhotoURL(serverPhotoURL);
         this.realm.copyToRealmOrUpdate(model);
         this.realm.commitTransaction();
-        Log.d(TAG, "updateServerPhotoURL: updated " + imageUrl);
+        Log.d(TAG, "updateServerPhotoURL: updated " + serverPhotoURL);
     }
 
     public void setSynced(String id, boolean isSynced) {
@@ -279,32 +279,21 @@ public class RealmHelper {
     public void countData() {
         Log.d(TAG, "countData");
         List<DataModel> data = getData();
-        for (int i = 0; i < data.size(); i++) {
-            String searchDate = data.get(i).getSearchDate();
-            String prefix = data.get(i).getPrefix();
-            String name = data.get(i).getName();
-            String photoUri = data.get(i).getPhotoURL();
-            String comment = data.get(i).getComment();
-            String latitude = String.valueOf(data.get(i).getLatitude());
-            String longitude = String.valueOf(data.get(i).getLongitude());
-            String stateCode = data.get(i).getStateCode();
-            String photoArrayLength = String.valueOf(data.get(i).getPhoto().length);
-            String prefixID = data.get(i).getPrefixID();
-            String date = String.valueOf(data.get(i).getDate());
-            String isSync = String.valueOf(data.get(i).isSynced());
+        for (DataModel model: data) {
             Log.i(TAG,
-                    "searchDate = " + searchDate + "\n" +
-                            "date = " + date + "\n" +
-                            "prefix = " + prefix + "\n" +
-                            "prefixID = " + prefixID + "\n" +
-                            "name = " + name + "\n" +
-                            "comment = " + comment + "\n" +
-                            "photoUri = " + photoUri + "\n" +
-                            "photoArrayLength = " + photoArrayLength + "\n" +
-                            "latitude = " + latitude + "\n" +
-                            "longitude = " + longitude + "\n" +
-                            "stateCode = " + stateCode + "\n" +
-                            "isSynced = " + isSync);
+                    "searchDate = " +  model.getSearchDate() + "\n" +
+                            "date = " + model.getDate() + "\n" +
+                            "prefix = " + model.getPrefix() + "\n" +
+                            "prefixID = " + model.getPrefixID() + "\n" +
+                            "name = " + model.getName() + "\n" +
+                            "comment = " + model.getComment() + "\n" +
+                            "storagePhotoURL = " + model.getStoragePhotoURL() + "\n" +
+                            "serverPhotoURL = " + model.getServerPhotoURL() + "\n" +
+                            "photoArrayLength = " + model.getPhoto().length + "\n" +
+                            "latitude = " + model.getLatitude() + "\n" +
+                            "longitude = " + model.getLongitude() + "\n" +
+                            "stateCode = " + model.getStateCode() + "\n" +
+                            "isSynced = " + model.isSynced());
         }
         Log.i(TAG, "countData: data.size is " + data.size());
         Log.i(TAG, "countData: not synced size is  " + getNotSyncedData().size());

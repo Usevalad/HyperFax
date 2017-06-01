@@ -1,12 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/full_screen_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black"
     tools:context="com.vsevolod.swipe.addphoto.activity.FullscreenActivity">
 
-    <com.vsevolod.swipe.addphoto.view.TouchImageView
-        android:id="@+id/fullscreen_content"
+    <ImageView
+        android:id="@+id/full_screen_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -14,32 +15,23 @@
         android:textSize="50sp"
         android:textStyle="bold" />
 
-    <FrameLayout
+    <RelativeLayout
+        android:id="@+id/transparent_panel"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="50dp"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@drawable/gradient_top">
 
-        <RelativeLayout
-            android:id="@+id/fullscreen_content_controls"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_gravity="top|center_horizontal"
-            android:background="@drawable/gradient_top"
-            tools:ignore="UselessParent">
+        <ImageButton
+            android:id="@+id/full_screen_back_button"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="left"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:src="@drawable/ic_back_arrow" />
 
-            <!--style="?metaButtonBarButtonStyle"-->
-
-            <ImageButton
-                android:id="@+id/full_screen_back_button"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_back_arrow"
-                android:layout_margin="10dp"
-                android:clickable="true"/>
-
-        </RelativeLayout>
-    </FrameLayout>
-</FrameLayout>
+    </RelativeLayout>
+</RelativeLayout>

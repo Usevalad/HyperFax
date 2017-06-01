@@ -18,7 +18,8 @@ public class DataModel extends RealmObject {
     private String searchDate;
     private String prefix;
     private String name;
-    private String photoURL;
+    private String serverPhotoURL;
+    private String storagePhotoURL;
     private String comment;
     private String viewDate;
     private double latitude;
@@ -29,15 +30,16 @@ public class DataModel extends RealmObject {
     private Date date;
     private boolean isSynced = false;
 
-    public DataModel(String searchDate,String viewDate, String prefix, String name, String comment,
-                     String photoURL, byte[] photo, double latitude, double longitude,
+    public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
+                     String storagePhotoURL, byte[] photo, double latitude, double longitude,
                      String prefixID, Date date) {
         this.comment = comment;
         this.latitude = latitude;
         this.longitude = longitude;
         this.searchDate = searchDate;
         this.prefix = prefix;
-        this.photoURL = photoURL;
+        this.serverPhotoURL = null;
+        this.storagePhotoURL = storagePhotoURL;
         this.photo = photo;
         this.name = name;
         this.prefixID = prefixID;
@@ -71,14 +73,6 @@ public class DataModel extends RealmObject {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
-    }
-
-    public String getPhotoURL() {
-        return photoURL;
-    }
-
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
     }
 
     public String getComment() {
@@ -155,6 +149,22 @@ public class DataModel extends RealmObject {
 
     public void setViewDate(String viewDate) {
         this.viewDate = viewDate;
+    }
+
+    public String getServerPhotoURL() {
+        return serverPhotoURL;
+    }
+
+    public void setServerPhotoURL(String serverPhotoURL) {
+        this.serverPhotoURL = serverPhotoURL;
+    }
+
+    public String getStoragePhotoURL() {
+        return storagePhotoURL;
+    }
+
+    public void setStoragePhotoURL(String storagePhotoURL) {
+        this.storagePhotoURL = storagePhotoURL;
     }
 
     public int getStateIconImage() {

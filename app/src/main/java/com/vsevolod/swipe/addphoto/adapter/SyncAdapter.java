@@ -130,7 +130,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             for (int i = 0; i < notSyncedData.size(); i++) {
                 DataModel dataModel = notSyncedData.get(i);
-                File imageFile = new File(dataModel.getPhotoURL());
+                File imageFile = new File(dataModel.getStoragePhotoURL());
                 RequestBody requestBody = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
                 Response<ResponseBody> postImageResponse = MyApplication.getApi().postImage(requestBody).execute();
                 Log.e(TAG, "uploadData: response code " + String.valueOf(postImageResponse.code()));

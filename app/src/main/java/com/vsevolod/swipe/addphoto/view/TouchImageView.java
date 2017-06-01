@@ -43,9 +43,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     // saved prior to the screen rotating.
     private Matrix matrix, prevMatrix;
 
-    private static enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM}
-
-    ;
+    private enum State {NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM};
     private State state;
 
     private float minScale;

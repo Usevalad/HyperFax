@@ -21,9 +21,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -51,7 +49,7 @@ import java.util.TimeZone;
 
 import it.sephiroth.android.library.picasso.Picasso;
 
-public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener{
+public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper;
@@ -125,26 +123,30 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
 
     private void decodeImage() {
         Log.e(TAG, "decodeImage");
-        File imageFile = new File(path);
-        final int THUMB_SIZE = Constants.THUMB_SIZE;
-        if (imageFile.exists()) {
-            if (isPrefixValid()) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
-                        BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-                int imageQuality = 40;
-                thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
-                byte[] byteArray = stream.toByteArray();
-                try {
-                    thumbImage.recycle();
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (path != null) {
+            File imageFile = new File(path);
+            final int THUMB_SIZE = Constants.THUMB_SIZE;
+            if (imageFile.exists()) {
+                if (isPrefixValid()) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
+                            BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
+                    int imageQuality = 40;
+                    thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    try {
+                        thumbImage.recycle();
+                        stream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    saveDataToRealm(byteArray, path);
                 }
-                saveDataToRealm(byteArray, path);
+            } else {
+                Log.e(TAG, "addImage: file is not exist");
             }
         } else {
-            Log.e(TAG, "addImage: file is not exist");
+            Toast.makeText(mContext, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
         }
     }
 

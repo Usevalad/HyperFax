@@ -30,6 +30,8 @@ public class Constants {
     public static final String DATA_MODEL_STATE_NEED_SYNC = "Need sync";
     public static final String DATA_MODEL_STATE_PARAM = "PARAM";
     public static final String INTENT_KEY_EXIT = "com.vsevolod.swipe.addphoto.EXIT";
+    public static final String INTENT_KEY_SERVER_PHOTO_URL = "server photo url";
+    public static final String INTENT_KEY_STORAGE_PHOTO_URL = "storage photo url";
     public static final String APP_STATE_IN = "signed in";
     public static final String APP_STATE_OUT = "signed out";
     public static final int THUMB_SIZE = 500;
