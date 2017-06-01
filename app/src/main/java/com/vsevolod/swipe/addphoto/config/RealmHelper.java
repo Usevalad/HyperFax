@@ -25,8 +25,6 @@ public class RealmHelper {
     private final String FIELD_NAME = "name";
     private final String FIELD_PREFIX = "prefix";
     private final String FIELD_UID = "uid";
-    private final String FIELD_COMMENT = "comment";
-    private final String FIELD_VIEW_DATE = "viewDate";
     private Realm realm;
 
     public RealmHelper() {
@@ -90,7 +88,7 @@ public class RealmHelper {
         String tmp;
 
         for (int i = 0; i < tree.size(); i++) {
-            tmp = tree.get(i).getName() + " @" + tree.get(i).getPrefix();
+            tmp = tree.get(i).toString();
             if (tmp.equals(text)) {
                 return true;
             }
@@ -99,29 +97,35 @@ public class RealmHelper {
     }
 
     public RealmResults search(String queryString) {
-        RealmQuery query = this.realm.where(DataModel.class);
         String FIELD_SEARCH_DATE = "searchDate";
-        query.contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.or().beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.or().contains(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.or().beginsWith(FIELD_COMMENT, queryString, Case.INSENSITIVE);
-        query.or().contains(FIELD_COMMENT, queryString, Case.INSENSITIVE);
-        query.or().beginsWith(FIELD_PREFIX, queryString, Case.INSENSITIVE);
-        query.or().contains(FIELD_PREFIX, queryString, Case.INSENSITIVE);
-        query.or().beginsWith(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE);
-        query.or().contains(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE);
-
-        return query.findAllSorted(FIELD_SEARCH_DATE, Sort.ASCENDING);
+        String FIELD_COMMENT = "comment";
+        String FIELD_VIEW_DATE = "viewDate";
+        return this.realm.where(DataModel.class).beginGroup().
+                contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE).or()
+                .beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .contains(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .equalTo(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .beginsWith(FIELD_COMMENT, queryString, Case.INSENSITIVE).or()
+                .contains(FIELD_COMMENT, queryString, Case.INSENSITIVE).or()
+                .beginsWith(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
+                .contains(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
+                .equalTo(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
+                .beginsWith(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE).or()
+                .contains(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE).or()
+                .equalTo(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE)
+                .endGroup()
+                .findAllSorted(FIELD_SEARCH_DATE, Sort.ASCENDING);
     }
 
     public RealmResults searchTree(String queryString) {
-        RealmQuery query = this.realm.where(FlowsTreeModel.class);
-        query.contains(FIELD_NAME, queryString, Case.INSENSITIVE); //INSENSITIVE TO UPPER/LOWER CASES
-        query.beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.equalTo(FIELD_NAME, queryString, Case.INSENSITIVE);
-        query.or().beginsWith(FIELD_PREFIX, queryString);
-        query.or().equalTo(FIELD_PREFIX, queryString);
-        return query.findAll();
+        return this.realm.where(FlowsTreeModel.class).beginGroup()
+                .beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .contains(FIELD_NAME, queryString, Case.INSENSITIVE).or() //INSENSITIVE TO UPPER/LOWER CASES
+                .equalTo(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .beginsWith(FIELD_PREFIX, queryString).or()
+                .equalTo(FIELD_PREFIX, queryString).or()
+                .contains(FIELD_PREFIX, queryString)
+                .endGroup().findAll();
     }
 
     public void save(List<FlowsTreeModel> flowsTreeModels) {

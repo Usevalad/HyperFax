@@ -127,7 +127,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             for (int i = 0; i < list.size(); i++) {
                 tmp = list.get(i);
                 String id = tmp.get(ID_NUMBER);
-                String name = tmp.get(NAME_NUMBER);
+                String name = tmp.get(NAME_NUMBER).toLowerCase();
                 String prefix = tmp.get(PREFIX_NUMBER);
                 String parentId = tmp.get(PARENT_ID_NUMBER);
                 mRealmHelper.save(new FlowsTreeModel(id, name, prefix, parentId));
@@ -160,7 +160,8 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             Notification n = new Notification.Builder(mContext)
                     .setContentTitle(mContext.getString(R.string.app_name))
                     .setContentText(notify)
-                    .setSmallIcon(R.drawable.ic_toolbar_logo)
+                    .setSmallIcon(R.drawable.ic_toolbar_logo
+                    )
                     .setContentIntent(pIntent)
                     .setAutoCancel(true)
 //                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)

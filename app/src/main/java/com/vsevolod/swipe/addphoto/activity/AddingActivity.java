@@ -21,7 +21,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -49,11 +51,11 @@ import java.util.TimeZone;
 
 import it.sephiroth.android.library.picasso.Picasso;
 
-public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener{
     private final String TAG = this.getClass().getSimpleName();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
     private RealmHelper mRealmHelper;
-    private AutoCompleteTextView mAutoCompleteTextView;
+    public AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
     private String path = null;
     private String text;
@@ -97,7 +99,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mAutoCompleteTextView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         mAutoCompleteTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText = (EditText) findViewById(R.id.adding_edit_text);
-        mEditText.setImeOptions(EditorInfo.IME_ACTION_GO);
+        mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
     }
@@ -241,7 +243,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         Log.e(TAG, "onEditorAction");
         boolean handled = false;
-        if (actionId == EditorInfo.IME_ACTION_GO) {
+        if (actionId == EditorInfo.IME_ACTION_SEND) {
             checkLastClick();
             handled = true;
         }

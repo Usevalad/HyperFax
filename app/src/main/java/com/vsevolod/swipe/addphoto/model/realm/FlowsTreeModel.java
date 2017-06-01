@@ -56,6 +56,6 @@ public class FlowsTreeModel extends RealmObject {
 
     @Override
     public String toString() {
-        return name + " " + "@" + prefix;
+        return name + " " + prefix;
     }
 }
