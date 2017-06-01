@@ -104,7 +104,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         Log.d(TAG, "handleIntent");
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            String query = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
             data = mRealmHelper.search(query);
         }
     }
