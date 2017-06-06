@@ -37,8 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_below="@+id/adding_appbar_layout"
-            android:scaleType="centerCrop"
-            android:src="@drawable/login_screen_background" />
+            android:scaleType="centerCrop" />
 
         <AutoCompleteTextView
             android:id="@+id/adding_auto_complete"
@@ -46,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/adding_image_view"
             android:inputType="textMultiLine"
+            android:minHeight="48dp"
             android:scrollHorizontally="false" />
 
         <EditText
@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/adding_auto_complete"
             android:hint="Комментарий"
-            android:inputType="textMultiLine|textAutoCorrect" />
+            android:inputType="textMultiLine|textAutoCorrect"
+            android:minHeight="48dp" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
 

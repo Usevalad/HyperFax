@@ -47,8 +47,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import it.sephiroth.android.library.picasso.Picasso;
-
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
     //    private AndroidTreeView tView; //to add AndroidTreeView change "setContentView(R.layout.activity_adding);"
@@ -88,7 +86,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         }
 
         ImageView mImageView = (ImageView) findViewById(R.id.adding_image_view);
-        Picasso.with(mContext).load(path).into(mImageView);
+        mImageView.setImageURI(Uri.parse(path));
 
 //        setFlowsTree(savedInstanceState);
         mAutoCompleteTextView =
@@ -118,6 +116,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     @Override
     protected void onResume() {
         Log.e(TAG, "onResume");
+        mEditText.setOnEditorActionListener(this);
         super.onResume();
     }
 

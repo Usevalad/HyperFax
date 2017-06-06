@@ -122,14 +122,15 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
 
         if (list != null && list.size() > 0) {
             mRealmHelper.open();
-            List<String> tmp;
             mRealmHelper.dropRealmTree();
-            for (int i = 0; i < list.size(); i++) {
-                tmp = list.get(i);
-                String id = tmp.get(ID_NUMBER);
-                String name = tmp.get(NAME_NUMBER).toLowerCase();
-                String prefix = tmp.get(PREFIX_NUMBER);
-                String parentId = tmp.get(PARENT_ID_NUMBER);
+            String id, name, prefix, parentId;
+            int i = 0;
+            for (List<String> stringList : list) {
+                i++;
+                id = stringList.get(ID_NUMBER);
+                name = stringList.get(NAME_NUMBER).toLowerCase();
+                prefix = stringList.get(PREFIX_NUMBER);
+                parentId = stringList.get(PARENT_ID_NUMBER);
                 mRealmHelper.save(new FlowsTreeModel(id, name, prefix, parentId));
                 publishProgress(String.valueOf(i));
             }

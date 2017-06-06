@@ -37,6 +37,14 @@
     <string name="update_tree">Обновить дерево</string>
     <string name="quit">Выйти</string>
     <string name="search">Поиск</string>
-    <string name="clear_cache">Очистить кеш</string>
+    <string name="clear_cache">Удалить все фото</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Войти</string>
+    <string name="phone_example">+380111111111</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="photo_desctiption">Фотография</string>
+    <string name="gallery">Галерея</string>
+    <string name="camera">Камера</string>
+    <string name="add_new_photo">Добавить новое фото</string>
 
 </resources>

@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
+        mRealmHelper.getRealm().removeAllChangeListeners();
         mRealmHelper.close();
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
@@ -171,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
         mFABGallery.setOnClickListener(null);
+        mRealmHelper.getRealm().removeAllChangeListeners();
         super.onPause();
     }
 
@@ -183,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFAB.setOnClickListener(this);
         mFABCamera.setOnClickListener(this);
         mFABGallery.setOnClickListener(this);
+        mRealmHelper.getRealm().addChangeListener(this);
         animateFAB();
         setRecyclerViewAdapter();
         super.onResume();
@@ -234,11 +237,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(mContext, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                 }
                 break;
-//            case R.id.main_menu_notifications:
+            case R.id.main_menu_notifications:
+                String url = "http://telegra.ph/Instrukciya-HyperFax-06-06";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
 //                isChecked = !item.isChecked();
 //                item.setChecked(isChecked);
 //                mRealmHelper.countData();//for debug only
-//                break;
+                break;
             case R.id.main_menu_request_flow:
                 new TreeConverterTask().execute();
                 mRealmHelper.countTree();

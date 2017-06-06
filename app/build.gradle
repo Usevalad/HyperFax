@@ -2,6 +2,20 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
+    signingConfigs {
+//        config {
+//            keyAlias 'myFirstAndroidKey'
+//            keyPassword 'ubuntu1488'
+//            storeFile file('/home/vsevolod/keystore.jks')
+//            storePassword 'ubuntu1488'
+//        }
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('/home/vsevolod/Descktop/hyperFax demos/AddPhoto/debug.keystore')
+            storePassword 'ubuntu1488'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -9,11 +23,13 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 1
-        versionName "0.10001"
+        versionCode 3
+        versionName "0.10003"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
         setProperty("archivesBaseName", "Hyperfax $versionName")
+        testApplicationId 'HyperFax'
+        signingConfig signingConfigs.debug
     }
     buildTypes {
         release {
@@ -24,8 +40,14 @@ android {
             versionNameSuffix "-beta" + "-build" + getDate()
             signingConfig signingConfigs.debug
         }
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+    productFlavors {
     }
 }
+
 def getDate() {//делает дату билда
     new Date().format('yyyyMMddHHmmss')
 }
@@ -35,14 +57,12 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     compile project(path: ':flowstreelibrary')
-
     //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     compile 'com.android.support:appcompat-v7:25.3.1'
-//    compile 'com.google.android.gms:play-services-drive:10.2.6'
+    //    compile 'com.google.android.gms:play-services-drive:10.2.6'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     compile 'it.sephiroth.android.library.picasso:picasso:2.5.2.4b'

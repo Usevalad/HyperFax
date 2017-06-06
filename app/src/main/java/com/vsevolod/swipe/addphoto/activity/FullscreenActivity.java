@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.vsevolod.swipe.addphoto.R;
@@ -18,7 +17,6 @@ import it.sephiroth.android.library.picasso.Picasso;
 
 public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = this.getClass().getSimpleName();
-    private final String PHOTO_URL = "photo url";
     private ImageView mTouchImageView;
 
     @Override
@@ -29,8 +27,6 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         View mTransparentPanel = findViewById(R.id.transparent_panel);
         mTouchImageView = (ImageView) findViewById(R.id.full_screen_image_view);
         mTouchImageView.setOnTouchListener(new ImageMatrixTouchHandler(this));
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.full_screen_parent_layout);
-        layout.setOnClickListener(this);
         findViewById(R.id.full_screen_back_button).setOnClickListener(this);
         setImage();
     }
@@ -54,6 +50,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onDestroy() {
         mTouchImageView.setOnTouchListener(null);
+        findViewById(R.id.full_screen_back_button).setOnClickListener(null);
         super.onDestroy();
     }
 

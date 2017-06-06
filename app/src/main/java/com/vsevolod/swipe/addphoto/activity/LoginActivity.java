@@ -73,7 +73,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         setContentView(R.layout.activity_login);
         mContext = getApplicationContext();
         mBuilder = new NotificationCompat.Builder(this);
-
         mAccountManager = AccountManager.get(this);
 
         logs();

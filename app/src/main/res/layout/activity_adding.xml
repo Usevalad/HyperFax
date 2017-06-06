@@ -39,7 +39,7 @@
             android:layout_height="200dp"
             android:layout_below="@+id/adding_appbar_layout"
             android:scaleType="centerCrop"
-            android:src="@drawable/login_screen_background" />
+             />
 
         <ScrollView
             android:id="@+id/container"
