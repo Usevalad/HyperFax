@@ -18,13 +18,15 @@ android {
     }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+
+
     defaultConfig {
         applicationId "com.vsevolod.swipe.addphoto"
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 3
-        versionName "0.10003"
+        versionCode 6
+        versionName "0.1000" + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
         setProperty("archivesBaseName", "Hyperfax $versionName")
@@ -44,8 +46,7 @@ android {
             signingConfig signingConfigs.debug
         }
     }
-    productFlavors {
-    }
+
 }
 
 def getDate() {//делает дату билда

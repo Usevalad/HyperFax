@@ -101,11 +101,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         mEditText.setOnEditorActionListener(null);
@@ -177,7 +172,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 searchDateFormat.format(date.getTime()),
                 viewDate,
                 prefix,
-                text.substring(0, text.length() - 6).toLowerCase(),//6 is a prefix length + @ + space
+                text.substring(0, text.length() - 5).toLowerCase(),//5 is a prefix length + space
                 mEditText.getText().toString(),
                 photoUri,
                 byteArray,

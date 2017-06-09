@@ -46,5 +46,6 @@
     <string name="gallery">Галерея</string>
     <string name="camera">Камера</string>
     <string name="add_new_photo">Добавить новое фото</string>
+    <string name="appointment">Назначение</string>
 
 </resources>
