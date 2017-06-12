@@ -62,8 +62,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.mPathTextView.setContentDescription(model.getName() + " " + model.getPrefix());
         holder.mComment.setText(model.getComment());
         holder.mComment.setContentDescription(model.getComment());
-//        holder.mLocation.setText("lat: " +
-//                String.valueOf(model.getLatitude()) + " long: " + String.valueOf(model.getLongitude()));
     }
 
     @Override
@@ -91,7 +89,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
             mComment = (TextView) itemView.findViewById(R.id.comment_text_view);
-//            mLocation = (TextView) itemView.findViewById(R.id.location_text_view);
         }
 
         @Override

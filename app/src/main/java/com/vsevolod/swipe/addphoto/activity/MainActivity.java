@@ -50,8 +50,6 @@ import java.util.Locale;
 
 import io.realm.RealmChangeListener;
 
-// FIXME: 21.04.17 make recyclerView item flexible, fix two-line prefix with comment, also different screen sizes
-// TODO: 13.05.17 add some settings in account menu (shared prefs)
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
     private final String TAG = MainActivity.class.getSimpleName();
     private final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
@@ -62,13 +60,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
-    private Animation fab_open;
-    private Animation fab_close;
-    private Animation rotate_forward;
-    private Animation rotate_backward;
+    private Animation mFabOpen;
+    private Animation mFabClose;
+    private Animation mRotateForward;
+    private Animation mRotateBackward;
     private Boolean isFabOpen = false;
     private boolean isChecked = false;
-    private Uri fileUri = null;
+    private Uri mFileUri = null;
     private RealmHelper mRealmHelper;
     private Context mContext = MyApplication.getAppContext();
 
@@ -149,10 +147,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFAB.setOnClickListener(this);
         mFABCamera.setOnClickListener(this);
         mFABGallery.setOnClickListener(this);
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
-        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
-        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
+        mFabOpen = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        mFabClose = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        mRotateForward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward);
+        mRotateBackward = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward);
     }
 
     @Override
@@ -197,14 +195,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStop();
     }
 
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        Log.e(TAG, "onPrepareOptionsMenu");
-//        MenuItem checkable = menu.findItem(R.id.main_menu_notifications);
-//        checkable.setChecked(isChecked);
-//        return true;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.e(TAG, "onCreateOptionsMenu");
@@ -234,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         new Bundle());
                 if (!isOnline()) {
                     // TODO: 24.05.17 change to a dialog fragment
-                    Toast.makeText(mContext, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.main_menu_notifications:
@@ -242,9 +232,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
-//                isChecked = !item.isChecked();
-//                item.setChecked(isChecked);
-//                mRealmHelper.countData();//for debug only
                 break;
             case R.id.main_menu_request_flow:
                 new TreeConverterTask().execute();
@@ -343,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
                 if (data == null) {
                     // A known bug here! The image should have saved in fileUri
-                    photoUri = fileUri;
+                    photoUri = mFileUri;
                 } else {
                     photoUri = data.getData();
                 }
@@ -369,8 +356,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void startCameraActivity() {
         Log.e(TAG, "startCameraActivity");
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileUri = Uri.fromFile(getOutputPhotoFile());
-        i.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        mFileUri = Uri.fromFile(getOutputPhotoFile());
+        i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
         startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
     }
 
@@ -410,17 +397,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void animateFAB() {
         if (isFabOpen) {
-            mFAB.startAnimation(rotate_backward);
-            mFABCamera.startAnimation(fab_close);
-            mFABGallery.startAnimation(fab_close);
+            mFAB.startAnimation(mRotateBackward);
+            mFABCamera.startAnimation(mFabClose);
+            mFABGallery.startAnimation(mFabClose);
             mFABCamera.setClickable(false);
             mFABGallery.setClickable(false);
             isFabOpen = false;
             Log.e(TAG, "animateFAB: close");
         } else {
-            mFAB.startAnimation(rotate_forward);
-            mFABCamera.startAnimation(fab_open);
-            mFABGallery.startAnimation(fab_open);
+            mFAB.startAnimation(mRotateForward);
+            mFABCamera.startAnimation(mFabOpen);
+            mFABGallery.startAnimation(mFabOpen);
             mFABCamera.setClickable(true);
             mFABGallery.setClickable(true);
             isFabOpen = true;
@@ -428,37 +415,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    private void startAuthTokenFetch(Account account) {
-//        Log.e(TAG, "startAuthTokenFetch");
-//        Bundle options = new Bundle();
-//        android.os.Handler handler = new android.os.Handler();
-//        OnAccountManagerComplete callBack = new OnAccountManagerComplete();
-//        mAccountManager.getAuthToken(
-//                account,
-//                AccountGeneral.ARG_TOKEN_TYPE,
-//                options,
-//                this,
-//                callBack,
-//                handler
-//        );
-//    }
-
     @Override
     public void onChange(Object element) {
         Log.e(TAG, "onChange");
         setRecyclerViewAdapter();
-//        if (SystemClock.elapsedRealtime() - mLastOnchangeAction > Constants.MIN_TIME_BEFORE_NEXT_SYNC) {
-//            Log.e(TAG, "onChange: invalidate");
-//            Log.e(TAG, "onChange: last onchange " + mLastOnchangeAction);
-//
-//            mLastOnchangeAction = SystemClock.elapsedRealtime();
-//            ContentResolver.requestSync(
-//                    new Account(AccountGeneral.ARG_ACCOUNT_NAME, AccountGeneral.ARG_ACCOUNT_TYPE),
-//                    getResources().getString(R.string.content_authority),
-//                    new Bundle());
-//
-//            setRecyclerViewAdapter();
-//        }
     }
 
     @Override
@@ -473,26 +433,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
-    //    private class OnAccountManagerComplete implements AccountManagerCallback<Bundle> {
-//        private final String TAG = this.getClass().getSimpleName();
-//
-//        @Override
-//        public void run(AccountManagerFuture<Bundle> result) {
-//            Bundle bundle;
-//            Log.e(TAG, "run");
-//            try {
-//                bundle = result.getResult();
-//            } catch (OperationCanceledException e) {
-//                e.printStackTrace();
-//                return;
-//            } catch (AuthenticatorException e) {
-//                e.printStackTrace();
-//                return;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                return;
-//            }
-//        }
-//    }
 }

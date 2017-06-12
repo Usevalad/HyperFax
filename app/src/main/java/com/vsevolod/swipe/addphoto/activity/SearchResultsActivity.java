@@ -23,7 +23,7 @@ import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
-    private final String TAG = "SearchResultsActivity";
+    private final String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RealmHelper mRealmHelper;
     private List<DataModel> data;

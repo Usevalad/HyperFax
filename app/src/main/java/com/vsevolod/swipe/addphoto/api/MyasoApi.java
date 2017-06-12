@@ -20,19 +20,19 @@ import retrofit2.http.PUT;
  * Created by vsevolod on 07.04.17.
  */
 public interface MyasoApi {
-    @POST("ext/api/auth")
+    @POST("auth")
     Call<AuthResponseModel> authenticate(@Body AuthModel user);
 
-    @POST("ext/api/tree")
+    @POST("tree")
     Call<ResponseFlowsTreeModel> getTree(@Body TreeQueryModel model);
 
-    @PUT("ext/api/upload")
+    @PUT("upload")
     Call<ResponseBody> postImage(@Body RequestBody body);
 
-    @POST("ext/api/commit")
+    @POST("commit")
     Call<CommitResponseModel> commit(@Body CommitModel commitModel);
 
-    @POST("ext/api/list")
+    @POST("list")
     Call<ListResponse> getList(@Body ListQueryModel listQueryModel);
 }
 

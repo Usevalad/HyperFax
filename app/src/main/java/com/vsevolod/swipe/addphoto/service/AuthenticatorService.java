@@ -25,12 +25,6 @@ public class AuthenticatorService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.e(TAG, "onBind");
-        //don't know what is it. it was in tutorial
-//        if (intent.getAction().equals(
-//                android.accounts.AccountManager.ACTION_AUTHENTICATOR_INTENT)) {
-//            Log.e(TAG, "onBind:" + null );
-//            return null;
-//        }
         return mAuthenticator.getIBinder();
     }
 }

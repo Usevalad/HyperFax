@@ -41,7 +41,9 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
+    public Bundle addAccount(AccountAuthenticatorResponse response,
+                             String accountType, String authTokenType, String[] requiredFeatures,
+                             Bundle options) throws NetworkErrorException {
         // We absolutely cannot add an account without some information
         // from the user; so we're definitely going to return an Intent
         // via KEY_INTENT
@@ -67,13 +69,16 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
+    public Bundle confirmCredentials(AccountAuthenticatorResponse response,
+                                     Account account, Bundle options) throws NetworkErrorException {
         Log.e(TAG, "confirmCredentials");
         return null;
     }
 
     @Override
-    public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+    public Bundle getAuthToken(AccountAuthenticatorResponse response,
+                               Account account, String authTokenType,
+                               Bundle options) throws NetworkErrorException {
         Log.e(TAG, "getAuthToken");
         // We can add rejection of a request for a token type we
         // don't support here
@@ -148,13 +153,16 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
+    public Bundle updateCredentials(AccountAuthenticatorResponse response,
+                                    Account account, String authTokenType,
+                                    Bundle options) throws NetworkErrorException {
         Log.e(TAG, "updateCredentials");
         return null;
     }
 
     @Override
-    public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
+    public Bundle hasFeatures(AccountAuthenticatorResponse response,
+                              Account account, String[] features) throws NetworkErrorException {
         Log.e(TAG, "hasFeatures");
         return null;
     }

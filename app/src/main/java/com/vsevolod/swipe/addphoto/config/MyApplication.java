@@ -86,7 +86,6 @@ public class MyApplication extends Application {
                 String model = info.model;                // "SAMSUNG-SM-G935A"
                 String codename = info.codename;          // "hero2lte"
                 String deviceName = info.getName();       // "Galaxy S7 Edge"
-                // FYI: We are on the UI thread.
                 mDeviceModel = manufacturer + " " + marketName;
             }
         });

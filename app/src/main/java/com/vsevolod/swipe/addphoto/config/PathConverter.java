@@ -7,6 +7,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 /**
  * Created by vsevolod on 21.04.17.
  * getting full path instead of short android absolute path
@@ -38,12 +40,14 @@ public class PathConverter {
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
+            FirebaseCrash.log(TAG + " " + e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
         mContext = null;
+        FirebaseCrash.log(mResult);
         return mResult;
     }
 }

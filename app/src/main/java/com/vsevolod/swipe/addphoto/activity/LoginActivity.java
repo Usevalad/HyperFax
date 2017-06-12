@@ -75,17 +75,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         mBuilder = new NotificationCompat.Builder(this);
         mAccountManager = AccountManager.get(this);
 
-        logs();
-
         final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
-//        mPhoneNumberView.setText("+380936622642");//+380506361408 номер телефона Mаксима
         mPhoneNumberView.setText(phoneNumber);
         mPhoneNumberView.setSelection(mPhoneNumberView
                 .getText().length());
 
         mPasswordView = (EditText) findViewById(R.id.password);
-//        mPasswordView.setText("user");//admin пароль Mаксима
         mPasswordView.setOnEditorActionListener(this);
         mViewPasswordButton = (ImageButton) findViewById(R.id.view_password_button);
         mViewPasswordButton.setOnTouchListener(this);
@@ -93,17 +89,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
-
-    private void logs() {
-        String mAccountName = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_NAME);
-        Log.e(TAG, "onCreate: mAccountName " + mAccountName);
-        String mAccountType = getIntent().getStringExtra(AccountGeneral.ARG_ACCOUNT_TYPE);
-        Log.e(TAG, "onCreate: mAccountType " + mAccountType);
-        String mAuthType = getIntent().getStringExtra(AccountGeneral.ARG_AUTH_TYPE);
-        Log.e(TAG, "onCreate: mAuthType " + mAuthType);
-        boolean isAddingNewAccount = getIntent().getBooleanExtra(AccountGeneral.ARG_IS_ADDING_NEW_ACCOUNT, false);
-        Log.e(TAG, "onCreate: isAddingNewAccount " + isAddingNewAccount);
     }
 
     @Override
@@ -143,7 +128,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @NonNull
     private String getPhoneNumber() {
-        // FIXME: 10.05.17 improve method
         //костыль, который по аккаунтам находит номер телефона
         Log.e(TAG, "getPhoneNumber");
         AccountManager am = AccountManager.get(this);
