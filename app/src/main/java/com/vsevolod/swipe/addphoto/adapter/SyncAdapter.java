@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
@@ -109,15 +110,19 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             ListQueryModel listQueryModel = new ListQueryModel(authToken, dataIds);
             Response<ListResponse> response = MyApplication.getApi().getList(listQueryModel).execute();
-            Log.e(TAG, "getList: response code " + String.valueOf(response.code()));
-            Log.e(TAG, "getList: response body " + String.valueOf(response.body()));
-            List<String> ids = response.body().getIds();
-            List<String> states = response.body().stateCodes();
-            for (int i = 0; i < states.size(); i++) {
-                if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
-                    mRealmHelper.setStateCode(ids.get(i), states.get(i));
-                    Log.e(TAG, "onResponse: id = " + ids.get(i));
-                    Log.e(TAG, "onResponse: state = " + states.get(i));
+            if (response.isSuccessful()) {
+                if (TextUtils.equals(response.body().getStatus(), Constants.RESPONSE_STATUS_OK)) {
+                    Log.e(TAG, "getList: response code " + String.valueOf(response.code()));
+                    Log.e(TAG, "getList: response body " + String.valueOf(response.body()));
+                    List<String> ids = response.body().getIds();
+                    List<String> states = response.body().stateCodes();
+                    for (int i = 0; i < states.size(); i++) {
+                        if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
+                            mRealmHelper.setStateCode(ids.get(i), states.get(i));
+                            Log.e(TAG, "onResponse: id = " + ids.get(i));
+                            Log.e(TAG, "onResponse: state = " + states.get(i));
+                        }
+                    }
                 }
             }
         } catch (IOException e) {

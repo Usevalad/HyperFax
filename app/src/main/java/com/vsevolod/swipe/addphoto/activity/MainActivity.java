@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Account(accountName, AccountGeneral.ARG_ACCOUNT_TYPE),
                 getResources().getString(R.string.content_authority),
                 new Bundle(),
-                10000);
+                Constants.MILLISECONDS_MINUTE);
         Log.e(TAG, "setPeriodicSync: time = " + 10000);
     }
 

@@ -49,10 +49,12 @@ public class ListResponse {
 
     public List<String> getIds() {
         List<String> ids = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            String uid = list.get(i).get(0);
-            ids.add(uid);
-            String stateCode = list.get(i).get(1);
+        if (list != null) {
+            for (int i = 0; i < list.size(); i++) {
+                String uid = list.get(i).get(0);
+                ids.add(uid);
+                String stateCode = list.get(i).get(1);
+            }
         }
         return ids;
     }
