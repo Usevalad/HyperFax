@@ -60,7 +60,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(TAG, "onCreate");
-        FirebaseCrash.log(TAG + " onCreate");
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         super.onCreate(savedInstanceState);

@@ -142,17 +142,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 phoneNumber = accountName;
             }
             System.out.println("Accounts : " + accountName + ", " + accountType + " describe:" + accountDescribe);
-            if (TextUtils.equals(ac.name, new PreferenceHelper().getAccountName())) {
-                Log.e(TAG, "getPhoneNumber: " + ac.name);
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountManager.KEY_AUTHTOKEN));
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_TOKEN_TYPE));
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_AUTH_TYPE));
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, "com.vsevolod.swipe.addphoto"));
-                Account account = new Account("Hyper Fax", "com.vsevolod.swipe.addphoto");
-                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(account, "com.vsevolod.swipe.addphoto"));
-            }
+//            if (TextUtils.equals(ac.name, new PreferenceHelper().getAccountName())
+//                    && TextUtils.equals(ac.type, "com.vsevolod.swipe.addphoto")) {
+//                Log.e(TAG, "getPhoneNumber: " + ac.name);
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountManager.KEY_AUTHTOKEN));
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_TOKEN_TYPE));
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_AUTH_TYPE));
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, "com.vsevolod.swipe.addphoto"));
+//                Account account = new Account("Hyper Fax", "com.vsevolod.swipe.addphoto");
+//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(account, "com.vsevolod.swipe.addphoto"));
+//            }
         }
         return phoneNumber;
     }
