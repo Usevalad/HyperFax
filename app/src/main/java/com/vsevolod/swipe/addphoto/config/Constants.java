@@ -33,8 +33,6 @@ public class Constants {
     public static final String INTENT_KEY_NOTIFY = "notify";
     public static final String INTENT_KEY_SERVER_PHOTO_URL = "server photo url";
     public static final String INTENT_KEY_STORAGE_PHOTO_URL = "storage photo url";
-    public static final String APP_STATE_IN = "signed in";
-    public static final String APP_STATE_OUT = "signed out";
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;

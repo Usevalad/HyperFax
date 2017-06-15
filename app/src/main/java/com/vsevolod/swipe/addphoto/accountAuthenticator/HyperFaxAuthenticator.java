@@ -69,6 +69,16 @@ public class HyperFaxAuthenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
+    public Bundle getAccountRemovalAllowed(AccountAuthenticatorResponse response, Account account)
+            throws NetworkErrorException {
+        Log.e(TAG, "getAccountRemovalAllowed");
+        Bundle bundle = new Bundle();
+        boolean allowed = true;
+        bundle.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, allowed);
+        return bundle;
+    }
+
+    @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response,
                                      Account account, Bundle options) throws NetworkErrorException {
         Log.e(TAG, "confirmCredentials");

@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -51,7 +52,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private RealmHelper mRealmHelper;
     public AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
-    private String mPath = null;
+    private Uri mPhotoUri = null;
     private String mText;
     private long mLastClickTime = 0;
     private Location mLocation = null;
@@ -69,22 +70,23 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
-        final Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-        PathConverter mPathConverter = new PathConverter(mContext);
 
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith(Constants.INTENT_KEY_PATH)) {
-                Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-                mPath = mPathConverter.getFullPath(imageUri);
+        final Intent intent = getIntent();
+
+        if (TextUtils.equals(Intent.ACTION_SEND, intent.getAction()) && intent.getType() != null) {
+            if (TextUtils.equals(intent.getType(), Constants.MEDIA_TYPE_IMAGE)) {
+                mPhotoUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             }
         } else {
-            mPath = getIntent().getStringExtra(Constants.INTENT_KEY_PATH);
+            mPhotoUri = Uri.parse(intent.getStringExtra(Constants.INTENT_KEY_PATH));
         }
 
-        ImageView mImageView = (ImageView) findViewById(R.id.adding_image_view);
-        mImageView.setImageURI(Uri.parse(mPath));
+        if (mPhotoUri != null) {
+            ImageView mImageView = (ImageView) findViewById(R.id.adding_image_view);
+            mImageView.setImageURI(mPhotoUri);
+        } else {
+            Toast.makeText(this, "Не удалось загрузить фото", Toast.LENGTH_SHORT).show();
+        }
 
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
@@ -114,8 +116,9 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
 
     private void decodeImage() {
         Log.e(TAG, "decodeImage");
-        if (mPath != null) {
-            File imageFile = new File(mPath);
+        if (mPhotoUri != null) {
+            String path = new PathConverter(this).getFullPath(mPhotoUri);
+            File imageFile = new File(path);
             final int THUMB_SIZE = Constants.THUMB_SIZE;
             if (imageFile.exists()) {
                 if (isPrefixValid()) {
@@ -132,10 +135,11 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                         e.printStackTrace();
                         FirebaseCrash.log(TAG + " " + e.getMessage());
                     }
-                    saveDataToRealm(byteArray, mPath);
+                    saveDataToRealm(byteArray, path);
                 }
             } else {
                 Log.e(TAG, "addImage: file is not exist");
+                Toast.makeText(mContext, "Не правильный путь к файлу", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(mContext, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();

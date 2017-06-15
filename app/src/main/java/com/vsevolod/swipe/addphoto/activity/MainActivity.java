@@ -1,18 +1,25 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.PeriodicSync;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,13 +37,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.adapter.SyncAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
-import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
@@ -51,6 +59,8 @@ import java.util.Locale;
 import io.realm.RealmChangeListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
+    private static final int GALLERY_PERMISSION_REQUEST_CODE = 23;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 24;
     private final String TAG = MainActivity.class.getSimpleName();
     private final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
     private final int SELECT_PICTURE = 12;
@@ -75,13 +85,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
         checkQuitIntent();
-        checkAccountAvailability();
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
+        mRealmHelper.getRealm().addChangeListener(this);
+        checkAccountAvailability();
         setContentView(R.layout.activity_main);
         setViews();
-        mRealmHelper.getRealm().addChangeListener(this);
     }
 
     private void setViews() {
@@ -116,27 +126,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkAccountAvailability() {
         AccountManager mAccountManager = AccountManager.get(this);
         Account[] ac = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-        if (ac.length < 1 || TextUtils.equals(new PreferenceHelper().getAccountState(), Constants.APP_STATE_OUT)) {
+        if (ac.length < 1) {
             Log.e(TAG, "onCreate: no such accs");
             startLoginActivity();
         } else {
-            ContentResolver.setMasterSyncAutomatically(true);
+//            ContentResolver.setMasterSyncAutomatically(true);
             setPeriodicSync();
         }
     }
 
     private void setPeriodicSync() {
         Log.e(TAG, "setPeriodicSync");
-//            long syncTime = mRealmHelper.getNotSyncedDataStatesIds().length > 0 ?
-//                    10000 : Constants.MILLISECONDS_HOUR;
-
-        String accountName = new PreferenceHelper().getAccountName();
+        AccountManager manager = AccountManager.get(this);
+        Account[] accounts = manager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
+        ContentResolver resolver = getContentResolver();
+        ContentResolver.setMasterSyncAutomatically(true);
+        ContentResolver.setIsSyncable(accounts[0], getString(R.string.content_authority), 1);
+        ContentResolver.setSyncAutomatically(accounts[0], getString(R.string.content_authority), true);
+        ContentResolver.requestSync(accounts[0], getString(R.string.content_authority), new Bundle());
         ContentResolver.addPeriodicSync(
-                new Account(accountName, AccountGeneral.ARG_ACCOUNT_TYPE),
-                getResources().getString(R.string.content_authority),
+                accounts[0],
+                getString(R.string.content_authority),
                 new Bundle(),
-                Constants.MILLISECONDS_MINUTE);
-        Log.e(TAG, "setPeriodicSync: time = " + 10000);
+                60);
+
+        List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(accounts[0], getString(R.string.content_authority));
+        Log.e(TAG, "setPeriodicSync: size" + s.size());
+        for (int i = 0; i < s.size(); i++) {
+            Log.e(TAG, "setPeriodicSync: toString " + s.get(i).toString());
+
+        }
+        SyncAdapter ss= new SyncAdapter(this, true);
+        ss.configurePeriodicSync(this, 60, 10);
     }
 
     private void setFABAnimation() {
@@ -235,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_request_flow:
                 new TreeConverterTask().execute();
-                mRealmHelper.countTree();
-                mRealmHelper.countData();
+//                mRealmHelper.countTree();
+//                mRealmHelper.countData();
                 break;
             case R.id.main_menu_log_out:
                 startLoginActivity();
@@ -267,18 +288,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 animateFAB();
                 break;
             case R.id.fab_camera:
-                mFABCamera.setClickable(false);
-                mFABGallery.setClickable(false);
-                startCameraActivity();
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    startCameraActivity();
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            GALLERY_PERMISSION_REQUEST_CODE);
+                }
                 break;
             case R.id.fab_gallery:
-                mFABCamera.setClickable(false);
-                mFABGallery.setClickable(false);
-                Intent intent = new Intent();
-                intent.setType(Constants.MEDIA_TYPE_IMAGE);
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent,
-                        Constants.ACTION_SELECT_PICTURE), SELECT_PICTURE);
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                == PackageManager.PERMISSION_GRANTED) {
+                    startGalleryActivity();
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            CAMERA_PERMISSION_REQUEST_CODE);
+                }
                 break;
             default:
                 break;
@@ -306,66 +337,108 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private File getOutputPhotoFile() {
+    private Uri getOutputPhotoFile() {
         Log.e(TAG, "getOutputPhotoFile");
         File directory = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), getPackageName());
+                Environment.DIRECTORY_PICTURES), getString(R.string.app_name));
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
                 Log.e(TAG, "Failed to create storage directory");
+                FirebaseCrash.log("Failed to create storage directory");
                 return null;
             }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(new Date());
-
         String img = "IMG";
-        return new File(directory.getPath() + File.separator + img
+        File file = new File(directory.getPath() + File.separator + img
                 + timeStamp + Constants.EXTENSION_JPG);
+        return Uri.fromFile(file);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e(TAG, "onActivityResult");
-        if (resultCode != RESULT_CANCELED) {
+        if (resultCode == RESULT_OK) {
             Uri photoUri;
-            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQ) {
-                if (data == null) {
-                    // A known bug here! The image should have saved in fileUri
-                    photoUri = mFileUri;
-                } else {
+            switch (requestCode) {
+                case CAPTURE_IMAGE_ACTIVITY_REQ:
+                    photoUri = data == null ? mFileUri : data.getData();
+                    startAddingActivity(photoUri);
+                    break;
+                case SELECT_PICTURE:
                     photoUri = data.getData();
-                }
-                startAddingActivity(photoUri.getPath());
-            } else if (requestCode == SELECT_PICTURE) {
-                photoUri = data.getData();
-                PathConverter pathConverter = new PathConverter(mContext);
-                String path = pathConverter.getFullPath(photoUri);
-                startAddingActivity(path);
-            } else {
-                Log.e(TAG, "onActivityResult: Call out for image capture failed!");
+                    startAddingActivity(photoUri);
+                    break;
+                default:
+                    Log.e(TAG, "onActivityResult: Call out for image capture failed!");
+                    break;
             }
         }
     }
 
-    private void startAddingActivity(String path) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case GALLERY_PERMISSION_REQUEST_CODE:
+                if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    startGalleryActivity();
+                break;
+            case CAMERA_PERMISSION_REQUEST_CODE:
+                if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    startCameraActivity();
+                break;
+            default:
+                break;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void startAddingActivity(Uri path) {
         Log.e(TAG, "startAddingActivity");
         Intent intent = new Intent(this, AddingActivity.class);
-        intent.putExtra(Constants.INTENT_KEY_PATH, path);
+        intent.putExtra(Constants.INTENT_KEY_PATH, path.toString());
         startActivity(intent);
     }
 
     private void startCameraActivity() {
         Log.e(TAG, "startCameraActivity");
+        mFABCamera.setClickable(false);
+        mFABGallery.setClickable(false);
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mFileUri = Uri.fromFile(getOutputPhotoFile());
+        mFileUri = getOutputPhotoFile();
         i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
         startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
     }
 
+    private void startGalleryActivity() {
+        mFABCamera.setClickable(false);
+        mFABGallery.setClickable(false);
+        Intent intent = new Intent();
+        intent.setType(Constants.MEDIA_TYPE_IMAGE);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                Constants.ACTION_SELECT_PICTURE), SELECT_PICTURE);
+    }
+
     private void startLoginActivity() {
         Log.e(TAG, "startLoginActivity");
-        new PreferenceHelper().saveString(PreferenceHelper.APP_STATE, Constants.APP_STATE_OUT);
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+        // loop through all accounts to remove them
+        Account[] accounts = accountManager.getAccounts();
+        for (Account account : accounts) {
+            if (TextUtils.equals(account.type, AccountGeneral.ARG_ACCOUNT_TYPE)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    accountManager.removeAccountExplicitly(account);
+                } else {
+                    accountManager.removeAccount(account, null, null);
+                }
+            }
+        }
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        finish();
         startActivity(intent);
     }
 

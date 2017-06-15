@@ -1,23 +1,25 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -53,6 +55,7 @@ import retrofit2.Response;
 // TODO: 13.05.17 refactor
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
         OnClickListener, View.OnTouchListener {
+    private static final int PERMISSION_REQUEST_CODE = 142;
     private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
     private EditText mPhoneNumberView;
@@ -64,7 +67,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private String phoneNumber;
     private AccountManager mAccountManager;
     private Context mContext;
-    private NotificationCompat.Builder mBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_login);
         mContext = getApplicationContext();
-        mBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mAccountManager = AccountManager.get(this);
 
         final String phoneNumber = getPhoneNumber();
@@ -89,6 +91,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+
+        // TODO: 15.06.17 remove
+        mPhoneNumberView.setText("+380630674650");
+        mPasswordView.setText("sevatest");
+
     }
 
     @Override
@@ -134,38 +142,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Account[] accounts = am.getAccounts();
         String phoneNumber = "+380";
         for (Account ac : accounts) {
-            String accountName = ac.name;
-            String accountType = ac.type;
-            String accountDescribe = String.valueOf(ac.describeContents());
-            // Take your time to look at all available accounts
-            if (accountName.startsWith(phoneNumber)) { //viber acc name is phone number
-                phoneNumber = accountName;
+            if (ac.name.startsWith(phoneNumber)) { //viber acc name is phone number
+                phoneNumber = ac.name;
+                break;
             }
-            System.out.println("Accounts : " + accountName + ", " + accountType + " describe:" + accountDescribe);
-//            if (TextUtils.equals(ac.name, new PreferenceHelper().getAccountName())
-//                    && TextUtils.equals(ac.type, "com.vsevolod.swipe.addphoto")) {
-//                Log.e(TAG, "getPhoneNumber: " + ac.name);
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountManager.KEY_AUTHTOKEN));
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_TOKEN_TYPE));
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_AUTH_TYPE));
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, AccountGeneral.ARG_ACCOUNT_TYPE));
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(ac, "com.vsevolod.swipe.addphoto"));
-//                Account account = new Account("Hyper Fax", "com.vsevolod.swipe.addphoto");
-//                Log.e(TAG, "getPhoneNumber: " + am.peekAuthToken(account, "com.vsevolod.swipe.addphoto"));
-//            }
         }
         return phoneNumber;
-    }
-
-    private void checkAccountAvailability() {
-        Account[] ac = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-        if (ac.length < 1) {
-            Log.e(TAG, "onCreate: no such accs");
-
-        } else {
-            startMainActivity();
-        }
     }
 
     private void startMainActivity() {
@@ -241,7 +223,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         Log.e(TAG, "showProgress");
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -288,7 +269,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         setAccountAuthenticatorResult(intent.getExtras());
         // Tell the account manager settings page that all went well
         setResult(RESULT_OK, intent);
-        ContentResolver.setSyncAutomatically(account, getString(R.string.content_authority), true);
+
+        ContentResolver resolver = getContentResolver();
+
+        resolver.setMasterSyncAutomatically(true);
+//        resolver.setIsSyncable(account, getString(R.string.content_authority), 1);
+        resolver.setSyncAutomatically(account, getString(R.string.content_authority), true);
+        //            ContentResolver.setMasterSyncAutomatically(true);
+        resolver.addPeriodicSync(
+                account,
+                getString(R.string.content_authority),
+                Bundle.EMPTY,
+                60001);
     }
 
     @Override
@@ -302,7 +294,35 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     public void onClick(View v) {
-        attemptLogin();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCOUNT_MANAGER)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+            attemptLogin();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.ACCOUNT_MANAGER},
+                    PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                    attemptLogin();
+                break;
+            default:
+                break;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public boolean isOnline() {
@@ -373,7 +393,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
                         case Constants.RESPONSE_STATUS_PARAM:
                             Log.e(TAG, "Status PARAM");
-                            // TODO: 28.05.17 add getLog
+                            showProgress(false);
                             break;
                         default:
                             break;
@@ -401,8 +421,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     new TreeConverterTask().execute();
                     Log.e(TAG, "onPostExecute: isFirst = true");
                     // Close the activity, we're done
-                    new PreferenceHelper().saveString(PreferenceHelper.APP_STATE, Constants.APP_STATE_IN);
                     finish();
+                    startMainActivity();
                 }
             } else {
                 onCancelled();

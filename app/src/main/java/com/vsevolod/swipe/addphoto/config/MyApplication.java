@@ -1,16 +1,21 @@
 package com.vsevolod.swipe.addphoto.config;
 
+import android.accounts.Account;
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jaredrummler.android.device.DeviceName;
 import com.vsevolod.swipe.addphoto.BuildConfig;
+import com.vsevolod.swipe.addphoto.R;
+import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
 
 import java.text.SimpleDateFormat;
@@ -56,19 +61,14 @@ public class MyApplication extends Application {
         //Создаем объект, при помощи которого будем выполнять запросы
         mMyasoApi = mRetrofit.create(MyasoApi.class);
 
-//        if (LeakCanary.isInAnalyzerProcess(this)) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not init your app in this process.
-//            return;
-//        }
-//        LeakCanary.install(this);
-
         PackageInfo pInfo = null;
+
         try {
             pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         mBuildDate = format.format(buildDate);
@@ -82,7 +82,7 @@ public class MyApplication extends Application {
             @Override
             public void onFinished(DeviceName.DeviceInfo info, Exception error) {
                 String manufacturer = info.manufacturer;  // "Samsung"
-                String marketName = info.marketName;            // "Galaxy S7 Edge"
+                String marketName = info.marketName;      // "Galaxy S7 Edge"
                 String model = info.model;                // "SAMSUNG-SM-G935A"
                 String codename = info.codename;          // "hero2lte"
                 String deviceName = info.getName();       // "Galaxy S7 Edge"
@@ -93,19 +93,12 @@ public class MyApplication extends Application {
     }
 
     public static MyasoApi getApi() {
-        Log.d(TAG, "getApi");
         return mMyasoApi;
     }
 
     public static Context getAppContext() {
         return MyApplication.mContext;
     }
-
-//    @Override
-//    protected void attachBaseContext(Context base) {
-//        super.attachBaseContext(base);
-//        MultiDex.install(this);//?
-//    }
 
     public static int getAppVersionCode() {
         return mAppVersionCode;
