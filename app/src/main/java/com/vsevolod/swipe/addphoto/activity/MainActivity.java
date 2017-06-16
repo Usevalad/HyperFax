@@ -41,7 +41,6 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
-import com.vsevolod.swipe.addphoto.adapter.SyncAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
@@ -130,34 +129,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, "onCreate: no such accs");
             startLoginActivity();
         } else {
-//            ContentResolver.setMasterSyncAutomatically(true);
-            setPeriodicSync();
+            checkPeriodicSync();
         }
     }
 
-    private void setPeriodicSync() {
-        Log.e(TAG, "setPeriodicSync");
-        AccountManager manager = AccountManager.get(this);
-        Account[] accounts = manager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-        ContentResolver resolver = getContentResolver();
-        ContentResolver.setMasterSyncAutomatically(true);
-        ContentResolver.setIsSyncable(accounts[0], getString(R.string.content_authority), 1);
-        ContentResolver.setSyncAutomatically(accounts[0], getString(R.string.content_authority), true);
-        ContentResolver.requestSync(accounts[0], getString(R.string.content_authority), new Bundle());
-        ContentResolver.addPeriodicSync(
-                accounts[0],
-                getString(R.string.content_authority),
-                new Bundle(),
-                60);
-
-        List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(accounts[0], getString(R.string.content_authority));
-        Log.e(TAG, "setPeriodicSync: size" + s.size());
+    private void checkPeriodicSync() {
+        Log.e(TAG, "checkPeriodicSync");
+        List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(AccountGeneral.getAccount(),
+                getString(R.string.content_authority));
+        Log.e(TAG, "checkPeriodicSync: size" + s.size());
         for (int i = 0; i < s.size(); i++) {
-            Log.e(TAG, "setPeriodicSync: toString " + s.get(i).toString());
+            Log.e(TAG, "checkPeriodicSync: toString " + s.get(i).toString());
 
         }
-        SyncAdapter ss= new SyncAdapter(this, true);
-        ss.configurePeriodicSync(this, 60, 10);
     }
 
     private void setFABAnimation() {
@@ -207,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRealmHelper.getRealm().addChangeListener(this);
         animateFAB();
         setRecyclerViewAdapter();
+        AccountGeneral.sync();
         super.onResume();
     }
 

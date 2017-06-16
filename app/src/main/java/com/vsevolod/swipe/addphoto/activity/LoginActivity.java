@@ -9,7 +9,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,7 +35,6 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
-import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -65,7 +63,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private View mLoginFormView;
     private String password;
     private String phoneNumber;
-    private AccountManager mAccountManager;
     private Context mContext;
 
     @Override
@@ -75,7 +72,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         setContentView(R.layout.activity_login);
         mContext = getApplicationContext();
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mAccountManager = AccountManager.get(this);
 
         final String phoneNumber = getPhoneNumber();
         mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
@@ -247,40 +243,16 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     }
 
     private void finishLogin(Intent intent) {
-        final Account account = new Account(
-                new PreferenceHelper().getAccountName(),
-                AccountGeneral.ARG_ACCOUNT_TYPE);
-        Account[] acc = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
-        String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-
-        if (acc.length == 0) {
-            Log.e(TAG, "finishLogin: adding new account");
-
-            mAccountManager.addAccountExplicitly(account, password, null);
-        } else {
-            Log.e(TAG, "finishLogin: changing password in existed account");
-            // Password change only
-            mAccountManager.setPassword(account, password);
-        }
-        mAccountManager.setAuthToken(account, AccountGeneral.ARG_TOKEN_TYPE, authToken);
         // base class can do what Android requires with the
         // KEY_ACCOUNT_AUTHENTICATOR_RESPONSE extra that onCreate has
         // already grabbed
+        AccountGeneral.finishLogin(this, intent, password);
         setAccountAuthenticatorResult(intent.getExtras());
         // Tell the account manager settings page that all went well
         setResult(RESULT_OK, intent);
-
-        ContentResolver resolver = getContentResolver();
-
-        resolver.setMasterSyncAutomatically(true);
-//        resolver.setIsSyncable(account, getString(R.string.content_authority), 1);
-        resolver.setSyncAutomatically(account, getString(R.string.content_authority), true);
-        //            ContentResolver.setMasterSyncAutomatically(true);
-        resolver.addPeriodicSync(
-                account,
-                getString(R.string.content_authority),
-                Bundle.EMPTY,
-                60001);
+        //finish, we are done
+        finish();
+        startMainActivity();
     }
 
     @Override
@@ -418,11 +390,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                     mPasswordView.requestFocus();
                 } else {
                     finishLogin(intent);
-                    new TreeConverterTask().execute();
-                    Log.e(TAG, "onPostExecute: isFirst = true");
-                    // Close the activity, we're done
-                    finish();
-                    startMainActivity();
                 }
             } else {
                 onCancelled();

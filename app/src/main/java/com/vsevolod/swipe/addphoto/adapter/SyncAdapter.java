@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
@@ -165,6 +166,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_CREATED);
                         break;
                     default:
+                        AccountGeneral.sync();
+                        FirebaseCrash.log("Запуск синхронизации после попытки загрузить фото");
                         break;
                 }
             }
