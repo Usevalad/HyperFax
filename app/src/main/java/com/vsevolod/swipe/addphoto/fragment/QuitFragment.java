@@ -32,13 +32,11 @@ public class QuitFragment extends DialogFragment {
                     }
                 });
         alertDialogBuilder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
+//            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(Constants.INTENT_KEY_EXIT, true);
-                startActivity(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(1);
             }
         });
 

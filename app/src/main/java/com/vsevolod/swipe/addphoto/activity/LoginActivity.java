@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -90,8 +91,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
 
         // TODO: 15.06.17 remove
-        mPhoneNumberView.setText("+380630674650");
-        mPasswordView.setText("sevatest");
+//        mPhoneNumberView.setText("+380630674650");
+//        mPasswordView.setText("sevatest");
 
     }
 
@@ -258,26 +259,40 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == R.id.login || actionId == EditorInfo.IME_NULL) {
-            attemptLogin();
+            if (isPermissionsAllowed()) {
+                attemptLogin();
+            }
             return true;
         }
         return false;
     }
 
+    private boolean isPermissionsAllowed() {
+        boolean isAllowed = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                    == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCOUNT_MANAGER)
+                            == PackageManager.PERMISSION_GRANTED) {
+                isAllowed = true;
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.INTERNET,
+                                Manifest.permission.ACCOUNT_MANAGER},
+                        PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            isAllowed = true;
+        }
+        return isAllowed;
+    }
+
+
     @Override
     public void onClick(View v) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-                == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCOUNT_MANAGER)
-                        == PackageManager.PERMISSION_GRANTED) {
-
+        if (isPermissionsAllowed()) {
             attemptLogin();
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{
-                            Manifest.permission.INTERNET,
-                            Manifest.permission.ACCOUNT_MANAGER},
-                    PERMISSION_REQUEST_CODE);
         }
     }
 

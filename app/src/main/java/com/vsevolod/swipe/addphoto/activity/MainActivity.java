@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
-        checkQuitIntent();
         mRealmHelper = new RealmHelper();
         mRealmHelper.open();
         data = mRealmHelper.getData();
@@ -105,18 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
-    }
-
-    /*
-    when activity getting intent from QuitFragment to
-    close up
-     */
-    private void checkQuitIntent() {
-        if (getIntent().getExtras() != null && getIntent().getExtras()
-                .getBoolean(Constants.INTENT_KEY_EXIT, false)) {
-            Log.e(TAG, "checkQuitIntent quit");
-            finish();
-        }
     }
 
     /*
@@ -273,32 +260,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 animateFAB();
                 break;
             case R.id.fab_camera:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+                if (isCameraPermissionsAllowed())
                     startCameraActivity();
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                            GALLERY_PERMISSION_REQUEST_CODE);
-                }
                 break;
             case R.id.fab_gallery:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                == PackageManager.PERMISSION_GRANTED) {
+                if (isGalleryPermissionsAllowed())
                     startGalleryActivity();
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{
-                                    Manifest.permission.CAMERA,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            CAMERA_PERMISSION_REQUEST_CODE);
-                }
                 break;
+
             default:
                 break;
         }
+    }
+
+    private boolean isCameraPermissionsAllowed() {
+        boolean isAllowed = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                isAllowed = true;
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        CAMERA_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            isAllowed = true;
+        }
+
+        return isAllowed;
+    }
+
+    private boolean isGalleryPermissionsAllowed() {
+        boolean isAllowed = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                isAllowed = true;
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        GALLERY_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            isAllowed = true;
+        }
+
+        return isAllowed;
     }
 
     @Override

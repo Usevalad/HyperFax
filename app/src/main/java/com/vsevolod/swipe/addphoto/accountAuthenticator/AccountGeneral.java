@@ -37,14 +37,13 @@ public class AccountGeneral {
         Account[] acc = accountManager.getAccountsByType(ARG_ACCOUNT_TYPE);
         String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
         String authority = context.getString(R.string.content_authority);
-        ContentResolver resolver = context.getContentResolver();
 
         if (acc.length == 0) {
             Log.e(TAG, "finishLogin: adding new account");
             if (accountManager.addAccountExplicitly(account, password, null)) {
                 ContentResolver.setMasterSyncAutomatically(true);
                 ContentResolver.setIsSyncable(account, authority, 1);
-//                resolver.setSyncAutomatically(account, authority, true);
+                ContentResolver.setSyncAutomatically(account, authority, true);
                 ContentResolver.addPeriodicSync(
                         account,
                         authority,
@@ -59,7 +58,7 @@ public class AccountGeneral {
             accountManager.setPassword(account, password);
         }
 
-        resolver.requestSync(account,
+        ContentResolver.requestSync(account,
                 authority,
                 Bundle.EMPTY);
     }
