@@ -2,15 +2,17 @@ package com.vsevolod.swipe.addphoto.accountAuthenticator;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
+import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
 
 /**
  * Created by vsevolod on 12.05.17.
@@ -18,7 +20,10 @@ import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 
 public class AccountGeneral {
     private static final String TAG = "AccountGeneral";
-    public static final String ARG_ACCOUNT_TYPE = "com.vsevolod.swipe.addphoto";//(R.string.account_type);
+    /*
+        R.string.account_type
+     */
+    public static final String ARG_ACCOUNT_TYPE = "com.vsevolod.swipe.addphoto";
     public static final String ARG_TOKEN_TYPE = "com.vsevolod.swipe.addphoto.EXTRA_TOKEN_TYPE";
     public static final String ARG_AUTH_TYPE = "AUTH_TYPE";
     public static final String ARG_ACCOUNT_NAME = "Hyper Fax";
@@ -26,6 +31,10 @@ public class AccountGeneral {
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
     public static final String PARAM_USER_PASS = "USER_PASS";
     public static final String KEY_ACCOUNT_PHONE_NUMBER = "com.vsevolod.swipe.addphoto.phoneNumber";
+    /*
+         R.string.content_authority
+     */
+    public static final String CONTENT_AUTHORITY = "com.vsevolod.swipe.addphoto.provider.StubProvider";
 
     public static Account getAccount() {
         return new Account(new PreferenceHelper().getAccountName(), ARG_ACCOUNT_TYPE);
@@ -36,19 +45,11 @@ public class AccountGeneral {
         AccountManager accountManager = AccountManager.get(context);
         Account[] acc = accountManager.getAccountsByType(ARG_ACCOUNT_TYPE);
         String authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-        String authority = context.getString(R.string.content_authority);
 
         if (acc.length == 0) {
             Log.e(TAG, "finishLogin: adding new account");
             if (accountManager.addAccountExplicitly(account, password, null)) {
-                ContentResolver.setMasterSyncAutomatically(true);
-                ContentResolver.setIsSyncable(account, authority, 1);
-                ContentResolver.setSyncAutomatically(account, authority, true);
-                ContentResolver.addPeriodicSync(
-                        account,
-                        authority,
-                        Bundle.EMPTY,
-                        60);
+                setAutomaticSync(account);
                 accountManager.setAuthToken(account, ARG_TOKEN_TYPE, authToken);
             }
 
@@ -57,20 +58,52 @@ public class AccountGeneral {
             // Password change only
             accountManager.setPassword(account, password);
         }
-
-        ContentResolver.requestSync(account,
-                authority,
-                Bundle.EMPTY);
     }
 
+    /*
+        turning on syncable
+     */
+    private static void setAutomaticSync(Account account) {
+        ContentResolver.setMasterSyncAutomatically(true);
+        ContentResolver.setIsSyncable(account, CONTENT_AUTHORITY, 1);
+        ContentResolver.setSyncAutomatically(account, CONTENT_AUTHORITY, true);
+    }
+
+    /*
+        account force sync
+     */
     public static void sync() {
         Log.e(TAG, "sync:");
-        Context context = MyApplication.getAppContext();
+        setAutomaticSync(getAccount());
         ContentResolver.requestSync(
                 getAccount(),
-                context.getString(R.string.content_authority),
+                CONTENT_AUTHORITY,
                 Bundle.EMPTY
         );
     }
 
+    /*
+        setting periodic sync via alarm manage, cause SynAdapter periodic sync doesn't work
+     */
+    public static void setPeriodicSync(Context context) {
+        PendingIntent pendingIntent;
+        AlarmManager manager;
+        Intent alarmIntent = new Intent(context, SyncAlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
+                Constants.MILLISECONDS_HOUR, pendingIntent);
+    }
+
+    /*
+        cancelling periodic sync
+     */
+    public static void cancelPeriodicSync(Context context) {
+        PendingIntent pendingIntent;
+        AlarmManager manager;
+        Intent alarmIntent = new Intent(context, SyncAlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(pendingIntent);
+    }
 }

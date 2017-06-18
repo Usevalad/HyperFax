@@ -3,6 +3,8 @@ package com.vsevolod.swipe.addphoto.activity;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -44,10 +46,10 @@ import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
-import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         checkAccountAvailability();
         setContentView(R.layout.activity_main);
         setViews();
+
     }
 
     private void setViews() {
@@ -116,18 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e(TAG, "onCreate: no such accs");
             startLoginActivity();
         } else {
-            checkPeriodicSync();
-        }
-    }
-
-    private void checkPeriodicSync() {
-        Log.e(TAG, "checkPeriodicSync");
-        List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(AccountGeneral.getAccount(),
-                getString(R.string.content_authority));
-        Log.e(TAG, "checkPeriodicSync: size" + s.size());
-        for (int i = 0; i < s.size(); i++) {
-            Log.e(TAG, "checkPeriodicSync: toString " + s.get(i).toString());
-
+            AccountGeneral.setPeriodicSync(this);
         }
     }
 
@@ -211,10 +203,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_repeat_download:
                 // syncing data
-                ContentResolver.requestSync(
-                        new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE),
-                        getResources().getString(R.string.content_authority),
-                        new Bundle());
+                AccountGeneral.sync();
                 if (!isOnline()) {
                     // TODO: 24.05.17 change to a dialog fragment
                     Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();

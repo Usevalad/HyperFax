@@ -91,8 +91,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
 
         // TODO: 15.06.17 remove
-//        mPhoneNumberView.setText("+380630674650");
-//        mPasswordView.setText("sevatest");
+        mPhoneNumberView.setText("+380630674650");
+        mPasswordView.setText("sevatest");
 
     }
 

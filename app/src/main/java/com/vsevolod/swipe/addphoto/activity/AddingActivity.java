@@ -189,7 +189,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         Log.e(TAG, "saveDataToRealm: ContentResolver.isSyncActive");
         if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
             Log.e(TAG, "saveDataToRealm: !ContentResolver.isSyncPending ");
-            ContentResolver.requestSync(account, getString(R.string.content_authority), new Bundle());
+            AccountGeneral.sync();
         }
         if (!isOnline()) {
             // TODO: 24.05.17 change to a dialog fragment
