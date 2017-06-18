@@ -32,11 +32,13 @@ public class PathConverter {
             String[] projection = {MediaStore.Images.Media.DATA};
             cursor = mContext.getContentResolver().query(uri, projection, null, null, null);
             if (cursor == null) {
-                return uri.getPath();
+                mResult = uri.getPath();
             } else {
                 int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
-                mResult = cursor.getString(columnIndex);
+                mResult = cursor.getString(columnIndex) != null
+                        ? cursor.getString(columnIndex)
+                        : cursor.getString(cursor.getColumnIndex(projection[0]));
             }
         } catch (NullPointerException e) {
             e.printStackTrace();

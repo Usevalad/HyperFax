@@ -175,43 +175,4 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             e.printStackTrace();
         }
     }
-
-    public void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
-        Log.e(TAG, "configurePeriodicSync");
-        /*
-
-        добавил этот метод для периодической синхронизации. Вызываю его из mainActivity onCreate
-        данные, ктороые я добавляю в этом методе отбражаются в contentResolver.getPeriodicSyncs,
-        но синхронизация не происходит
-
-         */
-        AccountManager manager = AccountManager.get(context);
-        Account account = manager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE)[0];
-        String authority = context.getString(R.string.content_authority);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder()
-                    .syncPeriodic(syncInterval, flexTime)
-                    .setSyncAdapter(account, authority)
-                    .setExtras(new Bundle()).build();
-            ContentResolver.requestSync(request);
-            List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(account,
-                    context.getString(R.string.content_authority));
-            Log.e(TAG, "setPeriodicSync: size" + s.size());
-            for (int i = 0; i < s.size(); i++) {
-                Log.e(TAG, "setPeriodicSync: toString " + s.get(i).toString());
-            }
-
-        } else {
-            ContentResolver.addPeriodicSync(account, authority, new Bundle(), syncInterval);
-            List<PeriodicSync> s = ContentResolver.getPeriodicSyncs(account, context.getString(R.string.content_authority));
-            Log.e(TAG, " else setPeriodicSync: size" + s.size());
-            for (int i = 0; i < s.size(); i++) {
-                Log.e(TAG, "setPeriodicSync: toString " + s.get(i).toString());
-
-            }
-
-        }
-    }
-
 }
