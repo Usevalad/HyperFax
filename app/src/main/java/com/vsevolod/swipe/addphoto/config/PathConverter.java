@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.google.firebase.crash.FirebaseCrash;
 
+import java.io.File;
+
 /**
  * Created by vsevolod on 21.04.17.
  * getting full path instead of short android absolute path
@@ -40,6 +42,9 @@ public class PathConverter {
                         ? cursor.getString(columnIndex)
                         : cursor.getString(cursor.getColumnIndex(projection[0]));
             }
+            if (mResult == null) {
+                FirebaseCrash.log(TAG + " result = " + mResult);
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
             FirebaseCrash.log(TAG + " " + e.getMessage());
@@ -49,7 +54,12 @@ public class PathConverter {
             }
         }
         mContext = null;
-        FirebaseCrash.log(mResult);
+
+        if (mResult == null) {
+            mResult = uri.getPath();
+        }
+
+        Log.e(TAG, "getFullPath: " + mResult);
         return mResult;
     }
 }

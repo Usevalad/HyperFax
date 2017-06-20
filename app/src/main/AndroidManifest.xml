@@ -65,7 +65,7 @@
             android:name=".provider.StubProvider"
             android:authorities="@string/content_authority"
             android:exported="false"
-            android:label="my provider"
+            android:label="@string/app_name"
             android:multiprocess="true"
             android:syncable="true" />
 

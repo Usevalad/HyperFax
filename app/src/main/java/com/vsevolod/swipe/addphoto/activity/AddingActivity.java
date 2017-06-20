@@ -105,6 +105,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setOnEditorActionListener(null);
         mRealmHelper.close();
         super.onDestroy();
+        FirebaseCrash.log("my log. destroy");
+        FirebaseCrash.logcat(1, "my log 2 ", "destroy");
     }
 
     @Override
@@ -123,6 +125,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             if (imageFile.exists()) {
                 if (isPrefixValid()) {
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(//<-----
+//                        BitmapFactory.decodeFile(path), THUMB_SIZE, THUMB_SIZE);
                     Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
                             BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
                     int imageQuality = 40;

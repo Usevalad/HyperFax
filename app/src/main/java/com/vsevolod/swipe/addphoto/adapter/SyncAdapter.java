@@ -6,18 +6,15 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.PeriodicSync;
-import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.crash.FirebaseCrash;
-import com.vsevolod.swipe.addphoto.R;
+import com.google.gson.JsonSyntaxException;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
@@ -45,11 +42,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private final String TAG = this.getClass().getSimpleName();
     private AccountManager mAccountManager;
     private RealmHelper mRealmHelper;
+    private Context mContext;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
         mAccountManager = AccountManager.get(context);
         mRealmHelper = new RealmHelper();
+        mContext = context;
         Log.e(TAG, "SyncAdapter: constructor");
     }
 
@@ -57,6 +56,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize, allowParallelSyncs);
         mAccountManager = AccountManager.get(context);
         mRealmHelper = new RealmHelper();
+        mContext = context;
         Log.e(TAG, "SyncAdapter: constructor 2");
     }
 
@@ -106,7 +106,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.e(TAG, "getStateCodesFromServer");
         try {
             ListQueryModel listQueryModel = new ListQueryModel(authToken, dataIds);
-            Response<ListResponse> response = MyApplication.getApi().getList(listQueryModel).execute();
+            Response<ListResponse> response;
+            try {
+                response = MyApplication.getApi().getList(listQueryModel).execute();
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+                Toast.makeText(mContext, "Ошибка соединения с сервером", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (response.isSuccessful()) {
                 if (TextUtils.equals(response.body().getStatus(), Constants.RESPONSE_STATUS_OK)) {
                     Log.e(TAG, "getList: response code " + String.valueOf(response.code()));
