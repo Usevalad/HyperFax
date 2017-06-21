@@ -6,16 +6,13 @@
         android:title="@string/clear_cache" />
     <item
         android:id="@+id/main_menu_repeat_download"
-        android:title="@string/synchronize" />
-
-    <!--android:checkable="true"-->
-
-    <item
-    android:id="@+id/main_menu_notifications"
-    android:title="Подсказка" />
+        android:title="@string/synchronize" >@color/colorPrimaryDark</item>
     <item
         android:id="@+id/main_menu_request_flow"
         android:title="@string/update_tree" />
+    <item
+        android:id="@+id/main_menu_notifications"
+        android:title="@string/telegraf_hint" />
     <item
         android:id="@+id/main_menu_log_out"
         android:title="@string/quit" />

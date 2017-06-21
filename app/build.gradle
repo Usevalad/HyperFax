@@ -25,7 +25,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 18
+        versionCode 19
         versionName "0.0." + versionCode
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
@@ -62,7 +62,7 @@ dependencies {
     //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-//    compile 'com.google.android.gms:play-services-drive:10.2.6'
+    compile 'com.google.android.gms:play-services-drive:10.2.6'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
@@ -79,6 +79,7 @@ dependencies {
     compile 'com.bogdwellers:pinchtozoom:0.1'
     compile 'com.google.firebase:firebase-crash:10.2.6'
     testCompile 'junit:junit:4.12'
+    //image picker
 }
 
 apply plugin: 'com.google.gms.google-services'

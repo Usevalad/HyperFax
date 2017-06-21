@@ -52,7 +52,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         byte[] photoByteArray = model.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
 
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm  dd.MM.yyyy EEEE");
         String viewDate = viewDateFormat.format(model.getDate()); //date format for textView
         holder.mPhotoImageView.setImageBitmap(bitmap);
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());

@@ -22,12 +22,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:elevation="4dp"
-                android:titleTextAppearance="@android:color/black"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:subtitleTextColor="@android:color/black"
-                app:titleTextColor="@android:color/black">
-
-            </android.support.v7.widget.Toolbar>
+                android:theme="@style/AppToolbar"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <include layout="@layout/divider" />
 
@@ -38,8 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_below="@+id/adding_appbar_layout"
-            android:scaleType="centerCrop"
-             />
+            android:scaleType="centerCrop" />
 
         <ScrollView
             android:id="@+id/container"

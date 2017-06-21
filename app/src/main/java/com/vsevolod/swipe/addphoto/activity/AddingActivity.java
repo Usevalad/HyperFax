@@ -34,6 +34,7 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.config.GeoDegree;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -87,7 +88,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         } else {
             Toast.makeText(this, "Не удалось загрузить фото", Toast.LENGTH_SHORT).show();
         }
-
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
         mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(mContext));
@@ -119,7 +119,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void decodeImage() {
         Log.e(TAG, "decodeImage");
         if (mPhotoUri != null) {
-            String path = new PathConverter(this).getFullPath(mPhotoUri);
+            int photoResource = getIntent().getIntExtra(Constants.INTENT_KEY_PHOTO_RES, 0);
+            String path = new PathConverter(this).getFullPath(mPhotoUri, photoResource);
             File imageFile = new File(path);
             final int THUMB_SIZE = Constants.THUMB_SIZE;
             if (imageFile.exists()) {
@@ -169,8 +170,14 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         searchDateFormat.setTimeZone(timeZone);
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
-        double latitude = mLocation != null ? mLocation.getLatitude() : 0.0;
-        double longitude = mLocation != null ? mLocation.getLongitude() : 0.0;
+        double latitude = 0.0, longitude = 0.0;
+
+        GeoDegree geoDegree = new GeoDegree(photoUri);
+        if (geoDegree.isValid()) {
+            latitude = geoDegree.getLatitude();
+            longitude = geoDegree.getLongitude();
+        }
+
         SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         String viewDate = viewDateFormat.format(date); //date format for textView
 

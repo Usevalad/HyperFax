@@ -19,10 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"
-            android:titleTextAppearance="@android:color/black"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:subtitleTextColor="@android:color/black"
-            app:titleTextColor="@android:color/black">
+            android:theme="@style/AppToolbar"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
 
@@ -70,7 +68,6 @@
         android:src="@drawable/ic_plus"
         app:backgroundTint="@color/colorAccent"
         app:elevation="6dp"
-        app:pressedTranslationZ="12dp"
-        />
+        app:pressedTranslationZ="12dp" />
 
 </android.support.design.widget.CoordinatorLayout>

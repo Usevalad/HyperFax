@@ -47,5 +47,6 @@
     <string name="camera">Камера</string>
     <string name="add_new_photo">Добавить новое фото</string>
     <string name="appointment">Назначение</string>
+    <string name="telegraf_hint">Подсказка</string>
 
 </resources>

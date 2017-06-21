@@ -11,6 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: 20.06.17 magic numbers
 public class ListResponse {
 
     @SerializedName("columns")
@@ -54,6 +55,7 @@ public class ListResponse {
                 String uid = list.get(i).get(0);
                 ids.add(uid);
                 String stateCode = list.get(i).get(1);
+                String comment = list.get(i).get(2);
             }
         }
         return ids;

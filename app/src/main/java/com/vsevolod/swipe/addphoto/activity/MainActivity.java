@@ -23,7 +23,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -58,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 23;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 24;
     private final String TAG = MainActivity.class.getSimpleName();
-    private final int CAPTURE_IMAGE_ACTIVITY_REQ = 31;
-    private final int SELECT_PICTURE = 12;
     private long mLastOnchangeAction = 0L;
     public RecyclerView mRecyclerView;
     public List<DataModel> data;
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "setViews");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
-        toolbar.setTitle(" HyperFax");
+        toolbar.setTitle("HyperFax v" + MyApplication.getAppVersionName());
         setSupportActionBar(toolbar);
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -339,20 +336,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e(TAG, "onActivityResult");
         if (resultCode == RESULT_OK) {
-            Uri photoUri;
-            switch (requestCode) {
-                case CAPTURE_IMAGE_ACTIVITY_REQ:
-                    photoUri = data == null ? mFileUri : data.getData();
-                    startAddingActivity(photoUri);
-                    break;
-                case SELECT_PICTURE:
-                    photoUri = data.getData();
-                    startAddingActivity(photoUri);
-                    break;
-                default:
-                    Log.e(TAG, "onActivityResult: Call out for image capture failed!");
-                    break;
-            }
+            Uri photoUri = data == null ? mFileUri : data.getData();
+            startAddingActivity(photoUri, requestCode);
         }
     }
 
@@ -376,9 +361,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void startAddingActivity(Uri path) {
+    private void startAddingActivity(Uri path, int photoResource) {
         Log.e(TAG, "startAddingActivity");
         Intent intent = new Intent(this, AddingActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_PHOTO_RES, photoResource);
         intent.putExtra(Constants.INTENT_KEY_PATH, path.toString());
         startActivity(intent);
     }
@@ -390,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         mFileUri = getOutputPhotoFile();
         i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-        startActivityForResult(i, CAPTURE_IMAGE_ACTIVITY_REQ);
+        startActivityForResult(i, Constants.CAPTURE_PICTURE_REQUEST);
     }
 
     private void startGalleryActivity() {
@@ -400,23 +386,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.setType(Constants.MEDIA_TYPE_IMAGE);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,
-                Constants.ACTION_SELECT_PICTURE), SELECT_PICTURE);
+                Constants.ACTION_SELECT_PICTURE), Constants.SELECT_PICTURE_REQUEST);
     }
 
     private void startLoginActivity() {
         Log.e(TAG, "startLoginActivity");
-        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
-        // loop through all accounts to remove them
-        Account[] accounts = accountManager.getAccounts();
-        for (Account account : accounts) {
-            if (TextUtils.equals(account.type, AccountGeneral.ARG_ACCOUNT_TYPE)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    accountManager.removeAccountExplicitly(account);
-                } else {
-                    accountManager.removeAccount(account, null, null);
-                }
-            }
-        }
+        AccountGeneral.removeAccount((AccountManager) this.getSystemService(ACCOUNT_SERVICE));
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();
@@ -429,8 +404,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    // Scroll Down
+                if (dy > 0) {   // Scroll Down
                     if (mFAB.isShown()) {
                         if (isFabOpen) {
                             animateFAB();
@@ -438,8 +412,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mFAB.setClickable(false);
                         mFAB.hide();
                     }
-                } else if (dy < 0) {
-                    // Scroll Up
+                } else if (dy < 0) {  // Scroll Up
                     if (!mFAB.isShown()) {
                         mFAB.setClickable(true);
                         mFAB.show();

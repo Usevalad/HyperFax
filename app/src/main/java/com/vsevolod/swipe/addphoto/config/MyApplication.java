@@ -115,4 +115,8 @@ public class MyApplication extends Application {
     public static String getDeviceModel() {
         return mDeviceModel;
     }
+
+    public static String getAppVersionName() {
+        return mAppVersionName;
+    }
 }

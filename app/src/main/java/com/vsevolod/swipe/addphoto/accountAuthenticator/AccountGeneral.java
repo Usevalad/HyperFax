@@ -7,7 +7,9 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.config.Constants;
@@ -20,9 +22,7 @@ import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
 
 public class AccountGeneral {
     private static final String TAG = "AccountGeneral";
-    /*
-        R.string.account_type
-     */
+    // R.string.account_type
     public static final String ARG_ACCOUNT_TYPE = "com.vsevolod.swipe.addphoto";
     public static final String ARG_TOKEN_TYPE = "com.vsevolod.swipe.addphoto.EXTRA_TOKEN_TYPE";
     public static final String ARG_AUTH_TYPE = "AUTH_TYPE";
@@ -31,13 +31,14 @@ public class AccountGeneral {
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
     public static final String PARAM_USER_PASS = "USER_PASS";
     public static final String KEY_ACCOUNT_PHONE_NUMBER = "com.vsevolod.swipe.addphoto.phoneNumber";
-    /*
-         R.string.content_authority
-     */
+    //   R.string.content_authority
     public static final String CONTENT_AUTHORITY = "com.vsevolod.swipe.addphoto.provider.StubProvider";
 
     public static Account getAccount() {
-        return new Account(new PreferenceHelper().getAccountName(), ARG_ACCOUNT_TYPE);
+        String accountName = new PreferenceHelper().getAccountName();
+        return new Account(TextUtils.isEmpty(accountName)
+                ? "Аккаунту нужно имя"
+                : accountName, ARG_ACCOUNT_TYPE);
     }
 
     public static void finishLogin(Context context, Intent intent, String password) {
@@ -105,5 +106,17 @@ public class AccountGeneral {
         pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         manager.cancel(pendingIntent);
+    }
+
+    public static void removeAccount(AccountManager accountManager) {
+        Account account = getAccount();
+        // loop through all accounts to remove them
+        if (TextUtils.equals(account.type, AccountGeneral.ARG_ACCOUNT_TYPE)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                accountManager.removeAccountExplicitly(account);
+            } else {
+                accountManager.removeAccount(account, null, null);
+            }
+        }
     }
 }

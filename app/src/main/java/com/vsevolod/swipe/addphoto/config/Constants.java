@@ -20,7 +20,6 @@ public class Constants {
     public static final String RESPONSE_AUTH_SUB_STATUS_VALID = "VALID";
     static final String BASE_URL = "http://crm.myaso.net.ua/ext/api/";
     public static final String MEDIA_TYPE_IMAGE = "image/*";
-    public static final String INTENT_KEY_PATH = "image/";
     public static final String ACTION_SELECT_PICTURE = "Select Picture";
     public static final String EXTENSION_JPG = ".jpg";
     public static final String DATA_MODEL_STATE_CREATED = "Created";
@@ -29,10 +28,14 @@ public class Constants {
     public static final String DATA_MODEL_STATE_DECLINED = "Declined";
     public static final String DATA_MODEL_STATE_NEED_SYNC = "Need sync";
     public static final String DATA_MODEL_STATE_PARAM = "PARAM";
+    public static final String INTENT_KEY_PATH = "image/";
+    public static final String INTENT_KEY_PHOTO_RES = "photo resource";
     public static final String INTENT_KEY_EXIT = "com.vsevolod.swipe.addphoto.EXIT";
     public static final String INTENT_KEY_NOTIFY = "notify";
     public static final String INTENT_KEY_SERVER_PHOTO_URL = "server photo url";
     public static final String INTENT_KEY_STORAGE_PHOTO_URL = "storage photo url";
+    public static final int CAPTURE_PICTURE_REQUEST = 31;
+    public static final int SELECT_PICTURE_REQUEST = 12;
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
