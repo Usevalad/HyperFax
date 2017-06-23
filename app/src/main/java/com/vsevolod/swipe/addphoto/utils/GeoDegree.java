@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.config;
+package com.vsevolod.swipe.addphoto.utils;
 
 /**
  * Created by vsevolod on 20.06.17.

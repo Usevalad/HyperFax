@@ -52,6 +52,7 @@ import retrofit2.Response;
  */
 // TODO: 21.04.17 add phone number finding library
 // TODO: 13.05.17 refactor
+// TODO: 23.06.17 add valid permissions
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
         OnClickListener, View.OnTouchListener {
     private static final int PERMISSION_REQUEST_CODE = 142;
@@ -93,7 +94,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         // TODO: 15.06.17 remove
 //        mPhoneNumberView.setText("+380630674650");
 //        mPasswordView.setText("sevatest");
-
     }
 
     @Override
@@ -144,6 +144,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 break;
             }
         }
+
         return phoneNumber;
     }
 
@@ -180,6 +181,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(phoneNumber)) {
+
             mPhoneNumberView.setError(getString(R.string.error_field_required));
             focusView = mPhoneNumberView;
             cancel = true;
@@ -285,14 +287,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         } else {
             isAllowed = true;
         }
-        return isAllowed;
+        return true;
     }
 
 
     @Override
     public void onClick(View v) {
-        if (isPermissionsAllowed()) {
-            attemptLogin();
+        switch (v.getId()) {
+            case R.id.login_button:
+//                if (isPermissionsAllowed())
+                    attemptLogin();
+            default:
+                break;
         }
     }
 
@@ -302,8 +308,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     attemptLogin();
+                }
                 break;
             default:
                 break;
@@ -432,9 +439,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                         .setSmallIcon(R.drawable.ic_toolbar_logo)
                         .setContentIntent(pIntent)
                         .setAutoCancel(true)
-//                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)
-//                    .addAction(R.drawable.round_logo96x96, "More", pIntent)
-//                    .addAction(R.drawable.round_logo96x96, "And more", pIntent)
                         .build();
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

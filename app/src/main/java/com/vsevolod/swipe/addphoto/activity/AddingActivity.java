@@ -4,10 +4,7 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.ThumbnailUtils;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -29,21 +26,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
 import com.vsevolod.swipe.addphoto.config.Constants;
-import com.vsevolod.swipe.addphoto.config.GeoDegree;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
-import com.vsevolod.swipe.addphoto.config.PathConverter;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.utils.GeoDegree;
+import com.vsevolod.swipe.addphoto.utils.ImageConverter;
+import com.vsevolod.swipe.addphoto.utils.PathConverter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -105,8 +99,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setOnEditorActionListener(null);
         mRealmHelper.close();
         super.onDestroy();
-        FirebaseCrash.log("my log. destroy");
-        FirebaseCrash.logcat(1, "my log 2 ", "destroy");
     }
 
     @Override
@@ -121,30 +113,9 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         if (mPhotoUri != null) {
             int photoResource = getIntent().getIntExtra(Constants.INTENT_KEY_PHOTO_RES, 0);
             String path = new PathConverter(this).getFullPath(mPhotoUri, photoResource);
-            File imageFile = new File(path);
-            final int THUMB_SIZE = Constants.THUMB_SIZE;
-            if (imageFile.exists()) {
-                if (isPrefixValid()) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                Bitmap thumbImage = ThumbnailUtils.extractThumbnail(//<-----
-//                        BitmapFactory.decodeFile(path), THUMB_SIZE, THUMB_SIZE);
-                    Bitmap thumbImage = ThumbnailUtils.extractThumbnail(
-                            BitmapFactory.decodeFile(imageFile.getAbsolutePath()), THUMB_SIZE, THUMB_SIZE);
-                    int imageQuality = 40;
-                    thumbImage.compress(Bitmap.CompressFormat.JPEG, imageQuality, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    try {
-                        thumbImage.recycle();
-                        stream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        FirebaseCrash.log(TAG + " " + e.getMessage());
-                    }
-                    saveDataToRealm(byteArray, path);
-                }
-            } else {
-                Log.e(TAG, "addImage: file is not exist");
-                Toast.makeText(mContext, "Не правильный путь к файлу", Toast.LENGTH_SHORT).show();
+            if (isPrefixValid()) {
+                byte[] image = ImageConverter.imageToByte(path);
+                saveDataToRealm(image, path);
             }
         } else {
             Toast.makeText(mContext, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();

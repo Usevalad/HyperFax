@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Account[] ac = mAccountManager.getAccountsByType(AccountGeneral.ARG_ACCOUNT_TYPE);
         if (ac.length < 1) {
             Log.e(TAG, "onCreate: no such accs");
-            startLoginActivity();
+            startLoginActivity(false);
         } else {
             AccountGeneral.setPeriodicSync(this);
         }
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                mRealmHelper.countData();
                 break;
             case R.id.main_menu_log_out:
-                startLoginActivity();
+                startLoginActivity(true);
                 break;
             default:
                 break;
@@ -389,9 +389,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Constants.ACTION_SELECT_PICTURE), Constants.SELECT_PICTURE_REQUEST);
     }
 
-    private void startLoginActivity() {
+    private void startLoginActivity(boolean accountExists) {
         Log.e(TAG, "startLoginActivity");
-        AccountGeneral.removeAccount((AccountManager) this.getSystemService(ACCOUNT_SERVICE));
+        if (accountExists)
+            AccountGeneral.removeAccount((AccountManager) this.getSystemService(ACCOUNT_SERVICE));
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();

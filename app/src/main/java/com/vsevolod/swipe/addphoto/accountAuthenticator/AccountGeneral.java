@@ -36,9 +36,8 @@ public class AccountGeneral {
 
     public static Account getAccount() {
         String accountName = new PreferenceHelper().getAccountName();
-        return new Account(TextUtils.isEmpty(accountName)
-                ? "Аккаунту нужно имя"
-                : accountName, ARG_ACCOUNT_TYPE);
+        accountName = TextUtils.isEmpty(accountName) ? ARG_ACCOUNT_NAME : accountName;
+        return new Account(accountName, ARG_ACCOUNT_TYPE);
     }
 
     public static void finishLogin(Context context, Intent intent, String password) {
@@ -50,8 +49,8 @@ public class AccountGeneral {
         if (acc.length == 0) {
             Log.e(TAG, "finishLogin: adding new account");
             if (accountManager.addAccountExplicitly(account, password, null)) {
-                setAutomaticSync(account);
                 accountManager.setAuthToken(account, ARG_TOKEN_TYPE, authToken);
+                setAutomaticSync(account);
             }
 
         } else {

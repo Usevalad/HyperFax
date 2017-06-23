@@ -92,6 +92,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             token = mAccountManager.blockingGetAuthToken(account,
                     AccountGeneral.ARG_TOKEN_TYPE, true);
+            Log.e(TAG, "getToken: token" + token);
         } catch (OperationCanceledException e) {
             e.printStackTrace();
         } catch (AuthenticatorException e) {
