@@ -4,14 +4,17 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
@@ -36,7 +39,7 @@ public class AccountGeneral {
 
     public static Account getAccount() {
         String accountName = new PreferenceHelper().getAccountName();
-        accountName = TextUtils.isEmpty(accountName) ? ARG_ACCOUNT_NAME : accountName;
+//        accountName = TextUtils.isEmpty(accountName) ? ARG_ACCOUNT_NAME : accountName;
         return new Account(accountName, ARG_ACCOUNT_TYPE);
     }
 
@@ -107,7 +110,8 @@ public class AccountGeneral {
         manager.cancel(pendingIntent);
     }
 
-    public static void removeAccount(AccountManager accountManager) {
+    public static void removeAccount(Context context, AccountManager accountManager) {
+
         Account account = getAccount();
         // loop through all accounts to remove them
         if (TextUtils.equals(account.type, AccountGeneral.ARG_ACCOUNT_TYPE)) {
@@ -117,5 +121,10 @@ public class AccountGeneral {
                 accountManager.removeAccount(account, null, null);
             }
         }
+
+        Intent intent = new Intent(context, MainActivity.class);
+        ComponentName cn = intent.getComponent();
+        Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
+        context.startActivity(mainIntent);
     }
 }

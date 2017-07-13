@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +54,8 @@ import java.util.Locale;
 
 import io.realm.RealmChangeListener;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener,
+        SwipeRefreshLayout.OnRefreshListener {
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 23;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 24;
     private final String TAG = MainActivity.class.getSimpleName();
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton mFAB;
     private FloatingActionButton mFABCamera;
     private FloatingActionButton mFABGallery;
+    public static SwipeRefreshLayout swipeRefreshLayout;
     private Animation mFabOpen;
     private Animation mFabClose;
     private Animation mRotateForward;
@@ -92,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
         toolbar.setTitle("HyperFax v" + MyApplication.getAppVersionName());
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
         setSupportActionBar(toolbar);
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -391,8 +396,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startLoginActivity(boolean accountExists) {
         Log.e(TAG, "startLoginActivity");
+        // TODO: 29.06.17 испровить логику. при нажатии на кнопку выйти можно просто удалять акк,
+        // потом активити пересоздается и заходит в логин активити
         if (accountExists)
-            AccountGeneral.removeAccount((AccountManager) this.getSystemService(ACCOUNT_SERVICE));
+            AccountGeneral.removeAccount(this, (AccountManager) this.getSystemService(ACCOUNT_SERVICE));
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         finish();
@@ -460,5 +467,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.e(TAG, "onRefresh");
+        if (isOnline()) {
+            AccountGeneral.sync();
+            swipeRefreshLayout.setRefreshing(true);
+        } else             // TODO: 24.05.17 change to a dialog fragment
+            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
     }
 }

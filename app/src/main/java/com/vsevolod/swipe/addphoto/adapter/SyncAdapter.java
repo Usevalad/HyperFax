@@ -146,6 +146,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 Response<ResponseBody> postImageResponse = MyApplication.getApi().postImage(requestBody).execute();
                 Log.e(TAG, "uploadData: response code " + String.valueOf(postImageResponse.code()));
                 Log.e(TAG, "uploadData: response body " + String.valueOf(postImageResponse.body()));
+                Log.e(TAG, "uploadData: response errorBody " + String.valueOf(postImageResponse.errorBody()));
+                Log.e(TAG, "uploadData: response headers " + String.valueOf(postImageResponse.headers()));
+                Log.e(TAG, "uploadData: response message " + String.valueOf(postImageResponse.message()));
+                Log.e(TAG, "uploadData: response raw " + String.valueOf(postImageResponse.raw()));
                 String link = postImageResponse.body().string();
                 String id = dataModel.getUid();
                 Log.e(TAG, "uploadData: link" + link);
@@ -173,6 +177,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         mRealmHelper.setPhotoURL(id, link);
                         mRealmHelper.setSynced(id, true);
                         mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_CREATED);
+                        break;
+                    case Constants.RESPONSE_STATUS_AUTH:
+                        AccountGeneral.cancelPeriodicSync(mContext);
+                        AccountGeneral.removeAccount(mContext, mAccountManager);
                         break;
                     default:
                         AccountGeneral.sync();

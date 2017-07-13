@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
+import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.activity.NotificationActivity;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
@@ -51,6 +52,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
 
     @Override
     protected void onPreExecute() {
+        Log.e(TAG, "onPreExecute");
         mContext = MyApplication.getAppContext();
         mAccountManager = AccountManager.get(mContext);
         mRealmHelper = new RealmHelper();
@@ -59,7 +61,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     @Override
     protected List<FlowsTreeModel> doInBackground(Void... params) {
         Log.e(TAG, "doInBackground");
-        Account account = new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE);
+        Account account = AccountGeneral.getAccount();
         String token;
         List<List<String>> list = null;
         List<FlowsTreeModel> result = new ArrayList<>();
@@ -69,6 +71,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             Log.e(TAG, "doInBackground: blockingGetAuthToken");
             token = mAccountManager.blockingGetAuthToken(account,
                     AccountGeneral.ARG_TOKEN_TYPE, true);
+            Log.e(TAG, "doInBackground: token " + token);
             Response<ResponseFlowsTreeModel> response;
 
             Log.e(TAG, "doInBackground: get tree");
@@ -77,9 +80,12 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
             if (response.code() == 201 || response.code() == 200) {
                 switch (response.body().getStatus()) {
                     case Constants.RESPONSE_STATUS_AUTH:
+                        message = "Нужна авторизация";
+                        AccountGeneral.removeAccount(mContext, AccountManager.get(mContext));
                         Log.e(TAG, "Status AUTH. invalid token");
                         break;
                     case Constants.RESPONSE_STATUS_FAIL:
+                        Toast.makeText(mContext, "Fail", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Status FAIL. error message: " + response.body().getError());
                         break;
                     case Constants.RESPONSE_STATUS_OK:
@@ -102,6 +108,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
 
                         break;
                     case Constants.RESPONSE_STATUS_PARAM:
+                        message = "Parameters";
                         Log.e(TAG, "Status PARAM");
                         break;
                     default:
@@ -111,7 +118,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                 Log.e(TAG, "response code = " + response.code());
                 Log.e(TAG, "response message = " + response.message());
             }
-
         } catch (OperationCanceledException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -150,6 +156,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
         super.onPostExecute(flowsTreeModels);
         Log.e(TAG, "onPostExecute");
+        MainActivity.swipeRefreshLayout.setRefreshing(false);
         if (!TextUtils.isEmpty(message)) {
             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onPostExecute: message :" + message);
