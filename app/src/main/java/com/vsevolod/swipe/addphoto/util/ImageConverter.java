@@ -19,7 +19,7 @@ import static com.vsevolod.swipe.addphoto.config.Constants.THUMB_SIZE;
  * Created by vsevolod on 23.06.17.
  */
 
-public class ImageConverter {
+public final class ImageConverter {
     private static final String TAG = "ImageConverter";
 
     public static byte[] imageToByte(String path) {

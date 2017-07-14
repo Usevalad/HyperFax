@@ -28,6 +28,7 @@ import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Response;
@@ -42,10 +43,11 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper;
     private AccountManager mAccountManager;
+    private PreferenceHelper mPreferenceHelper;
     private Context mContext;
     private String notify;
     private String message;
-    private final int ID_NUMBER = 0;
+    private final int ID_NUMBER = 0; // TODO: 14.07.17 add to enum
     private final int NAME_NUMBER = 1;
     private final int PREFIX_NUMBER = 2;
     private final int PARENT_ID_NUMBER = 3;
@@ -56,6 +58,8 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
         mContext = MyApplication.getAppContext();
         mAccountManager = AccountManager.get(mContext);
         mRealmHelper = new RealmHelper();
+        mPreferenceHelper = new PreferenceHelper();
+        MainActivity.swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -101,7 +105,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                                 TextUtils.equals(resultCode, Constants.RESPONSE_TREE_SUB_STATUS_NT)) {
 
                             list = response.body().getList();
-                            new PreferenceHelper().saveString(PreferenceHelper.APP_PREFERENCES_MODIFIED,
+                            mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_MODIFIED,
                                     response.body().getModified());
                             message = mContext.getString(R.string.updated);
                         }
@@ -157,6 +161,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
         super.onPostExecute(flowsTreeModels);
         Log.e(TAG, "onPostExecute");
         MainActivity.swipeRefreshLayout.setRefreshing(false);
+        mPreferenceHelper.saveDate(PreferenceHelper.APP_PREFERENCES_FLOWS_UPDATE_DATE, new Date().getTime());
         if (!TextUtils.isEmpty(message)) {
             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onPostExecute: message :" + message);
@@ -172,9 +177,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                     )
                     .setContentIntent(pIntent)
                     .setAutoCancel(true)
-//                    .addAction(R.drawable.round_logo96x96, "Call", pIntent)
-//                    .addAction(R.drawable.round_logo96x96, "More", pIntent)
-//                    .addAction(R.drawable.round_logo96x96, "And more", pIntent)
                     .build();
             NotificationManager notificationManager =
                     (NotificationManager) (mContext).getSystemService(NOTIFICATION_SERVICE);

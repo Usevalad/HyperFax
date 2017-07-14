@@ -8,22 +8,18 @@ import java.util.TimeZone;
  * Created by vsevolod on 14.07.17.
  */
 
-public class MyDateUtil {
+public final class MyDateUtil {
     private static TimeZone timeZone = TimeZone.getTimeZone("UTC");
+    private static SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+    private static SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String getViewDate() {
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
         viewDateFormat.setTimeZone(timeZone);
-        return viewDateFormat.format(getDate());
+        return viewDateFormat.format(new Date());
     }
 
     public static String getSearchDate() {
-        SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         searchDateFormat.setTimeZone(timeZone);
-        return searchDateFormat.format(getDate());
-    }
-
-    public static Date getDate() {
-        return new Date();
+        return searchDateFormat.format(new Date());
     }
 }

@@ -137,12 +137,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void saveDataToRealm(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.e(TAG, "saveDataToRealm");
 
-//        TimeZone timeZone = TimeZone.getTimeZone("UTC");
-//        Date date = new Date();
-//        SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        searchDateFormat.setTimeZone(timeZone);
-//        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
-//        String viewDate = viewDateFormat.format(date); //date format for textView
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
         double latitude = 0.0, longitude = 0.0;
 
@@ -163,7 +157,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 latitude,
                 longitude,
                 mRealmHelper.getPrefixID(prefix),
-                MyDateUtil.getDate()
+                new Date()
         );
 
         mRealmHelper.save(model);

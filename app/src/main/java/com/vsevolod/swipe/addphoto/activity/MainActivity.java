@@ -39,6 +39,7 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
+import com.vsevolod.swipe.addphoto.asyncTask.ServerSyncTask;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
         mFABGallery.setOnClickListener(null);
+        swipeRefreshLayout.setOnRefreshListener(null);
         super.onDestroy();
     }
 
@@ -151,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFAB.setOnClickListener(null);
         mFABCamera.setOnClickListener(null);
         mFABGallery.setOnClickListener(null);
+        swipeRefreshLayout.setOnRefreshListener(null);
         mRealmHelper.getRealm().removeAllChangeListeners();
         super.onPause();
     }
@@ -165,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABCamera.setOnClickListener(this);
         mFABGallery.setOnClickListener(this);
         mRealmHelper.getRealm().addChangeListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
         animateFAB();
         setRecyclerViewAdapter();
         AccountGeneral.sync();
@@ -464,8 +468,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onRefresh() {
         Log.e(TAG, "onRefresh");
         if (isOnline()) {
-            AccountGeneral.sync();
-            swipeRefreshLayout.setRefreshing(true);
+            new ServerSyncTask().execute();
         } else             // TODO: 24.05.17 change to a dialog fragment
             Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
     }

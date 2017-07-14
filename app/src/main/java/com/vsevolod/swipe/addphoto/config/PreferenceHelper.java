@@ -31,6 +31,13 @@ public final class PreferenceHelper {
         editor.apply();
     }
 
+    public void saveDate(String key, long value) {
+        Log.e(TAG, "saveDate");
+        SharedPreferences.Editor editor = mUserSettings.edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
     public String getModified() {
         return mUserSettings.getString(APP_PREFERENCES_MODIFIED, APP_PREFERENCES_NOT_FOUND);
     }
@@ -39,7 +46,7 @@ public final class PreferenceHelper {
         return mUserSettings.getString(APP_PREFERENCES_ACCOUNT_NAME, APP_PREFERENCES_NOT_FOUND);
     }
 
-    public String getLastUpdate() {
-        return mUserSettings.getString(APP_PREFERENCES_FLOWS_UPDATE_DATE, APP_PREFERENCES_NOT_FOUND);
+    public long getLastUpdate() {
+        return mUserSettings.getLong(APP_PREFERENCES_FLOWS_UPDATE_DATE, 0);
     }
 }

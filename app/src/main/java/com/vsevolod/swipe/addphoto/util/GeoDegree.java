@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class GeoDegree {
+public final class GeoDegree {
     private boolean valid = false;
     private Float Latitude, Longitude;
 

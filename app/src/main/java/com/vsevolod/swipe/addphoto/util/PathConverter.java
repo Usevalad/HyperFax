@@ -16,7 +16,7 @@ import com.google.firebase.crash.FirebaseCrash;
  * needed for decoding image to byte array
  */
 
-public class PathConverter {
+public final class PathConverter {
     private final String TAG = this.getClass().getSimpleName();
     private Context mContext;
 

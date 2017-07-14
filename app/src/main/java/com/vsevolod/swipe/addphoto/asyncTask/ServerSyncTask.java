@@ -1,14 +1,10 @@
-package com.vsevolod.swipe.addphoto.adapter;
+package com.vsevolod.swipe.addphoto.asyncTask;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProviderClient;
 import android.content.Context;
-import android.content.SyncResult;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,7 +12,7 @@ import android.widget.Toast;
 import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonSyntaxException;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
-import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
+import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
@@ -38,48 +34,50 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 /**
- * Created by vsevolod on 13.05.17.
+ * Created by vsevolod on 14.07.17.
+ * Async needed for start and stop refresh animation
  */
 // TODO: 14.07.17 не изменять класс пока все запросы не будут вынесены в другое место
-//потому, что это копия кода в ServerSyncTask
-
-public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    private final String TAG = this.getClass().getSimpleName();
-    private AccountManager mAccountManager;
-    private RealmHelper mRealmHelper;
+//потому, что это копия кода в синк адаптере
+public class ServerSyncTask extends AsyncTask<Void, Void, Void> {
+    private final String TAG = getClass().getSimpleName();
+    private RealmHelper mRealmHelper = new RealmHelper();
     private Context mContext;
+    private AccountManager mAccountManager;
 
-    public SyncAdapter(Context context, boolean autoInitialize) {
-        super(context, autoInitialize);
-        mAccountManager = AccountManager.get(context);
-        mRealmHelper = new RealmHelper();
-        mContext = context;
-        Log.e(TAG, "SyncAdapter: constructor");
-    }
-
-    public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
-        super(context, autoInitialize, allowParallelSyncs);
-        mAccountManager = AccountManager.get(context);
-        mRealmHelper = new RealmHelper();
-        mContext = context;
-        Log.e(TAG, "SyncAdapter: constructor 2");
+    @Override
+    protected void onPreExecute() {
+        Log.e(TAG, "onPreExecute");
+        MainActivity.swipeRefreshLayout.setRefreshing(true);
+        mContext = MyApplication.getAppContext();
+        mAccountManager = AccountManager.get(mContext);
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras,
-                              String authority, ContentProviderClient provider,
-                              SyncResult syncResult) {
-        Log.e(TAG, "onPerformSync");
+    protected Void doInBackground(Void... params) {
+        Log.e(TAG, "doInBackground");
+
+        String token = null;
+        try {
+            token = mAccountManager.blockingGetAuthToken(AccountGeneral.getAccount(),
+                    AccountGeneral.ARG_TOKEN_TYPE, true);
+        } catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        }
         mRealmHelper.open();
         List<DataModel> dataModels = mRealmHelper.getNotSyncedData();
         Log.e(TAG, "onPerformSync: NotSyncedData.size() " + dataModels.size());
         String[] dataIds = mRealmHelper.getNotSyncedDataStatesIds();
         Log.e(TAG, "onPerformSync: NotSyncedDataStatesIds.length " + dataIds.length);
         if (dataModels.size() > 0) {
-            uploadData(getToken(account), dataModels);
+            uploadData(token, dataModels);
         }
         if (dataIds.length > 0) {
-            getStateCodesFromServer(getToken(account), dataIds);
+            getStateCodesFromServer(token, dataIds);
         }
 
         mRealmHelper.close();
@@ -89,30 +87,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         if (currentDate - lastUpdate >= Constants.MILLISECONDS_DAY) {
             updateFlowsTree();
         }
+        return null;
     }
 
-    private void updateFlowsTree() {
-        Log.e(TAG, "updateFlowsTree");
-        TreeConverterTask task = new TreeConverterTask();
-        task.execute();
-    }
-
-    private String getToken(Account account) {
-        Log.e(TAG, "getToken");
-        String token = null;
-        try {
-            token = mAccountManager.blockingGetAuthToken(account,
-                    AccountGeneral.ARG_TOKEN_TYPE, true);
-            Log.e(TAG, "getToken: token" + token);
-        } catch (OperationCanceledException e) {
-            e.printStackTrace();
-        } catch (AuthenticatorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return token;
-    }
 
     private void getStateCodesFromServer(String authToken, String[] dataIds) {
         Log.e(TAG, "getStateCodesFromServer");
@@ -209,5 +186,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateFlowsTree() {
+        Log.e(TAG, "updateFlowsTree");
+        TreeConverterTask task = new TreeConverterTask();
+        task.execute();
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        Log.e(TAG, "onPostExecute");
+        MainActivity.swipeRefreshLayout.setRefreshing(false);
     }
 }
