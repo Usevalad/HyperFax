@@ -30,9 +30,6 @@ public class ListResponse {
     @Expose
     private String status;
 
-    public ListResponse() {
-    }
-
     public ListResponse(List<String> columns, List<List<String>> list, String status) {
         super();
         this.columns = columns;
@@ -40,11 +37,11 @@ public class ListResponse {
         this.list = list;
     }
 
+    public ListResponse() {}
     /*
             оба конструктора не используются. Статус ответа проверяется в первую очередь,
             поэтому тут я инициализирую списки
      */
-
     public String getStatus() {
         if (ids.size() < 1)
             initLists(list);

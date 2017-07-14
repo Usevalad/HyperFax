@@ -98,7 +98,7 @@ public class SearchResultsActivity extends AppCompatActivity {
             case R.id.main_menu_clear_data:
                 mRealmHelper.dropRealmData();
                 break;
-            case R.id.main_menu_notifications:
+            case R.id.main_menu_instruction:
                 String url = "http://telegra.ph/Instrukciya-HyperFax-06-06";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
