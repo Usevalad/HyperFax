@@ -19,6 +19,9 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
+// TODO: 13.07.17 add final strings to enum (kotlin) 
+// TODO: 13.07.17 create kotlin enums instead of Constants.java
+
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
     private final String FIELD_DATE = "date";
@@ -69,7 +72,6 @@ public class RealmHelper {
             this.realm.commitTransaction();
         }
     }
-
 
     public RealmResults getData() {
         Log.d(TAG, "getData");
@@ -171,7 +173,7 @@ public class RealmHelper {
         newModel.setPhoto(model.getPhoto());
         newModel.setLatitude(model.getLatitude());
         newModel.setLongitude(model.getLongitude());
-        newModel.setComment(model.getComment());
+        newModel.setDescription(model.getDescription());
         newModel.setStateCode(model.getStateCode());
         newModel.setStoragePhotoURL(model.getStoragePhotoURL());
         newModel.setName(model.getName());
@@ -224,6 +226,27 @@ public class RealmHelper {
         this.realm.copyToRealmOrUpdate(model);
         this.realm.commitTransaction();
         Log.d(TAG, "updateServerPhotoURL: updated " + serverPhotoURL);
+    }
+
+    public void setComment(String id, String comment) {
+        Log.d(TAG, "setComment");
+
+        RealmQuery dataQuery = this.realm.where(DataModel.class);
+        dataQuery.equalTo(FIELD_UID, id);
+        DataModel model;
+        try {
+            model = (DataModel) dataQuery.findFirst();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Log.d(TAG, "getDataById: no data with such id");
+            return;
+        }
+
+        this.realm.beginTransaction();
+        model.setComment(comment);
+        this.realm.copyToRealmOrUpdate(model);
+        this.realm.commitTransaction();
+        Log.d(TAG, "setComment: updated " + comment);
     }
 
     public void setSynced(String id, boolean isSynced) {
@@ -279,14 +302,15 @@ public class RealmHelper {
     public void countData() {
         Log.d(TAG, "countData");
         List<DataModel> data = getData();
-        for (DataModel model: data) {
+        for (DataModel model : data) {
             Log.i(TAG,
-                    "searchDate = " +  model.getSearchDate() + "\n" +
+                    "searchDate = " + model.getSearchDate() + "\n" +
                             "date = " + model.getDate() + "\n" +
+                            "uid = " + model.getUid() + "\n" +
                             "prefix = " + model.getPrefix() + "\n" +
                             "prefixID = " + model.getPrefixID() + "\n" +
                             "name = " + model.getName() + "\n" +
-                            "comment = " + model.getComment() + "\n" +
+                            "comment = " + model.getDescription() + "\n" +
                             "storagePhotoURL = " + model.getStoragePhotoURL() + "\n" +
                             "serverPhotoURL = " + model.getServerPhotoURL() + "\n" +
                             "photoArrayLength = " + model.getPhoto().length + "\n" +

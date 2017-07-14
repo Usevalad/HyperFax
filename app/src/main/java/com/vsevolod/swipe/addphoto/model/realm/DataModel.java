@@ -11,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by vsevolod on 09.04.17.
  */
-
+// TODO: 13.07.17 add date, viewDate, searchDate, latitude, longitude to constructor
 public class DataModel extends RealmObject {
     @PrimaryKey
     private String uid;
@@ -20,6 +20,7 @@ public class DataModel extends RealmObject {
     private String name;
     private String serverPhotoURL;
     private String storagePhotoURL;
+    private String description;
     private String comment;
     private String viewDate;
     private double latitude;
@@ -30,10 +31,10 @@ public class DataModel extends RealmObject {
     private Date date;
     private boolean isSynced = false;
 
-    public DataModel(String searchDate, String viewDate, String prefix, String name, String comment,
+    public DataModel(String searchDate, String viewDate, String prefix, String name, String description,
                      String storagePhotoURL, byte[] photo, double latitude, double longitude,
                      String prefixID, Date date) {
-        this.comment = comment;
+        this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
         this.searchDate = searchDate;
@@ -75,12 +76,12 @@ public class DataModel extends RealmObject {
         this.photo = photo;
     }
 
-    public String getComment() {
-        return comment;
+    public String getDescription() {
+        return description;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getLatitude() {
@@ -161,6 +162,14 @@ public class DataModel extends RealmObject {
 
     public String getStoragePhotoURL() {
         return storagePhotoURL;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public void setStoragePhotoURL(String storagePhotoURL) {

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,8 +61,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.mDateTextView.setContentDescription(viewDate);
         holder.mPathTextView.setText(model.getName() + " " + model.getPrefix());
         holder.mPathTextView.setContentDescription(model.getName() + " " + model.getPrefix());
-        holder.mComment.setText(model.getComment());
-        holder.mComment.setContentDescription(model.getComment());
+        holder.mDescriptionTextView.setText(model.getDescription());
+        holder.mDescriptionTextView.setContentDescription(model.getDescription());
+        if (TextUtils.isEmpty(model.getComment())) {
+            holder.mCommentTextView.setVisibility(View.GONE);
+        } else {
+            holder.mCommentTextView.setVisibility(View.VISIBLE);
+            holder.mCommentTextView.setText("Комментарий: " + model.getComment());
+        }
     }
 
     @Override
@@ -72,8 +79,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView mDateTextView;
         TextView mPathTextView;
-        TextView mComment;
+        TextView mDescriptionTextView;
         TextView mLocation;
+        TextView mCommentTextView;
         ImageView mPhotoImageView;
         ImageView mStateIconImageView;
         CardView mCardView;
@@ -88,7 +96,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state_image_view);
             mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
-            mComment = (TextView) itemView.findViewById(R.id.comment_text_view);
+            mDescriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
+            mCommentTextView = (TextView) itemView.findViewById(R.id.comment_text_view);
         }
 
         @Override

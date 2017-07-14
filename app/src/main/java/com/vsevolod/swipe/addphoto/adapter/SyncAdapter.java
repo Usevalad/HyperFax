@@ -28,6 +28,7 @@ import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -43,6 +44,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private AccountManager mAccountManager;
     private RealmHelper mRealmHelper;
     private Context mContext;
+    private Date mLastTreeUpdate;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -107,6 +109,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.e(TAG, "getStateCodesFromServer");
         try {
             ListQueryModel listQueryModel = new ListQueryModel(authToken, dataIds);
+            Log.e(TAG, "getStateCodesFromServer: data ids.length " + dataIds.length);
             Response<ListResponse> response;
             try {
                 response = MyApplication.getApi().getList(listQueryModel).execute();
@@ -116,21 +119,27 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 return;
             }
 
-            if (response.isSuccessful()) {
-                if (TextUtils.equals(response.body().getStatus(), Constants.RESPONSE_STATUS_OK)) {
-                    Log.e(TAG, "getList: response code " + String.valueOf(response.code()));
-                    Log.e(TAG, "getList: response body " + String.valueOf(response.body()));
-                    List<String> ids = response.body().getIds();
-                    List<String> states = response.body().stateCodes();
-                    for (int i = 0; i < states.size(); i++) {
-                        if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
-                            mRealmHelper.setStateCode(ids.get(i), states.get(i));
-                            Log.e(TAG, "onResponse: id = " + ids.get(i));
-                            Log.e(TAG, "onResponse: state = " + states.get(i));
-                        }
+            if (response.isSuccessful() &&
+                    TextUtils.equals(response.body().getStatus(), Constants.RESPONSE_STATUS_OK)) {
+                List<String> ids = response.body().getIds();
+                List<String> states = response.body().getStateCodes();
+                List<String> comments = response.body().getComments();
+                Log.e(TAG, "getStateCodesFromServer: ids.size " + ids.size());
+                Log.e(TAG, "getStateCodesFromServer: states.size " + states.size());
+                Log.e(TAG, "getStateCodesFromServer: comments.size " + comments.size());
+                for (int i = 0; i < states.size(); i++) {
+                    if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
+                        mRealmHelper.setStateCode(ids.get(i), states.get(i));
+                        Log.e(TAG, "onResponse: id = " + ids.get(i));
+                        Log.e(TAG, "onResponse: state = " + states.get(i));
+                    }
+                    if (!TextUtils.isEmpty(comments.get(i))) {
+                        mRealmHelper.setComment(ids.get(i), comments.get(i));
+                        Log.e(TAG, "onResponse: comment = " + comments.get(i));
                     }
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +168,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         link,
                         dataModel.getUid(),
                         dataModel.getPrefixID(),
-                        dataModel.getComment(),
+                        dataModel.getDescription(),
                         dataModel.getSearchDate(),
                         String.valueOf(dataModel.getLatitude() + "," + dataModel.getLongitude())
                 );
