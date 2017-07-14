@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.utils;
+package com.vsevolod.swipe.addphoto.util;
 
 /**
  * Created by vsevolod on 20.06.17.

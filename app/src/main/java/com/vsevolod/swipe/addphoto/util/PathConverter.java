@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.utils;
+package com.vsevolod.swipe.addphoto.util;
 
 import android.content.Context;
 import android.database.Cursor;

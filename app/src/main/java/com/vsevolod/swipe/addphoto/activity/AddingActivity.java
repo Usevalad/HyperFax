@@ -34,9 +34,10 @@ import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
-import com.vsevolod.swipe.addphoto.utils.GeoDegree;
-import com.vsevolod.swipe.addphoto.utils.ImageConverter;
-import com.vsevolod.swipe.addphoto.utils.PathConverter;
+import com.vsevolod.swipe.addphoto.util.GeoDegree;
+import com.vsevolod.swipe.addphoto.util.ImageConverter;
+import com.vsevolod.swipe.addphoto.util.MyDateUtil;
+import com.vsevolod.swipe.addphoto.util.PathConverter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -136,10 +137,12 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void saveDataToRealm(@NonNull byte[] byteArray, @NonNull String photoUri) {
         Log.e(TAG, "saveDataToRealm");
 
-        TimeZone timeZone = TimeZone.getTimeZone("UTC");
-        Date date = new Date();
-        SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        searchDateFormat.setTimeZone(timeZone);
+//        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+//        Date date = new Date();
+//        SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        searchDateFormat.setTimeZone(timeZone);
+//        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
+//        String viewDate = viewDateFormat.format(date); //date format for textView
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
         double latitude = 0.0, longitude = 0.0;
 
@@ -149,12 +152,9 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             longitude = geoDegree.getLongitude();
         }
 
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy E");
-        String viewDate = viewDateFormat.format(date); //date format for textView
-
         DataModel model = new DataModel(
-                searchDateFormat.format(date.getTime()),
-                viewDate,
+                MyDateUtil.getSearchDate(),
+                MyDateUtil.getViewDate(),
                 prefix,
                 mText.substring(0, mText.length() - 5).toLowerCase(),//5 is a prefix length + space
                 mEditText.getText().toString(),
@@ -163,7 +163,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 latitude,
                 longitude,
                 mRealmHelper.getPrefixID(prefix),
-                date
+                MyDateUtil.getDate()
         );
 
         mRealmHelper.save(model);
