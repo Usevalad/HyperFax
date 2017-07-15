@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 
 public class NotificationActivity extends AppCompatActivity {
 

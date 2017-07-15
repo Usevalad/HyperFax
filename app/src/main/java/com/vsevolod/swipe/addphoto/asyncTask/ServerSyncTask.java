@@ -13,10 +13,10 @@ import com.google.firebase.crash.FirebaseCrash;
 import com.google.gson.JsonSyntaxException;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.activity.MainActivity;
-import com.vsevolod.swipe.addphoto.config.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -115,12 +115,12 @@ public class ServerSyncTask extends AsyncTask<Void, Void, Void> {
                 Log.e(TAG, "getStateCodesFromServer: comments.size " + comments.size());
                 for (int i = 0; i < states.size(); i++) {
                     if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
-                        mRealmHelper.setStateCode(ids.get(i), states.get(i));
+                        mRealmHelper.setField(ids.get(i), mRealmHelper.STATE_CODE, states.get(i), false);
                         Log.e(TAG, "onResponse: id = " + ids.get(i));
                         Log.e(TAG, "onResponse: state = " + states.get(i));
                     }
                     if (!TextUtils.isEmpty(comments.get(i))) {
-                        mRealmHelper.setComment(ids.get(i), comments.get(i));
+                        mRealmHelper.setField(ids.get(i), mRealmHelper.COMMENT, comments.get(i), false);
                         Log.e(TAG, "onResponse: comment = " + comments.get(i));
                     }
                 }
@@ -165,13 +165,13 @@ public class ServerSyncTask extends AsyncTask<Void, Void, Void> {
                 Log.e(TAG, "commit : commitResponse.log() " + commitResponse.body().getLog());
                 switch (commitResponse.body().getStatus()) {
                     case Constants.RESPONSE_STATUS_PARAM:
-                        mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_PARAM);
-                        mRealmHelper.setSynced(id, true);
+                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, Constants.DATA_MODEL_STATE_PARAM, false);
+                        mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
                         break;
                     case Constants.RESPONSE_STATUS_OK:
-                        mRealmHelper.setPhotoURL(id, link);
-                        mRealmHelper.setSynced(id, true);
-                        mRealmHelper.setStateCode(id, Constants.DATA_MODEL_STATE_CREATED);
+                        mRealmHelper.setField(id, mRealmHelper.SERVER_PHOTO_URL, link, false);
+                        mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
+                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, Constants.DATA_MODEL_STATE_CREATED, false);
                         break;
                     case Constants.RESPONSE_STATUS_AUTH:
                         AccountGeneral.cancelPeriodicSync(mContext);

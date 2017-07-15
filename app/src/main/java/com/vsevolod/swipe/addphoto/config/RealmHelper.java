@@ -3,6 +3,7 @@ package com.vsevolod.swipe.addphoto.config;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
@@ -24,11 +25,15 @@ import io.realm.Sort;
 
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
-    private final String FIELD_DATE = "date";
-    private final String FIELD_NAME = "name";
-    private final String FIELD_PREFIX = "prefix";
-    private final String FIELD_UID = "uid";
-    private Realm realm;
+    private final String DATE = "date";
+    private final String NAME = "name";
+    private final String PREFIX = "prefix";
+    private final String UID = "uid";
+    public final String COMMENT = "comment";
+    public final String SERVER_PHOTO_URL = "serverPhotoURL";
+    public final String IS_SYNCED = "isSynced";
+    public final String STATE_CODE = "stateCOde";
+    private Realm mRealm;
 
     public RealmHelper() {
         Log.d(TAG, "Realm constructor");
@@ -39,48 +44,48 @@ public class RealmHelper {
         Realm.init(MyApplication.getAppContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
-        this.realm = Realm.getDefaultInstance();
+        this.mRealm = Realm.getDefaultInstance();
     }
 
     public void close() {
         Log.d(TAG, "close");
-        this.realm.close();
+        this.mRealm.close();
     }
 
     public Realm getRealm() {
-        return realm;
+        return mRealm;
     }
 
     public void dropRealmData() {
         Log.d(TAG, "dropRealmData");
-        RealmResults<DataModel> results = this.realm.where(DataModel.class).findAll();
+        RealmResults<DataModel> results = this.mRealm.where(DataModel.class).findAll();
         // All changes to data must happen in a transaction
-        this.realm.beginTransaction();
+        this.mRealm.beginTransaction();
         // Delete all matches
         results.deleteAllFromRealm();
-        this.realm.commitTransaction();
+        this.mRealm.commitTransaction();
     }
 
     public void dropRealmTree() {
         Log.d(TAG, "dropRealmTree");
-        RealmResults<FlowsTreeModel> results = this.realm.where(FlowsTreeModel.class).findAll();
+        RealmResults<FlowsTreeModel> results = this.mRealm.where(FlowsTreeModel.class).findAll();
         // All changes to data must happen in a transaction
         if (results.size() > 0) {
-            this.realm.beginTransaction();
+            this.mRealm.beginTransaction();
             // Delete all matches
             results.deleteAllFromRealm();
-            this.realm.commitTransaction();
+            this.mRealm.commitTransaction();
         }
     }
 
     public RealmResults getData() {
         Log.d(TAG, "getData");
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        return dataQuery.findAllSorted(FIELD_DATE, Sort.DESCENDING);
+        RealmQuery dataQuery = this.mRealm.where(DataModel.class);
+        return dataQuery.findAllSorted(DATE, Sort.DESCENDING);
     }
 
     private RealmResults getTree() {
-        RealmQuery treeQuery = this.realm.where(FlowsTreeModel.class);
+        RealmQuery treeQuery = this.mRealm.where(FlowsTreeModel.class);
         return treeQuery.findAll();
     }
 
@@ -102,16 +107,16 @@ public class RealmHelper {
         String FIELD_SEARCH_DATE = "searchDate";
         String FIELD_COMMENT = "comment";
         String FIELD_VIEW_DATE = "viewDate";
-        return this.realm.where(DataModel.class).beginGroup().
+        return this.mRealm.where(DataModel.class).beginGroup().
                 contains(FIELD_SEARCH_DATE, queryString, Case.INSENSITIVE).or()
-                .beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE).or()
-                .contains(FIELD_NAME, queryString, Case.INSENSITIVE).or()
-                .equalTo(FIELD_NAME, queryString, Case.INSENSITIVE).or()
+                .beginsWith(NAME, queryString, Case.INSENSITIVE).or()
+                .contains(NAME, queryString, Case.INSENSITIVE).or()
+                .equalTo(NAME, queryString, Case.INSENSITIVE).or()
                 .beginsWith(FIELD_COMMENT, queryString, Case.INSENSITIVE).or()
                 .contains(FIELD_COMMENT, queryString, Case.INSENSITIVE).or()
-                .beginsWith(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
-                .contains(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
-                .equalTo(FIELD_PREFIX, queryString, Case.INSENSITIVE).or()
+                .beginsWith(PREFIX, queryString, Case.INSENSITIVE).or()
+                .contains(PREFIX, queryString, Case.INSENSITIVE).or()
+                .equalTo(PREFIX, queryString, Case.INSENSITIVE).or()
                 .beginsWith(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE).or()
                 .contains(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE).or()
                 .equalTo(FIELD_VIEW_DATE, queryString, Case.INSENSITIVE)
@@ -120,13 +125,13 @@ public class RealmHelper {
     }
 
     public RealmResults searchTree(String queryString) {
-        return this.realm.where(FlowsTreeModel.class).beginGroup()
-                .beginsWith(FIELD_NAME, queryString, Case.INSENSITIVE).or()
-                .contains(FIELD_NAME, queryString, Case.INSENSITIVE).or() //INSENSITIVE TO UPPER/LOWER CASES
-                .equalTo(FIELD_NAME, queryString, Case.INSENSITIVE).or()
-                .beginsWith(FIELD_PREFIX, queryString).or()
-                .equalTo(FIELD_PREFIX, queryString).or()
-                .contains(FIELD_PREFIX, queryString)
+        return this.mRealm.where(FlowsTreeModel.class).beginGroup()
+                .beginsWith(NAME, queryString, Case.INSENSITIVE).or()
+                .contains(NAME, queryString, Case.INSENSITIVE).or() //INSENSITIVE TO UPPER/LOWER CASES
+                .equalTo(NAME, queryString, Case.INSENSITIVE).or()
+                .beginsWith(PREFIX, queryString).or()
+                .equalTo(PREFIX, queryString).or()
+                .contains(PREFIX, queryString)
                 .endGroup().findAll();
     }
 
@@ -134,39 +139,39 @@ public class RealmHelper {
         Log.d(TAG, "saveTreeList");
         FlowsTreeModel tmp;
         for (int i = 0; i < flowsTreeModels.size(); i++) {
-            this.realm.beginTransaction();
+            this.mRealm.beginTransaction();
             // Create an object
             tmp = flowsTreeModels.get(i);
-            FlowsTreeModel model = this.realm.createObject(FlowsTreeModel.class);
+            FlowsTreeModel model = this.mRealm.createObject(FlowsTreeModel.class);
             // Set its fields
             model.setId(tmp.getId());
             model.setName(tmp.getName());
             model.setParentId(tmp.getParentId());
             model.setPrefix(tmp.getPrefix());
 
-            this.realm.commitTransaction();
+            this.mRealm.commitTransaction();
         }
     }
 
     public void save(FlowsTreeModel model) {
         Log.d(TAG, "saveTreeListModel");
-        this.realm.beginTransaction();
+        this.mRealm.beginTransaction();
         // Create an object
-        FlowsTreeModel newModel = this.realm.createObject(FlowsTreeModel.class);
+        FlowsTreeModel newModel = this.mRealm.createObject(FlowsTreeModel.class);
         // Set its fields
         newModel.setId(model.getId());
         newModel.setName(model.getName());
         newModel.setParentId(model.getParentId());
         newModel.setPrefix(model.getPrefix());
 
-        this.realm.commitTransaction();
+        this.mRealm.commitTransaction();
     }
 
     public void save(DataModel model) {
         Log.d(TAG, "saveDataModel");
-        this.realm.beginTransaction();
+        this.mRealm.beginTransaction();
         // Create an object
-        DataModel newModel = this.realm.createObject(DataModel.class, UUID.randomUUID().toString());
+        DataModel newModel = this.mRealm.createObject(DataModel.class, UUID.randomUUID().toString());
         // Set its fields
         newModel.setSearchDate(model.getSearchDate());
         newModel.setPrefix(model.getPrefix());
@@ -181,21 +186,13 @@ public class RealmHelper {
         newModel.setDate(model.getDate());
         newModel.setViewDate(model.getViewDate());
 
-        this.realm.commitTransaction();
-    }
-
-
-    public DataModel getLastDataModel() {
-        Log.d(TAG, "getLastDataModel");
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        RealmResults<DataModel> models = dataQuery.findAllSorted(FIELD_DATE, Sort.DESCENDING);
-        return models.first();
+        this.mRealm.commitTransaction();
     }
 
     public String getPrefixID(String prefix) {
         Log.d(TAG, "getPrefixID");
-        RealmQuery idQuery = this.realm.where(FlowsTreeModel.class);
-        idQuery.equalTo(FIELD_PREFIX, prefix, Case.INSENSITIVE);
+        RealmQuery idQuery = this.mRealm.where(FlowsTreeModel.class);
+        idQuery.equalTo(PREFIX, prefix, Case.INSENSITIVE);
         FlowsTreeModel model;
         try {
             model = (FlowsTreeModel) idQuery.findFirst();
@@ -207,11 +204,18 @@ public class RealmHelper {
         }
     }
 
-    public void setPhotoURL(String id, String serverPhotoURL) {
-        Log.d(TAG, "updateServerPhotoURL");
+    /**
+     * @param id        id of post to update
+     * @param fieldName name of field to update (serverPhotoUrl, isSynced, comment, etc)
+     * @param value     new field value to update (if field name is 'isSynced' - can be null)
+     * @param isSynced  new isSynced value (if field name not 'isSynced' - never used)
+     */
 
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo(FIELD_UID, id);
+    public void setField(String id, String fieldName, String value, boolean isSynced) {
+        Log.d(TAG, "setField");
+
+        RealmQuery dataQuery = this.mRealm.where(DataModel.class);
+        dataQuery.equalTo(UID, id);
         DataModel model;
         try {
             model = (DataModel) dataQuery.findFirst();
@@ -221,58 +225,30 @@ public class RealmHelper {
             return;
         }
 
-        this.realm.beginTransaction();
-        model.setServerPhotoURL(serverPhotoURL);
-        this.realm.copyToRealmOrUpdate(model);
-        this.realm.commitTransaction();
-        Log.d(TAG, "updateServerPhotoURL: updated " + serverPhotoURL);
-    }
-
-    public void setComment(String id, String comment) {
-        Log.d(TAG, "setComment");
-
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo(FIELD_UID, id);
-        DataModel model;
-        try {
-            model = (DataModel) dataQuery.findFirst();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Log.d(TAG, "getDataById: no data with such id");
-            return;
+        this.mRealm.beginTransaction();
+        switch (fieldName) {
+            case SERVER_PHOTO_URL:
+                model.setServerPhotoURL(value);
+                break;
+            case COMMENT:
+                model.setComment(value);
+                break;
+            case IS_SYNCED:
+                model.setSynced(isSynced);
+                break;
+            case STATE_CODE:
+                model.setStateCode(value);
+                break;
+            default:
+                break;
         }
-
-        this.realm.beginTransaction();
-        model.setComment(comment);
-        this.realm.copyToRealmOrUpdate(model);
-        this.realm.commitTransaction();
-        Log.d(TAG, "setComment: updated " + comment);
-    }
-
-    public void setSynced(String id, boolean isSynced) {
-        Log.d(TAG, "setSynced");
-
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo(FIELD_UID, id);
-        DataModel model;
-        try {
-            model = (DataModel) dataQuery.findFirst();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Log.d(TAG, "getDataById: no data with such id");
-            return;
-        }
-
-        this.realm.beginTransaction();
-        model.setSynced(isSynced);
-        this.realm.copyToRealmOrUpdate(model);
-        this.realm.commitTransaction();
-        Log.d(TAG, "setSynced: isSynced " + isSynced);
+        this.mRealm.copyToRealmOrUpdate(model);
+        this.mRealm.commitTransaction();
     }
 
     public RealmResults getNotSyncedData() {
         Log.d(TAG, "getNotSynced");
-        RealmQuery query = this.realm.where(DataModel.class);
+        RealmQuery query = this.mRealm.where(DataModel.class);
         String FIELD_IS_SYNCED = "isSynced";
         query.equalTo(FIELD_IS_SYNCED, false);
         return query.findAll();
@@ -280,7 +256,7 @@ public class RealmHelper {
 
     public String[] getNotSyncedDataStatesIds() {
         Log.d(TAG, "getNotFinishedStates:");
-        RealmQuery query = this.realm.where(DataModel.class);
+        RealmQuery query = this.mRealm.where(DataModel.class);
         String FIELD_STATE_CODE = "stateCode";
         query.equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_CREATED);
         query.or().equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_REVIEW);
@@ -293,8 +269,8 @@ public class RealmHelper {
     }
 
     public boolean isStateCodeEqual(String uid, String stateCode) {
-        RealmQuery query = this.realm.where(DataModel.class);
-        query.equalTo(FIELD_UID, uid);
+        RealmQuery query = this.mRealm.where(DataModel.class);
+        query.equalTo(UID, uid);
         DataModel dataModel = (DataModel) query.findFirst();
         return TextUtils.equals(dataModel.getStateCode(), stateCode);
     }
@@ -329,24 +305,5 @@ public class RealmHelper {
             Log.e(TAG, "countTree: getName " + tree.getName());
             Log.e(TAG, "countTree: getPrefix " + tree.getPrefix());
         }
-    }
-
-    public void setStateCode(String id, String stateCode) {
-        Log.d(TAG, "setStateCode");
-        RealmQuery dataQuery = this.realm.where(DataModel.class);
-        dataQuery.equalTo(FIELD_UID, id);
-        DataModel model;
-        try {
-            model = (DataModel) dataQuery.findFirst();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            Log.d(TAG, "getDataById: no data with such id");
-            return;
-        }
-        this.realm.beginTransaction();
-        model.setStateCode(stateCode);
-        this.realm.copyToRealmOrUpdate(model);
-        this.realm.commitTransaction();
-        Log.d(TAG, "updateStateCode: updated " + stateCode);
     }
 }

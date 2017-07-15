@@ -18,7 +18,7 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.activity.NotificationActivity;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;

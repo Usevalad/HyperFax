@@ -1,7 +1,7 @@
 package com.vsevolod.swipe.addphoto.model.realm;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 
 import java.util.Date;
 

@@ -4,14 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.activity.MainActivity;
-import com.vsevolod.swipe.addphoto.config.Constants;
 
 /**
  * Created by vsevolod on 16.05.17.

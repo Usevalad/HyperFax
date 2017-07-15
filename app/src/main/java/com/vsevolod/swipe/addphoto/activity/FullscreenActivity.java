@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package com.vsevolod.swipe.addphoto.config;
+package com.vsevolod.swipe.addphoto.constant;
 
 /**
  * Created by vsevolod on 08.04.17.
@@ -18,7 +18,7 @@ public class Constants {
     public static final String RESPONSE_AUTH_SUB_STATUS_TEL = "TEL";//number not valid
     public static final String RESPONSE_AUTH_SUB_STATUS_PASS = "PASS";//password not valid
     public static final String RESPONSE_AUTH_SUB_STATUS_VALID = "VALID";
-    static final String BASE_URL = "http://crm.myaso.net.ua/ext/api/";
+    public static final String BASE_URL = "http://crm.myaso.net.ua/ext/api/";
     public static final String MEDIA_TYPE_IMAGE = "image/*";
     public static final String ACTION_SELECT_PICTURE = "Select Picture";
     public static final String EXTENSION_JPG = ".jpg";

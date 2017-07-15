@@ -1,22 +1,18 @@
 package com.vsevolod.swipe.addphoto.config;
 
-import android.accounts.Account;
 import android.app.Application;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jaredrummler.android.device.DeviceName;
 import com.vsevolod.swipe.addphoto.BuildConfig;
-import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

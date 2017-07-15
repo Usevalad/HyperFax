@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.text.SimpleDateFormat;

@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static com.vsevolod.swipe.addphoto.config.Constants.THUMB_SIZE;
+import static com.vsevolod.swipe.addphoto.constant.Constants.THUMB_SIZE;
 
 /**
  * Created by vsevolod on 23.06.17.

@@ -29,7 +29,7 @@ import android.widget.Toast;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
-import com.vsevolod.swipe.addphoto.config.Constants;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
@@ -39,9 +39,7 @@ import com.vsevolod.swipe.addphoto.util.ImageConverter;
 import com.vsevolod.swipe.addphoto.util.MyDateUtil;
 import com.vsevolod.swipe.addphoto.util.PathConverter;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
