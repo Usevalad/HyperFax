@@ -29,17 +29,14 @@ import android.widget.Toast;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
-import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.util.GeoDegree;
 import com.vsevolod.swipe.addphoto.util.ImageConverter;
-import com.vsevolod.swipe.addphoto.util.MyDateUtil;
 import com.vsevolod.swipe.addphoto.util.PathConverter;
-
-import java.util.Date;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
@@ -136,17 +133,12 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         Log.e(TAG, "saveDataToRealm");
 
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
-        double latitude = 0.0, longitude = 0.0;
 
         GeoDegree geoDegree = new GeoDegree(photoUri);
-        if (geoDegree.isValid()) {
-            latitude = geoDegree.getLatitude();
-            longitude = geoDegree.getLongitude();
-        }
+        double latitude = geoDegree.isValid() ? geoDegree.getLatitude() : 0.0;
+        double longitude = geoDegree.isValid() ? geoDegree.getLongitude() : 0.0;
 
         DataModel model = new DataModel(
-                MyDateUtil.getSearchDate(),
-                MyDateUtil.getViewDate(),
                 prefix,
                 mText.substring(0, mText.length() - 5).toLowerCase(),//5 is a prefix length + space
                 mEditText.getText().toString(),
@@ -154,8 +146,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 byteArray,
                 latitude,
                 longitude,
-                mRealmHelper.getPrefixID(prefix),
-                new Date()
+                mRealmHelper.getPrefixID(prefix)
         );
 
         mRealmHelper.save(model);

@@ -2,6 +2,7 @@ package com.vsevolod.swipe.addphoto.model.realm;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.util.MyDateUtil;
 
 import java.util.Date;
 
@@ -31,21 +32,21 @@ public class DataModel extends RealmObject {
     private Date date;
     private boolean isSynced = false;
 
-    public DataModel(String searchDate, String viewDate, String prefix, String name, String description,
+    public DataModel(String prefix, String name, String description,
                      String storagePhotoURL, byte[] photo, double latitude, double longitude,
-                     String prefixID, Date date) {
+                     String prefixID) {
         this.description = description;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.searchDate = searchDate;
+        this.searchDate = MyDateUtil.getSearchDate();
         this.prefix = prefix;
         this.serverPhotoURL = null;
         this.storagePhotoURL = storagePhotoURL;
         this.photo = photo;
         this.name = name;
         this.prefixID = prefixID;
-        this.date = date;
-        this.viewDate = viewDate;
+        this.date = new Date();
+        this.viewDate = MyDateUtil.getViewDate();
     }
 
     public DataModel() {

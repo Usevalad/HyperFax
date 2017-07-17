@@ -42,11 +42,12 @@
     <string name="enter">Войти</string>
     <string name="phone_example">+380111111111</string>
     <string name="show_password">Показать пароль</string>
-    <string name="photo_desctiption">Фотография</string>
+    <string name="photo_description">Фотография</string>
     <string name="gallery">Галерея</string>
     <string name="camera">Камера</string>
     <string name="add_new_photo">Добавить новое фото</string>
-    <string name="appointment">Назначение</string>
+    <string name="appointment">Статья</string>
     <string name="telegraf_hint">Подсказка</string>
+    <string name="description">Описание</string>
 
 </resources>

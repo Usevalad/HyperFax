@@ -7,7 +7,10 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,16 +62,32 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());
         holder.mDateTextView.setText(viewDate);
         holder.mDateTextView.setContentDescription(viewDate);
-        holder.mPathTextView.setText(model.getName() + " " + model.getPrefix());
-        holder.mPathTextView.setContentDescription(model.getName() + " " + model.getPrefix());
-        holder.mDescriptionTextView.setText(model.getDescription());
-        holder.mDescriptionTextView.setContentDescription(model.getDescription());
+        holder.mPathTextView.setText(toBold("статья: ", model.getName() + " " + model.getPrefix()));
+        holder.mPathTextView.setContentDescription("статья: " + model.getName() + " " + model.getPrefix());
+
+
+        if (TextUtils.isEmpty(model.getDescription())) {
+            holder.mDescriptionTextView.setVisibility(View.GONE);
+        } else {
+            holder.mDescriptionTextView.setVisibility(View.VISIBLE);
+            holder.mDescriptionTextView.setText(toBold("описание: ", model.getDescription()));
+            holder.mDescriptionTextView.setContentDescription("описание: " + model.getDescription());
+        }
         if (TextUtils.isEmpty(model.getComment())) {
             holder.mCommentTextView.setVisibility(View.GONE);
         } else {
             holder.mCommentTextView.setVisibility(View.VISIBLE);
-            holder.mCommentTextView.setText("Комментарий: " + model.getComment());
+            holder.mCommentTextView.setText(toBold("комментарий: ", model.getComment()));
+            holder.mCommentTextView.setContentDescription("комментарий: " + model.getComment());
         }
+    }
+
+    private SpannableStringBuilder toBold(String boldText, String simpleText) {
+        SpannableStringBuilder sb = new SpannableStringBuilder(boldText + simpleText);
+        // TODO: 7/16/17 add this to Utils
+        StyleSpan b = new StyleSpan(android.graphics.Typeface.BOLD);
+        sb.setSpan(b, 0, boldText.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        return sb;
     }
 
     @Override

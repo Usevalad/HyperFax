@@ -16,12 +16,11 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
-import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.activity.NotificationActivity;
-import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
@@ -38,7 +37,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 /**
  * Created by vsevolod on 09.04.17.
  */
-
+// TODO: 7/17/17 refactor
 public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeModel>> {
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper;
@@ -59,7 +58,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
         mAccountManager = AccountManager.get(mContext);
         mRealmHelper = new RealmHelper();
         mPreferenceHelper = new PreferenceHelper();
-        MainActivity.swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
@@ -160,7 +158,6 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     protected void onPostExecute(List<FlowsTreeModel> flowsTreeModels) {
         super.onPostExecute(flowsTreeModels);
         Log.e(TAG, "onPostExecute");
-        MainActivity.swipeRefreshLayout.setRefreshing(false);
         mPreferenceHelper.saveDate(PreferenceHelper.APP_PREFERENCES_FLOWS_UPDATE_DATE, new Date().getTime());
         if (!TextUtils.isEmpty(message)) {
             Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();

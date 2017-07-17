@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/adding_auto_complete"
-            android:hint="Комментарий"
+            android:hint="@string/description"
             android:inputType="textMultiLine|textAutoCorrect"
             android:minHeight="48dp" />
     </RelativeLayout>
