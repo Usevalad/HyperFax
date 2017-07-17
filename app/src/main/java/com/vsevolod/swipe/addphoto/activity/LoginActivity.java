@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -242,20 +243,36 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         switch (actionId) {
-            case EditorInfo.IME_ACTION_DONE:
-                mPasswordEditText.setError(passwordError(mPasswordEditText.getText().toString()));
-                if (passwordError(mPasswordEditText.getText().toString()) == null)
-                    mSubmitButton.setVisibility(View.VISIBLE);
-                else mSubmitButton.setVisibility(View.GONE);
-                return true;
             case EditorInfo.IME_ACTION_NEXT:
                 mPhoneEditText.setError(phoneError(mPhoneEditText.getText().toString()));
-                if (phoneError(mPhoneEditText.getText().toString()) == null)
+                if (phoneError(mPhoneEditText.getText().toString()) == null &&
+                        passwordError(mPasswordEditText.getText().toString()) == null) {
+                    hideKeyboard();
+                    mSubmitButton.setVisibility(View.VISIBLE);
+                } else if (phoneError(mPhoneEditText.getText().toString()) == null &&
+                        passwordError(mPasswordEditText.getText().toString()) != null)
                     mPasswordEditText.requestFocus();
                 else mSubmitButton.setVisibility(View.GONE);
                 return true;
+            case EditorInfo.IME_ACTION_DONE:
+                mPasswordEditText.setError(passwordError(mPasswordEditText.getText().toString()));
+                if (passwordError(mPasswordEditText.getText().toString()) == null &&
+                        phoneError(mPhoneEditText.getText().toString()) == null) {
+                    hideKeyboard();
+                    mSubmitButton.setVisibility(View.VISIBLE);
+                } else mSubmitButton.setVisibility(View.GONE);
+                return true;
             default:
                 return false;
+        }
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)
+                    getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
