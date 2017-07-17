@@ -140,7 +140,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
 
         DataModel model = new DataModel(
                 prefix,
-                mText.substring(0, mText.length() - 5).toLowerCase(),//5 is a prefix length + space
+                mText.substring(0, mText.length() - 5),//5 is a prefix length + space
                 mEditText.getText().toString(),
                 photoUri,
                 byteArray,

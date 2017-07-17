@@ -63,7 +63,7 @@ public class PostPhoto implements Api {
                         link,
                         dataModel.getUid(),
                         dataModel.getPrefixID(),
-                        dataModel.getDescription(),
+                        dataModel.getViewDescription(),
                         dataModel.getSearchDate(),
                         String.valueOf(dataModel.getLatitude() + "," + dataModel.getLongitude())
                 );

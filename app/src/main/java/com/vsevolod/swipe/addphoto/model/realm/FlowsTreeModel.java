@@ -8,13 +8,15 @@ import io.realm.RealmObject;
 
 public class FlowsTreeModel extends RealmObject {
     private String id;
-    private String name;
+    private String viewName;
+    private String searchName;
     private String prefix;
     private String parentId;
 
-    public FlowsTreeModel(String id, String name, String prefix, String parentId) {
+    public FlowsTreeModel(String id, String viewName, String searchName, String prefix, String parentId) {
         this.id = id;
-        this.name = name;
+        this.viewName = viewName;
+        this.searchName = searchName;
         this.prefix = prefix;
         this.parentId = parentId;
     }
@@ -30,12 +32,20 @@ public class FlowsTreeModel extends RealmObject {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getViewName() {
+        return viewName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setViewName(String viewName) {
+        this.viewName = viewName;
+    }
+
+    public String getSearchName() {
+        return searchName;
+    }
+
+    public void setSearchName(String searchName) {
+        this.searchName = searchName;
     }
 
     public String getPrefix() {
@@ -56,6 +66,6 @@ public class FlowsTreeModel extends RealmObject {
 
     @Override
     public String toString() {
-        return name + " " + prefix;
+        return viewName + " " + prefix;
     }
 }

@@ -60,25 +60,25 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         String viewDate = viewDateFormat.format(model.getDate()); //date format for textView
         holder.mPhotoImageView.setImageBitmap(bitmap);
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());
-        holder.mDateTextView.setText(viewDate);
+        holder.mDateTextView.setText(model.getViewDate());
         holder.mDateTextView.setContentDescription(viewDate);
-        holder.mPathTextView.setText(toBold("статья: ", model.getName() + " " + model.getPrefix()));
-        holder.mPathTextView.setContentDescription("статья: " + model.getName() + " " + model.getPrefix());
+        holder.mPathTextView.setText(toBold("статья: ", model.getViewArticle() + " " + model.getPrefix()));
+        holder.mPathTextView.setContentDescription("статья: " + model.getViewArticle() + " " + model.getPrefix());
 
 
-        if (TextUtils.isEmpty(model.getDescription())) {
+        if (TextUtils.isEmpty(model.getViewDescription())) {
             holder.mDescriptionTextView.setVisibility(View.GONE);
         } else {
             holder.mDescriptionTextView.setVisibility(View.VISIBLE);
-            holder.mDescriptionTextView.setText(toBold("описание: ", model.getDescription()));
-            holder.mDescriptionTextView.setContentDescription("описание: " + model.getDescription());
+            holder.mDescriptionTextView.setText(toBold("описание: ", model.getViewDescription()));
+            holder.mDescriptionTextView.setContentDescription("описание: " + model.getViewDescription());
         }
-        if (TextUtils.isEmpty(model.getComment())) {
+        if (TextUtils.isEmpty(model.getViewComment())) {
             holder.mCommentTextView.setVisibility(View.GONE);
         } else {
             holder.mCommentTextView.setVisibility(View.VISIBLE);
-            holder.mCommentTextView.setText(toBold("комментарий: ", model.getComment()));
-            holder.mCommentTextView.setContentDescription("комментарий: " + model.getComment());
+            holder.mCommentTextView.setText(toBold("комментарий: ", model.getViewComment()));
+            holder.mCommentTextView.setContentDescription("комментарий: " + model.getViewComment());
         }
     }
 

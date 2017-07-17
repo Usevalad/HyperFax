@@ -16,26 +16,30 @@ import io.realm.annotations.PrimaryKey;
 public class DataModel extends RealmObject {
     @PrimaryKey
     private String uid;
-    private String searchDate;
     private String prefix;
-    private String name;
+    private String viewArticle;
+    private String searchArticle;
     private String serverPhotoURL;
     private String storagePhotoURL;
-    private String description;
-    private String comment;
+    private String viewDescription;
+    private String searchDescription;
+    private String viewComment;
+    private String searchComment;
     private String viewDate;
+    private String searchDate;
+    private Date date;
     private double latitude;
     private double longitude;
     private String stateCode = Constants.DATA_MODEL_STATE_NEED_SYNC;
     private byte[] photo;
     private String prefixID;
-    private Date date;
     private boolean isSynced = false;
 
-    public DataModel(String prefix, String name, String description,
+    public DataModel(String prefix, String viewArticle, String viewDescription,
                      String storagePhotoURL, byte[] photo, double latitude, double longitude,
                      String prefixID) {
-        this.description = description;
+        this.viewDescription = viewDescription;
+        this.searchDescription = viewDescription.toLowerCase();
         this.latitude = latitude;
         this.longitude = longitude;
         this.searchDate = MyDateUtil.getSearchDate();
@@ -43,7 +47,8 @@ public class DataModel extends RealmObject {
         this.serverPhotoURL = null;
         this.storagePhotoURL = storagePhotoURL;
         this.photo = photo;
-        this.name = name;
+        this.viewArticle = viewArticle;
+        this.searchArticle = viewArticle.toLowerCase();
         this.prefixID = prefixID;
         this.date = new Date();
         this.viewDate = MyDateUtil.getViewDate();
@@ -77,12 +82,36 @@ public class DataModel extends RealmObject {
         this.photo = photo;
     }
 
-    public String getDescription() {
-        return description;
+    public String getViewDescription() {
+        return viewDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setViewDescription(String viewDescription) {
+        this.viewDescription = viewDescription;
+    }
+
+    public String getSearchDescription() {
+        return searchDescription;
+    }
+
+    public void setSearchDescription(String searchDescription) {
+        this.searchDescription = searchDescription;
+    }
+
+    public String getViewComment() {
+        return viewComment;
+    }
+
+    public void setViewComment(String viewComment) {
+        this.viewComment = viewComment;
+    }
+
+    public String getSearchComment() {
+        return searchComment;
+    }
+
+    public void setSearchComment(String searchComment) {
+        this.searchComment = searchComment;
     }
 
     public double getLatitude() {
@@ -109,12 +138,20 @@ public class DataModel extends RealmObject {
         this.prefix = prefix;
     }
 
-    public String getName() {
-        return name;
+    public String getViewArticle() {
+        return viewArticle;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setViewArticle(String viewArticle) {
+        this.viewArticle = viewArticle;
+    }
+
+    public String getSearchArticle() {
+        return searchArticle;
+    }
+
+    public void setSearchArticle(String searchArticle) {
+        this.searchArticle = searchArticle;
     }
 
     public String getUid() {
@@ -163,14 +200,6 @@ public class DataModel extends RealmObject {
 
     public String getStoragePhotoURL() {
         return storagePhotoURL;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public void setStoragePhotoURL(String storagePhotoURL) {

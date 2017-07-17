@@ -53,7 +53,7 @@ public class AutoCompleteAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.drop_down_item, parent, false);
         }
 
-        String name = getItem(position).getName();
+        String name = getItem(position).getViewName();
         String prefix = getItem(position).getPrefix();
 
         ((TextView) convertView.findViewById(R.id.drop_down_name)).setText(name + " | " + prefix);

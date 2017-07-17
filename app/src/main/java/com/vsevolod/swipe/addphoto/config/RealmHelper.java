@@ -26,10 +26,11 @@ import io.realm.Sort;
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
     private final String DATE = "date";
-    private final String NAME = "name";
+    private final String SEARCH_ARTICLE = "searchArticle";
+    private final String TREE_SEARCH_NAME = "searchName";
     private final String PREFIX = "prefix";
     private final String UID = "uid";
-    public final String COMMENT = "comment";
+    public final String COMMENT = "searchComment";
     public final String SERVER_PHOTO_URL = "serverPhotoURL";
     public final String IS_SYNCED = "isSynced";
     public final String STATE_CODE = "stateCOde";
@@ -105,13 +106,12 @@ public class RealmHelper {
 
     public RealmResults search(String queryString) {
         String SEARCH_DATE = "searchDate";
-        String DESCRIPTION = "description";
         String VIEW_DATE = "viewDate";
-        return this.mRealm.where(DataModel.class).beginGroup().
-                contains(SEARCH_DATE, queryString, Case.INSENSITIVE).or()
-                .beginsWith(NAME, queryString, Case.INSENSITIVE).or()
-                .contains(NAME, queryString, Case.INSENSITIVE).or()
-                .equalTo(NAME, queryString, Case.INSENSITIVE).or()
+        String DESCRIPTION = "searchDescription";
+        return this.mRealm.where(DataModel.class).beginGroup()
+                .beginsWith(SEARCH_ARTICLE, queryString, Case.INSENSITIVE).or()
+                .contains(SEARCH_ARTICLE, queryString, Case.INSENSITIVE).or()
+                .equalTo(SEARCH_ARTICLE, queryString, Case.INSENSITIVE).or()
                 .beginsWith(DESCRIPTION, queryString, Case.INSENSITIVE).or()
                 .contains(DESCRIPTION, queryString, Case.INSENSITIVE).or()
                 .equalTo(DESCRIPTION, queryString, Case.INSENSITIVE).or()
@@ -120,39 +120,24 @@ public class RealmHelper {
                 .equalTo(PREFIX, queryString, Case.INSENSITIVE).or()
                 .beginsWith(VIEW_DATE, queryString, Case.INSENSITIVE).or()
                 .contains(VIEW_DATE, queryString, Case.INSENSITIVE).or()
-                .equalTo(VIEW_DATE, queryString, Case.INSENSITIVE)
+                .equalTo(VIEW_DATE, queryString, Case.INSENSITIVE).or()
+                .beginsWith(COMMENT, queryString, Case.INSENSITIVE).or()
+                .contains(COMMENT, queryString, Case.INSENSITIVE).or()
+                .equalTo(COMMENT, queryString, Case.INSENSITIVE)
                 .endGroup()
-                .findAllSorted(SEARCH_DATE, Sort.ASCENDING);
+                .findAllSorted(SEARCH_DATE, Sort.DESCENDING);
     }
 
     public RealmResults searchTree(String queryString) {
         return this.mRealm.where(FlowsTreeModel.class).beginGroup()
-                .beginsWith(NAME, queryString, Case.INSENSITIVE).or()
-                .contains(NAME, queryString, Case.INSENSITIVE).or() //INSENSITIVE TO UPPER/LOWER CASES
-                .equalTo(NAME, queryString, Case.INSENSITIVE).or()
+                .beginsWith(TREE_SEARCH_NAME, queryString, Case.INSENSITIVE).or()
+                .contains(TREE_SEARCH_NAME, queryString, Case.INSENSITIVE).or() //INSENSITIVE TO UPPER/LOWER CASES
+                .equalTo(TREE_SEARCH_NAME, queryString, Case.INSENSITIVE).or()
                 .beginsWith(PREFIX, queryString).or()
                 .equalTo(PREFIX, queryString).or()
                 .contains(PREFIX, queryString)
                 .endGroup().findAll();
     }
-
-//    public void save(List<FlowsTreeModel> flowsTreeModels) {
-//        Log.d(TAG, "saveTreeList");
-//        FlowsTreeModel tmp;
-//        for (int i = 0; i < flowsTreeModels.size(); i++) {
-//            this.mRealm.beginTransaction();
-//            // Create an object
-//            tmp = flowsTreeModels.get(i);
-//            FlowsTreeModel model = this.mRealm.createObject(FlowsTreeModel.class);
-//            // Set its fields
-//            model.setId(tmp.getId());
-//            model.setName(tmp.getName());
-//            model.setParentId(tmp.getParentId());
-//            model.setPrefix(tmp.getPrefix());
-//
-//            this.mRealm.commitTransaction();
-//        }
-//    }
 
     public void save(FlowsTreeModel model) {
         Log.d(TAG, "saveTreeListModel");
@@ -161,7 +146,8 @@ public class RealmHelper {
         FlowsTreeModel newModel = this.mRealm.createObject(FlowsTreeModel.class);
         // Set its fields
         newModel.setId(model.getId());
-        newModel.setName(model.getName());
+        newModel.setViewName(model.getViewName());
+        newModel.setSearchName(model.getSearchName());
         newModel.setParentId(model.getParentId());
         newModel.setPrefix(model.getPrefix());
 
@@ -179,10 +165,12 @@ public class RealmHelper {
         newModel.setPhoto(model.getPhoto());
         newModel.setLatitude(model.getLatitude());
         newModel.setLongitude(model.getLongitude());
-        newModel.setDescription(model.getDescription());
+        newModel.setViewDescription(model.getViewDescription());
+        newModel.setSearchDescription(model.getSearchDescription());
         newModel.setStateCode(model.getStateCode());
         newModel.setStoragePhotoURL(model.getStoragePhotoURL());
-        newModel.setName(model.getName());
+        newModel.setViewArticle(model.getViewArticle());
+        newModel.setSearchArticle(model.getSearchArticle());
         newModel.setPrefixID(model.getPrefixID());
         newModel.setDate(model.getDate());
         newModel.setViewDate(model.getViewDate());
@@ -232,7 +220,8 @@ public class RealmHelper {
                 model.setServerPhotoURL(value);
                 break;
             case COMMENT:
-                model.setComment(value);
+                model.setViewComment(value);
+                model.setSearchComment(value.toLowerCase());
                 break;
             case IS_SYNCED:
                 model.setSynced(isSynced);
@@ -286,8 +275,8 @@ public class RealmHelper {
                             "uid = " + model.getUid() + "\n" +
                             "prefix = " + model.getPrefix() + "\n" +
                             "prefixID = " + model.getPrefixID() + "\n" +
-                            "name = " + model.getName() + "\n" +
-                            "comment = " + model.getDescription() + "\n" +
+                            "name = " + model.getViewArticle() + "\n" +
+                            "comment = " + model.getViewDescription() + "\n" +
                             "storagePhotoURL = " + model.getStoragePhotoURL() + "\n" +
                             "serverPhotoURL = " + model.getServerPhotoURL() + "\n" +
                             "photoArrayLength = " + model.getPhoto().length + "\n" +
@@ -303,7 +292,7 @@ public class RealmHelper {
     public void countTree() {
         List<FlowsTreeModel> treeModels = getTree();
         for (FlowsTreeModel tree : treeModels) {
-            Log.e(TAG, "countTree: getName " + tree.getName());
+            Log.e(TAG, "countTree: getName " + tree.getViewName());
             Log.e(TAG, "countTree: getPrefix " + tree.getPrefix());
         }
     }
