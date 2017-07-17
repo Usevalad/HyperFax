@@ -22,6 +22,7 @@ import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.util.List;
 
+import static com.vsevolod.swipe.addphoto.util.MyTextUtil.highLightMatches;
 import static com.vsevolod.swipe.addphoto.util.MyTextUtil.toBold;
 
 /**
@@ -32,11 +33,19 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private final String TAG = this.getClass().getSimpleName();
     private Context context;
     public List<DataModel> data;
+    private String mSearchString;
 
     public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
+    }
+
+    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data, String searchString) {
+        Log.d(TAG, "MyRecyclerAdapter: constructor");
+        this.context = context;
+        this.data = data;
+        this.mSearchString = searchString;
     }
 
     @Override
@@ -55,23 +64,29 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
         holder.mPhotoImageView.setImageBitmap(bitmap);
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());
-        holder.mDateTextView.setText(model.getViewDate());
+        holder.mDateTextView.setText(highLightMatches(model.getViewDate(), mSearchString));
         holder.mDateTextView.setContentDescription(model.getViewDate());
-        holder.mPathTextView.setText(toBold("статья: ", model.getViewArticle() + " " + model.getPrefix()));
+        holder.mPathTextView.setText(TextUtils.concat(
+                toBold("статья: "),
+                highLightMatches(model.getViewArticle() + " " + model.getPrefix(), mSearchString)));
         holder.mPathTextView.setContentDescription("статья: " + model.getViewArticle() + " " + model.getPrefix());
-        
+
         if (TextUtils.isEmpty(model.getViewDescription())) {
             holder.mDescriptionTextView.setVisibility(View.GONE);
         } else {
             holder.mDescriptionTextView.setVisibility(View.VISIBLE);
-            holder.mDescriptionTextView.setText(toBold("описание: ", model.getViewDescription()));
+            holder.mDescriptionTextView.setText(TextUtils.concat(
+                    toBold("описание: "),
+                    highLightMatches(model.getViewDescription(), mSearchString)));
             holder.mDescriptionTextView.setContentDescription("описание: " + model.getViewDescription());
         }
         if (TextUtils.isEmpty(model.getViewComment())) {
             holder.mCommentTextView.setVisibility(View.GONE);
         } else {
             holder.mCommentTextView.setVisibility(View.VISIBLE);
-            holder.mCommentTextView.setText(toBold("комментарий: ", model.getViewComment()));
+            holder.mCommentTextView.setText(TextUtils.concat(
+                    toBold("комментарий: "),
+                    highLightMatches(model.getViewComment(), mSearchString)));
             holder.mCommentTextView.setContentDescription("комментарий: " + model.getViewComment());
         }
     }

@@ -31,6 +31,7 @@ public class SearchResultsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RealmHelper mRealmHelper;
     private List<DataModel> data;
+    private String searchString;
     public Context mContext;
 
     @Override
@@ -50,7 +51,7 @@ public class SearchResultsActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data));
+        mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, searchString));
         mContext = getApplicationContext();
     }
 
@@ -137,8 +138,8 @@ public class SearchResultsActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         Log.d(TAG, "handleIntent");
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
-            data = mRealmHelper.search(query);
+            searchString = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
+            data = mRealmHelper.search(searchString);
         }
     }
 }
