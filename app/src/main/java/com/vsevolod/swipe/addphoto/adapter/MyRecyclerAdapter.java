@@ -7,10 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,8 +20,9 @@ import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
 import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
+
+import static com.vsevolod.swipe.addphoto.util.MyTextUtil.toBold;
 
 /**
  * Created by vsevolod on 13.03.17.
@@ -55,17 +53,13 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         DataModel model = data.get(position);
         byte[] photoByteArray = model.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
-
-        SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm  dd.MM.yyyy EEEE");
-        String viewDate = viewDateFormat.format(model.getDate()); //date format for textView
         holder.mPhotoImageView.setImageBitmap(bitmap);
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());
         holder.mDateTextView.setText(model.getViewDate());
-        holder.mDateTextView.setContentDescription(viewDate);
+        holder.mDateTextView.setContentDescription(model.getViewDate());
         holder.mPathTextView.setText(toBold("статья: ", model.getViewArticle() + " " + model.getPrefix()));
         holder.mPathTextView.setContentDescription("статья: " + model.getViewArticle() + " " + model.getPrefix());
-
-
+        
         if (TextUtils.isEmpty(model.getViewDescription())) {
             holder.mDescriptionTextView.setVisibility(View.GONE);
         } else {
@@ -80,14 +74,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             holder.mCommentTextView.setText(toBold("комментарий: ", model.getViewComment()));
             holder.mCommentTextView.setContentDescription("комментарий: " + model.getViewComment());
         }
-    }
-
-    private SpannableStringBuilder toBold(String boldText, String simpleText) {
-        SpannableStringBuilder sb = new SpannableStringBuilder(boldText + simpleText);
-        // TODO: 7/16/17 add this to Utils
-        StyleSpan b = new StyleSpan(android.graphics.Typeface.BOLD);
-        sb.setSpan(b, 0, boldText.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        return sb;
     }
 
     @Override
