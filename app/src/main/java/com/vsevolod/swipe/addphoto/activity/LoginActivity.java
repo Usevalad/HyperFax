@@ -1,6 +1,5 @@
 package com.vsevolod.swipe.addphoto.activity;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -11,15 +10,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.NotificationCompat;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -29,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -36,9 +32,9 @@ import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
-import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
@@ -55,45 +51,46 @@ import retrofit2.Response;
 // TODO: 23.06.17 add valid permissions
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
         OnClickListener, View.OnTouchListener {
-    private static final int PERMISSION_REQUEST_CODE = 142;
+
     private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
-    private EditText mPhoneNumberView;
-    private EditText mPasswordView;
+    private EditText mPhoneEditText;
+    private EditText mPasswordEditText;
     private ImageButton mViewPasswordButton;
+    private Button mSubmitButton;
     private View mProgressView;
     private View mLoginFormView;
     private String password;
     private String phoneNumber;
-    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_login);
-        mContext = getApplicationContext();
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
 
-        final String phoneNumber = getPhoneNumber();
-        mPhoneNumberView = (EditText) findViewById(R.id.phone_number);
-        mPhoneNumberView.setText(phoneNumber);
-        mPhoneNumberView.setSelection(mPhoneNumberView
-                .getText().length());
+        mPhoneEditText = (EditText) findViewById(R.id.phone_number);
+        mPhoneEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        mPhoneEditText.setOnEditorActionListener(this);
+        mPhoneEditText.setText(getPhoneNumber());
+        mPhoneEditText.setSelection(getPhoneNumber().length());
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(this);
+        mPasswordEditText = (EditText) findViewById(R.id.password);
+        mPasswordEditText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        mPasswordEditText.setOnEditorActionListener(this);
+
         mViewPasswordButton = (ImageButton) findViewById(R.id.view_password_button);
         mViewPasswordButton.setOnTouchListener(this);
-        findViewById(R.id.login_button).setOnClickListener(this);
+
+        mSubmitButton = (Button) findViewById(R.id.login_button);
+        mSubmitButton.setOnClickListener(this);
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
-
         // TODO: 15.06.17 remove
-//        mPhoneNumberView.setText("+380630674650");
-//        mPasswordView.setText("sevatest");
+//        mPhoneEditText.setText("+380630674650");
+//        mPasswordEditText.setText("sevatest");
     }
 
     @Override
@@ -107,7 +104,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        mPasswordView.setOnEditorActionListener(null);
+        mPasswordEditText.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
         mViewPasswordButton.setOnTouchListener(null);
         super.onPause();
@@ -116,7 +113,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     protected void onResume() {
         Log.e(TAG, "onResume");
-        mPasswordView.setOnEditorActionListener(this);
+        mPasswordEditText.setOnEditorActionListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
         mViewPasswordButton.setOnTouchListener(this);
         super.onResume();
@@ -125,7 +122,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
-        mPasswordView.setOnEditorActionListener(null);
+        mPasswordEditText.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
         mViewPasswordButton.setOnTouchListener(null);
         super.onDestroy();
@@ -144,7 +141,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 break;
             }
         }
-
         return phoneNumber;
     }
 
@@ -163,60 +159,45 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         if (mAuthTask != null) {
             return;
         }
-        // Reset errors.
-        mPhoneNumberView.setError(null);
-        mPasswordView.setError(null);
-        // Store values at the time of the login attempt.
-        phoneNumber = mPhoneNumberView.getText().toString();
-        password = mPasswordView.getText().toString();
+        phoneNumber = mPhoneEditText.getText().toString();
+        password = mPasswordEditText.getText().toString();
+        mPasswordEditText.setError(passwordError(password));
+        mPhoneEditText.setError(phoneError(phoneNumber));
 
-        boolean cancel = false;
-        View focusView = null;
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(phoneNumber)) {
-
-            mPhoneNumberView.setError(getString(R.string.error_field_required));
-            focusView = mPhoneNumberView;
-            cancel = true;
-        } else if (!isPhoneNumberValid(phoneNumber)) {
-            mPhoneNumberView.setError(getResources().getString(R.string.phone_number_invalid));
-            focusView = mPhoneNumberView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+        if (passwordError(password) == null && phoneError(phoneNumber) == null) {
             if (isOnline()) {
                 showProgress(true);
                 new LoginTask().execute();
             } else {
                 Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
             }
-        }
+        } else mSubmitButton.setVisibility(View.GONE);
     }
 
-    private boolean isPhoneNumberValid(String phoneNumber) {
-        //TODO: improve validation
+    private String phoneError(String phoneNumber) {
         Log.e(TAG, "isPhoneNumberValid");
-        return phoneNumber.length() == Constants.PHONE_NUMBER_LENGTH;
+        if (TextUtils.isEmpty(phoneNumber)) {
+            mPhoneEditText.requestFocus();
+            return "Заполните поле";
+        } else if (!phoneNumber.startsWith("+380")) {
+            mPhoneEditText.requestFocus();
+            return "+380XXXXXXXXX";
+        } else if (phoneNumber.length() > Constants.PHONE_NUMBER_LENGTH) {
+            mPhoneEditText.requestFocus();
+            return "Номер слишком длинный";
+        } else if (phoneNumber.length() < Constants.PHONE_NUMBER_LENGTH) {
+            mPhoneEditText.requestFocus();
+            return "Номер слишком короткий";
+        } else
+            return null;
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: improve validation
+    private String passwordError(String password) {
         Log.e(TAG, "isPasswordValid");
-        return password.length() > Constants.MIN_PASSWORD_LENGTH;
+        if (TextUtils.isEmpty(password)) {
+            return "Заполните поле";
+        } else
+            return null;
     }
 
     /**
@@ -260,63 +241,32 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == R.id.login || actionId == EditorInfo.IME_NULL) {
-            if (isPermissionsAllowed()) {
-                attemptLogin();
-            }
-            return true;
+        switch (actionId) {
+            case EditorInfo.IME_ACTION_DONE:
+                mPasswordEditText.setError(passwordError(mPasswordEditText.getText().toString()));
+                if (passwordError(mPasswordEditText.getText().toString()) == null)
+                    mSubmitButton.setVisibility(View.VISIBLE);
+                else mSubmitButton.setVisibility(View.GONE);
+                return true;
+            case EditorInfo.IME_ACTION_NEXT:
+                mPhoneEditText.setError(phoneError(mPhoneEditText.getText().toString()));
+                if (phoneError(mPhoneEditText.getText().toString()) == null)
+                    mPasswordEditText.requestFocus();
+                else mSubmitButton.setVisibility(View.GONE);
+                return true;
+            default:
+                return false;
         }
-        return false;
     }
-
-    private boolean isPermissionsAllowed() {
-        boolean isAllowed = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-                    == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCOUNT_MANAGER)
-                            == PackageManager.PERMISSION_GRANTED) {
-                isAllowed = true;
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{
-                                Manifest.permission.INTERNET,
-                                Manifest.permission.ACCOUNT_MANAGER},
-                        PERMISSION_REQUEST_CODE);
-            }
-        } else {
-            isAllowed = true;
-        }
-        return true;
-    }
-
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_button:
-//                if (isPermissionsAllowed())
-                    attemptLogin();
+                attemptLogin();
             default:
                 break;
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    attemptLogin();
-                }
-                break;
-            default:
-                break;
-        }
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public boolean isOnline() {
@@ -331,10 +281,10 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT);
+                mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
                 break;
             case MotionEvent.ACTION_UP:
-                mPasswordView.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 break;
         }
         return true;
@@ -346,6 +296,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         private String resultCode;
         private String manufacturer;
         private String name;
+        private Context mContext = MyApplication.getAppContext();
 
         @Override
         protected Intent doInBackground(Void... params) {
@@ -367,7 +318,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                             resultCode = response.body().getResult();
                             Log.e(TAG, "Status OK. notify: " + notify);
                             Log.e(TAG, "Status OK. result: " + resultCode);
-
 
                             if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_VALID)
                                     && response.isSuccessful()) {
@@ -408,8 +358,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             mAuthTask = null;
             if (intent != null) {
                 if (intent.hasExtra(AccountGeneral.KEY_ERROR_MESSAGE)) {
-                    mPasswordView.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
-                    mPasswordView.requestFocus();
+                    mPasswordEditText.setError(intent.getStringExtra(AccountGeneral.KEY_ERROR_MESSAGE));
+                    mPasswordEditText.requestFocus();
                 } else {
                     finishLogin(intent);
                 }
@@ -424,9 +374,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             mAuthTask = null;
             showProgress(false);
             if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_TEL)) {
-                mPhoneNumberView.setError(notify);
+                mPhoneEditText.setError(notify);
             } else if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_PASS)) {
-                mPasswordView.setError(notify);
+                mPasswordEditText.setError(notify);
             }
             if (!TextUtils.isEmpty(notify)) {
                 Intent intent = new Intent(mContext, NotificationActivity.class);
