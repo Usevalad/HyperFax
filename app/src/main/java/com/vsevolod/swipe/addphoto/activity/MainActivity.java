@@ -41,10 +41,11 @@ import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.MyRecyclerAdapter;
 import com.vsevolod.swipe.addphoto.asyncTask.ServerSyncTask;
 import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
-import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
+import com.vsevolod.swipe.addphoto.fragment.RemovePhotoFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.io.File;
@@ -200,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.main_menu_clear_data:
-                mRealmHelper.dropRealmData();
+                RemovePhotoFragment fragment = new RemovePhotoFragment();
+                fragment.show(getFragmentManager(), "MyDialog");
                 break;
             case R.id.main_menu_instruction:
                 String url = "http://telegra.ph/Instrukciya-HyperFax-06-06";

@@ -55,5 +55,6 @@
         - Попробуйте использовать более популярные ключевые слова.\n
         - Попробуйте уменьшить количество слов в запросе.\n</string>
     <string name="recommendation">Рекомендации: </string>
+    <string name="realy_want_to_delete_all_data">Вы действительно хотите удалить все фото?</string>
 
 </resources>

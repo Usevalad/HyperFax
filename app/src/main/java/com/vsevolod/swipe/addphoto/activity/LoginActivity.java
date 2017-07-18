@@ -252,7 +252,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 } else if (phoneError(mPhoneEditText.getText().toString()) == null &&
                         passwordError(mPasswordEditText.getText().toString()) != null)
                     mPasswordEditText.requestFocus();
-                else mSubmitButton.setVisibility(View.GONE);
+                else {
+                    mSubmitButton.setVisibility(View.GONE);
+                }
                 return true;
             case EditorInfo.IME_ACTION_DONE:
                 mPasswordEditText.setError(passwordError(mPasswordEditText.getText().toString()));
@@ -260,7 +262,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                         phoneError(mPhoneEditText.getText().toString()) == null) {
                     hideKeyboard();
                     mSubmitButton.setVisibility(View.VISIBLE);
-                } else mSubmitButton.setVisibility(View.GONE);
+                } else {
+                    mSubmitButton.setVisibility(View.GONE);
+                }
                 return true;
             default:
                 return false;
