@@ -20,7 +20,6 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -51,7 +50,7 @@ import retrofit2.Response;
 // TODO: 13.05.17 refactor
 // TODO: 23.06.17 add valid permissions
 public class LoginActivity extends AccountAuthenticatorActivity implements TextView.OnEditorActionListener,
-        OnClickListener, View.OnTouchListener {
+        OnClickListener {
 
     private final String TAG = this.getClass().getSimpleName();
     private AsyncTask mAuthTask = null;
@@ -63,6 +62,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     private View mLoginFormView;
     private String password;
     private String phoneNumber;
+    private boolean showPass = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         mPasswordEditText.setOnEditorActionListener(this);
 
         mViewPasswordButton = (ImageButton) findViewById(R.id.view_password_button);
-        mViewPasswordButton.setOnTouchListener(this);
+        mViewPasswordButton.setOnClickListener(this);
 
         mSubmitButton = (Button) findViewById(R.id.login_button);
         mSubmitButton.setOnClickListener(this);
@@ -116,7 +116,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onResume");
         mPasswordEditText.setOnEditorActionListener(this);
         findViewById(R.id.login_button).setOnClickListener(this);
-        mViewPasswordButton.setOnTouchListener(this);
+        mViewPasswordButton.setOnClickListener(this);
         super.onResume();
     }
 
@@ -125,7 +125,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         Log.e(TAG, "onDestroy");
         mPasswordEditText.setOnEditorActionListener(null);
         findViewById(R.id.login_button).setOnClickListener(null);
-        mViewPasswordButton.setOnTouchListener(null);
+        mViewPasswordButton.setOnClickListener(null);
         super.onDestroy();
     }
 
@@ -281,8 +281,23 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         switch (v.getId()) {
             case R.id.login_button:
                 attemptLogin();
+                break;
+            case R.id.view_password_button:
+                showPassword();
+                break;
             default:
                 break;
+        }
+    }
+
+    private void showPassword() {
+        showPass = !showPass;
+        if (showPass) {
+            mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+            mViewPasswordButton.setImageResource(R.drawable.ic_eye_off);
+        } else {
+            mViewPasswordButton.setImageResource(R.drawable.ic_eye);
+            mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         }
     }
 
@@ -292,19 +307,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                break;
-            case MotionEvent.ACTION_UP:
-                mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                break;
-        }
-        return true;
     }
 
     private class LoginTask extends AsyncTask<Void, Void, Intent> {

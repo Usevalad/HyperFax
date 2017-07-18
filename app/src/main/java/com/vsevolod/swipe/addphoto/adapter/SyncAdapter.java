@@ -84,14 +84,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         long currentDate = new Date().getTime();
         long lastUpdate = new PreferenceHelper().getLastUpdate();
         if (currentDate - lastUpdate >= Constants.MILLISECONDS_DAY) {
-            updateFlowsTree();
+            new TreeConverterTask().execute();
         }
-    }
-
-    private void updateFlowsTree() {
-        Log.e(TAG, "updateFlowsTree");
-        TreeConverterTask task = new TreeConverterTask();
-        task.execute();
     }
 
     private String getToken(Account account) {
