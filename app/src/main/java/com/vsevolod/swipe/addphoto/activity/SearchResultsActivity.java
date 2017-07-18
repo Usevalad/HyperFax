@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
@@ -24,13 +27,13 @@ import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
     private final String TAG = this.getClass().getSimpleName();
-    private RecyclerView mRecyclerView;
     private RealmHelper mRealmHelper;
-    private List<DataModel> data;
+    private List<DataModel> data = new ArrayList<>();
     private String searchString;
     public Context mContext;
 
@@ -48,10 +51,18 @@ public class SearchResultsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, searchString));
+        if (data.isEmpty()) {
+            RelativeLayout mNoResultsLayout = (RelativeLayout) findViewById(R.id.no_results_layout);
+            mNoResultsLayout.setVisibility(View.VISIBLE);
+            TextView textView = (TextView) findViewById(R.id.text_view_no_results);
+            // FIXME: 7/18/17 hardcode
+            textView.setText("По запросу \'" + searchString + "\' ничего не найдено");
+        } else {
+            RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, searchString));
+        }
         mContext = getApplicationContext();
     }
 

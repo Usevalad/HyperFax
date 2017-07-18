@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "setViews");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
-        toolbar.setTitle(" v" + MyApplication.getAppVersionName());
+        toolbar.setTitle("HyperFax v" + MyApplication.getAppVersionName());
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         setSupportActionBar(toolbar);

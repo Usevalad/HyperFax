@@ -49,5 +49,11 @@
     <string name="appointment">Статья</string>
     <string name="telegraf_hint">Подсказка</string>
     <string name="description">Описание</string>
+    <string name="recommendations">
+        - Убедитесь, что все слова написаны без ошибок.\n
+        - Попробуйте использовать другие ключевые слова.\n
+        - Попробуйте использовать более популярные ключевые слова.\n
+        - Попробуйте уменьшить количество слов в запросе.\n</string>
+    <string name="recommendation">Рекомендации: </string>
 
 </resources>
