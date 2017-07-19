@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android'
 apply plugin: 'realm-android'
 
 android {
@@ -63,6 +63,7 @@ dependencies {
     //    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     //    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     //    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
     compile 'com.google.android.gms:play-services-drive:10.2.6'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
@@ -81,7 +82,7 @@ dependencies {
     compile 'com.google.firebase:firebase-crash:10.2.6'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.test:runner:0.5'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+//    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

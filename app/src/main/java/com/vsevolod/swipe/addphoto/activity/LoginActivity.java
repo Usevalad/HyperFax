@@ -89,6 +89,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
         // TODO: 15.06.17 remove
 //        mPhoneEditText.setText("+380630674650");
 //        mPasswordEditText.setText("sevatest");
