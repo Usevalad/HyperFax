@@ -1,9 +1,11 @@
 package com.vsevolod.swipe.addphoto.activity;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -37,6 +40,10 @@ import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.util.GeoDegree;
 import com.vsevolod.swipe.addphoto.util.ImageConverter;
 import com.vsevolod.swipe.addphoto.util.PathConverter;
+
+import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     private final String TAG = this.getClass().getSimpleName();
@@ -87,6 +94,21 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
+
+        ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+            Subscription subscribe = locationProvider.getLastKnownLocation()
+                    .subscribe(new Action1<Location>() {
+                        @Override
+                        public void call(Location location) {
+                            mLocation = location;
+                            Log.e(TAG, "call: " + location.getLatitude() + " " + location.getLongitude());
+                        }
+                    });
+        }
     }
 
     @Override
@@ -135,8 +157,15 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
 
         GeoDegree geoDegree = new GeoDegree(photoUri);
-        double latitude = geoDegree.isValid() ? geoDegree.getLatitude() : 0.0;
-        double longitude = geoDegree.isValid() ? geoDegree.getLongitude() : 0.0;
+        double latitude = 0.0, longitude = 0.0;
+
+        if (geoDegree.isValid()) {
+            latitude = geoDegree.getLatitude();
+            longitude = geoDegree.getLongitude();
+        } else if (mLocation != null) {
+            latitude = mLocation.getLatitude();
+            longitude = mLocation.getLongitude();
+        }
 
         DataModel model = new DataModel(
                 prefix,
