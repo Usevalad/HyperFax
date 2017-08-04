@@ -34,7 +34,9 @@ import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.constant.AuthSubStatus;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.ResponseStatus;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
@@ -334,16 +336,16 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
 
                 if (response.code() == 201 || response.code() == 200) {
                     switch (response.body().getStatus()) {
-                        case Constants.RESPONSE_STATUS_FAIL:
+                        case ResponseStatus.FAIL:
                             Log.e(TAG, "Status FAIL. error message: " + response.body().getError());
                             break;
-                        case Constants.RESPONSE_STATUS_OK:
+                        case ResponseStatus.OK:
                             notify = response.body().getNotify();
                             resultCode = response.body().getResult();
                             Log.e(TAG, "Status OK. notify: " + notify);
                             Log.e(TAG, "Status OK. result: " + resultCode);
 
-                            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_VALID)
+                            if (TextUtils.equals(resultCode, AuthSubStatus.VALID)
                                     && response.isSuccessful()) {
                                 //all right
                                 authToken = response.body().getToken();
@@ -359,7 +361,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
                                 return res;
                             } else return null;
 
-                        case Constants.RESPONSE_STATUS_PARAM:
+                        case ResponseStatus.PARAM:
                             Log.e(TAG, "Status PARAM");
                             showProgress(false);
                             break;
@@ -397,9 +399,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
             Log.e(TAG, "onCancelled");
             mAuthTask = null;
             showProgress(false);
-            if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_TEL)) {
+            if (TextUtils.equals(resultCode, AuthSubStatus.TEL)) {
                 mPhoneEditText.setError(notify);
-            } else if (TextUtils.equals(resultCode, Constants.RESPONSE_AUTH_SUB_STATUS_PASS)) {
+            } else if (TextUtils.equals(resultCode, AuthSubStatus.PASS)) {
                 mPasswordEditText.setError(notify);
             }
             if (!TextUtils.isEmpty(notify)) {

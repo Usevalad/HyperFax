@@ -36,6 +36,7 @@ import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.util.GeoDegree;
 import com.vsevolod.swipe.addphoto.util.ImageConverter;
@@ -76,7 +77,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 mPhotoUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
             }
         } else {
-            mPhotoUri = Uri.parse(intent.getStringExtra(Constants.INTENT_KEY_PATH));
+            mPhotoUri = Uri.parse(intent.getStringExtra(IntentKey.PATH));
         }
 
         if (mPhotoUri != null) {
@@ -129,7 +130,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void decodeImage() {
         Log.e(TAG, "decodeImage");
         if (mPhotoUri != null) {
-            int photoResource = getIntent().getIntExtra(Constants.INTENT_KEY_PHOTO_RES, 0);
+            int photoResource = getIntent().getIntExtra(IntentKey.PHOTO_RES, 0);
             String path = new PathConverter(this).getFullPath(mPhotoUri, photoResource);
             if (isPrefixValid()) {
                 byte[] image = ImageConverter.imageToByte(path);

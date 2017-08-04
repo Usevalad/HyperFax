@@ -3,7 +3,7 @@ package com.vsevolod.swipe.addphoto.config;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.DataState;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 
@@ -248,8 +248,8 @@ public class RealmHelper {
         Log.d(TAG, "getNotFinishedStates:");
         RealmQuery query = this.mRealm.where(DataModel.class);
         String FIELD_STATE_CODE = "stateCode";
-        query.equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_CREATED);
-        query.or().equalTo(FIELD_STATE_CODE, Constants.DATA_MODEL_STATE_REVIEW);
+        query.equalTo(FIELD_STATE_CODE, DataState.CREATED);
+        query.or().equalTo(FIELD_STATE_CODE, DataState.REVIEW);
         List<DataModel> list = query.findAll();
         String[] ids = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {

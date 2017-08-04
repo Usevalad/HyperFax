@@ -4,11 +4,12 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.DataState;
+import com.vsevolod.swipe.addphoto.constant.ResponseStatus;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.CommitResponseModel;
@@ -33,7 +34,8 @@ public class PostPhoto implements Api {
     private String mToken;
     private List<DataModel> mDataModel;
 
-    public PostPhoto(Context context, RealmHelper realmHelper, String token, List<DataModel> dataModel) {
+    public PostPhoto(Context context, RealmHelper realmHelper,
+                     String token, List<DataModel> dataModel) {
         this.mContext = context;
         this.mRealmHelper = realmHelper;
         this.mToken = token;
@@ -73,22 +75,21 @@ public class PostPhoto implements Api {
                 Log.e(TAG, "commit : commitResponse.code() " + commitResponse.code());
                 Log.e(TAG, "commit : commitResponse.log() " + commitResponse.body().getLog());
                 switch (commitResponse.body().getStatus()) {
-                    case Constants.RESPONSE_STATUS_PARAM:
-                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, Constants.DATA_MODEL_STATE_PARAM, false);
+                    case ResponseStatus.PARAM:
+                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, DataState.PARAM, false);
                         mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
                         break;
-                    case Constants.RESPONSE_STATUS_OK:
+                    case ResponseStatus.OK:
                         mRealmHelper.setField(id, mRealmHelper.SERVER_PHOTO_URL, link, false);
                         mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
-                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, Constants.DATA_MODEL_STATE_CREATED, false);
+                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, DataState.CREATED, false);
                         break;
-                    case Constants.RESPONSE_STATUS_AUTH:
+                    case ResponseStatus.AUTH:
                         AccountGeneral.cancelPeriodicSync(mContext);
                         AccountGeneral.removeAccount(mContext, AccountManager.get(mContext));
                         break;
                     default:
                         AccountGeneral.sync();
-                        FirebaseCrash.log("Запуск синхронизации после попытки загрузить фото");
                         break;
                 }
             }

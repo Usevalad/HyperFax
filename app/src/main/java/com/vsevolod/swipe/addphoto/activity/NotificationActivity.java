@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.IntentKey;
 
 public class NotificationActivity extends AppCompatActivity {
 
@@ -23,7 +23,7 @@ public class NotificationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
         mNotificationTextView = (TextView) findViewById(R.id.notify_text_view);
-        String text = getIntent().getStringExtra(Constants.INTENT_KEY_NOTIFY);
+        String text = getIntent().getStringExtra(IntentKey.NOTIFY);
         mNotificationTextView.setText(text);
     }
 

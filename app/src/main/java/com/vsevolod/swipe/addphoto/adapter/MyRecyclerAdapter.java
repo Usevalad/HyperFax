@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.util.List;
@@ -126,8 +126,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             String storagePhotoURL = data.get(getAdapterPosition()).getStoragePhotoURL();
             Intent intent = new Intent(context, FullscreenActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(Constants.INTENT_KEY_SERVER_PHOTO_URL, serverPhotoURL);
-            intent.putExtra(Constants.INTENT_KEY_STORAGE_PHOTO_URL, storagePhotoURL);
+            intent.putExtra(IntentKey.SERVER_PHOTO_URL, serverPhotoURL);
+            intent.putExtra(IntentKey.STORAGE_PHOTO_URL, storagePhotoURL);
             context.startActivity(intent);
         }
     }

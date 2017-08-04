@@ -20,7 +20,8 @@ import com.vsevolod.swipe.addphoto.activity.NotificationActivity;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.ResponseStatus;
+import com.vsevolod.swipe.addphoto.constant.TreeSubStatus;
 import com.vsevolod.swipe.addphoto.model.query.TreeQueryModel;
 import com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel;
 import com.vsevolod.swipe.addphoto.model.responce.ResponseFlowsTreeModel;
@@ -81,26 +82,26 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
 
             if (response.code() == 201 || response.code() == 200) {
                 switch (response.body().getStatus()) {
-                    case Constants.RESPONSE_STATUS_AUTH:
+                    case ResponseStatus.AUTH:
                         message = "Нужна авторизация";
                         AccountGeneral.removeAccount(mContext, AccountManager.get(mContext));
                         Log.e(TAG, "Status AUTH. invalid token");
                         break;
-                    case Constants.RESPONSE_STATUS_FAIL:
+                    case ResponseStatus.FAIL:
                         Toast.makeText(mContext, "Fail", Toast.LENGTH_SHORT).show();
                         Log.e(TAG, "Status FAIL. error message: " + response.body().getError());
                         break;
-                    case Constants.RESPONSE_STATUS_OK:
+                    case ResponseStatus.OK:
                         message = "Обновлено";
                         notify = response.body().getNotify();
                         String resultCode = response.body().getResult();
                         Log.e(TAG, "Status OK. notify: " + notify);
                         Log.e(TAG, "Status OK. result: " + resultCode);
 
-                        if (TextUtils.equals(resultCode, Constants.RESPONSE_TREE_SUB_STATUS_NM)) {
+                        if (TextUtils.equals(resultCode, TreeSubStatus.NM)) {
                             message = mContext.getString(R.string.already_have_last_version);
-                        } else if (TextUtils.equals(resultCode, Constants.RESPONSE_TREE_SUB_STATUS_CH) ||
-                                TextUtils.equals(resultCode, Constants.RESPONSE_TREE_SUB_STATUS_NT)) {
+                        } else if (TextUtils.equals(resultCode, TreeSubStatus.CH) ||
+                                TextUtils.equals(resultCode, TreeSubStatus.NT)) {
 
                             list = response.body().getList();
                             mPreferenceHelper.saveString(PreferenceHelper.APP_PREFERENCES_MODIFIED,
@@ -109,7 +110,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
                         }
 
                         break;
-                    case Constants.RESPONSE_STATUS_PARAM:
+                    case ResponseStatus.PARAM:
                         message = "Parameters";
                         Log.e(TAG, "Status PARAM");
                         break;

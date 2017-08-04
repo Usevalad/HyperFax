@@ -44,6 +44,7 @@ import com.vsevolod.swipe.addphoto.asyncTask.TreeConverterTask;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.fragment.RemovePhotoFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
@@ -366,8 +367,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void startAddingActivity(Uri path, int photoResource) {
         Log.e(TAG, "startAddingActivity");
         Intent intent = new Intent(this, AddingActivity.class);
-        intent.putExtra(Constants.INTENT_KEY_PHOTO_RES, photoResource);
-        intent.putExtra(Constants.INTENT_KEY_PATH, path.toString());
+        intent.putExtra(IntentKey.PHOTO_RES, photoResource);
+        intent.putExtra(IntentKey.PATH, path.toString());
         startActivity(intent);
     }
 
@@ -378,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         mFileUri = getOutputPhotoFile();
         i.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-        startActivityForResult(i, Constants.CAPTURE_PICTURE_REQUEST);
+        startActivityForResult(i, Constants.CAPTURE_PIC_REQUEST);
     }
 
     private void startGalleryActivity() {
@@ -388,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.setType(Constants.MEDIA_TYPE_IMAGE);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent,
-                Constants.ACTION_SELECT_PICTURE), Constants.SELECT_PICTURE_REQUEST);
+                Constants.ACTION_SELECT_PIC), Constants.SELECT_PIC_REQUEST);
     }
 
     private void startLoginActivity(boolean accountExists) {

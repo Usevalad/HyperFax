@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.google.gson.JsonSyntaxException;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.ResponseStatus;
 import com.vsevolod.swipe.addphoto.model.query.ListQueryModel;
 import com.vsevolod.swipe.addphoto.model.responce.ListResponse;
 
@@ -48,7 +48,7 @@ public class GetList implements Api {
             }
 
             if (response.isSuccessful() &&
-                    TextUtils.equals(response.body().getStatus(), Constants.RESPONSE_STATUS_OK)) {
+                    TextUtils.equals(response.body().getStatus(), ResponseStatus.OK)) {
                 List<String> ids = response.body().getIds();
                 List<String> states = response.body().getStateCodes();
                 List<String> comments = response.body().getComments();

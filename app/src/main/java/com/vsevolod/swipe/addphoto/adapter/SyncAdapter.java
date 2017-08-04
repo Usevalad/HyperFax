@@ -20,6 +20,7 @@ import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.Millisecond;
 import com.vsevolod.swipe.addphoto.model.query.CommitModel;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.model.responce.CommitResponseModel;
@@ -83,7 +84,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         long currentDate = new Date().getTime();
         long lastUpdate = new PreferenceHelper().getLastUpdate();
-        if (currentDate - lastUpdate >= Constants.MILLISECONDS_DAY) {
+        if (currentDate - lastUpdate >= Millisecond.DAY) {
             new TreeConverterTask().execute();
         }
     }

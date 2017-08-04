@@ -14,7 +14,7 @@ import com.vsevolod.swipe.addphoto.api.command.PostPhoto;
 import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.Millisecond;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class ServerSyncTask extends AsyncTask<Void, Void, Void> {
 
         long currentDate = new Date().getTime();
         long lastUpdate = new PreferenceHelper().getLastUpdate();
-        if (currentDate - lastUpdate >= Constants.MILLISECONDS_DAY) {
+        if (currentDate - lastUpdate >= Millisecond.DAY) {
             updateFlowsTree();
         }
         return null;

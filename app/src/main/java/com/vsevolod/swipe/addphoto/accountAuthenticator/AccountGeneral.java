@@ -17,6 +17,7 @@ import android.util.Log;
 import com.vsevolod.swipe.addphoto.activity.MainActivity;
 import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
+import com.vsevolod.swipe.addphoto.constant.Millisecond;
 import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
 
 /**
@@ -95,7 +96,7 @@ public class AccountGeneral {
         pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),
-                Constants.MILLISECONDS_HOUR, pendingIntent);
+                Millisecond.HOUR, pendingIntent);
     }
 
     /*

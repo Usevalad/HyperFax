@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.bogdwellers.pinchtozoom.ImageMatrixTouchHandler;
 import com.vsevolod.swipe.addphoto.R;
-import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.constant.IntentKey;
 
 import java.io.File;
 
@@ -33,12 +33,12 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     private void setImage() {
         Log.e(TAG, "setImage");
-        File image = new File(getIntent().getStringExtra(Constants.INTENT_KEY_STORAGE_PHOTO_URL));
-        String serverPhotoURL = getIntent().getStringExtra(Constants.INTENT_KEY_SERVER_PHOTO_URL);
+        File image = new File(getIntent().getStringExtra(IntentKey.STORAGE_PHOTO_URL));
+        String serverPhotoURL = getIntent().getStringExtra(IntentKey.SERVER_PHOTO_URL);
         if (image.exists()) {
             Log.e(TAG, "STORAGE_PHOTO_URL");
             mTouchImageView.setImageURI(Uri.parse(getIntent()
-                    .getStringExtra(Constants.INTENT_KEY_STORAGE_PHOTO_URL)));
+                    .getStringExtra(IntentKey.STORAGE_PHOTO_URL)));
         } else {
             Log.e(TAG, "SERVER_PHOTO_URL");
             Picasso.with(this)

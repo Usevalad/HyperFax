@@ -9,10 +9,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
-
-import org.w3c.dom.Text;
-
 /**
  * Created by vsevolod on 21.04.17.
  * getting full path instead of short android absolute path
