@@ -15,9 +15,9 @@ public class SyncService extends Service {
      * onPerformSync().
      */
     // Storage for an instance of the sync adapter
-    private static SyncAdapter sSyncAdapter = null;
+    private SyncAdapter sSyncAdapter = null;
     // Object to use as a thread-safe lock
-    private static final Object sSyncAdapterLock = new Object();
+    private final Object sSyncAdapterLock = new Object();
 
     /*
      * Instantiate the sync adapter object.

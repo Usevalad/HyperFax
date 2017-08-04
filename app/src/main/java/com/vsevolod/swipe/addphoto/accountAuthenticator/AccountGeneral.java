@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.vsevolod.swipe.addphoto.activity.MainActivity;
-import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.constant.Millisecond;
 import com.vsevolod.swipe.addphoto.receiver.SyncAlarmReceiver;
