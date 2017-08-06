@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -46,7 +47,8 @@ import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener,
+        View.OnClickListener {
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper;
     public AutoCompleteTextView mAutoCompleteTextView;
@@ -86,6 +88,11 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         } else {
             Toast.makeText(this, "Не удалось загрузить фото", Toast.LENGTH_SHORT).show();
         }
+        setViews();
+        getLocation();
+    }
+
+    private void setViews() {
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
         mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(mContext));
@@ -95,7 +102,10 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
+        findViewById(R.id.flow_tree_button).setOnClickListener(this);
+    }
 
+    private void getLocation() {
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED &&
@@ -239,5 +249,17 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.flow_tree_button:
+                // TODO: 8/6/17 start lows tree fragment
+                Toast.makeText(mContext, "boom", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
     }
 }

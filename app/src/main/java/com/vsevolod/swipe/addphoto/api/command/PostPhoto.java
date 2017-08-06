@@ -50,13 +50,16 @@ public class PostPhoto implements Api {
                 File imageFile = new File(dataModel.getStoragePhotoURL());
                 RequestBody requestBody = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_IMAGE), imageFile);
                 Response<ResponseBody> postImageResponse = MyApplication.getApi().postImage(requestBody).execute();
-                Log.e(TAG, "uploadData: response code " + String.valueOf(postImageResponse.code()));
-                Log.e(TAG, "uploadData: response body " + String.valueOf(postImageResponse.body()));
-                Log.e(TAG, "uploadData: response errorBody " + String.valueOf(postImageResponse.errorBody()));
-                Log.e(TAG, "uploadData: response headers " + String.valueOf(postImageResponse.headers()));
+
+                String responseCode = String.valueOf(postImageResponse.code());
+                String link = postImageResponse.body().string();
+                String errorBody = String.valueOf(postImageResponse.errorBody());
+
+                Log.e(TAG, "uploadData: response code " + responseCode);
+                Log.e(TAG, "uploadData: response body " + link);
+                Log.e(TAG, "uploadData: response errorBody " + errorBody);
                 Log.e(TAG, "uploadData: response message " + String.valueOf(postImageResponse.message()));
                 Log.e(TAG, "uploadData: response raw " + String.valueOf(postImageResponse.raw()));
-                String link = postImageResponse.body().string();
                 String id = dataModel.getUid();
                 Log.e(TAG, "uploadData: link" + link);
                 Log.e(TAG, "uploadData: id" + id);

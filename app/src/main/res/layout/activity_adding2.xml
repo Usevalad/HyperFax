@@ -35,21 +35,38 @@
             android:layout_below="@+id/adding_appbar_layout"
             android:scaleType="centerCrop" />
 
-        <AutoCompleteTextView
-            android:id="@+id/adding_auto_complete"
+        <RelativeLayout
+            android:id="@+id/auto_complete_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/adding_image_view"
-            android:hint="@string/appointment"
-            android:inputType="textMultiLine"
-            android:minHeight="48dp"
-            android:scrollHorizontally="false" />
+            android:layout_below="@id/adding_image_view">
+
+            <AutoCompleteTextView
+                android:id="@+id/adding_auto_complete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/appointment"
+                android:inputType="textMultiLine"
+                android:minHeight="48dp"
+                android:scrollHorizontally="false" />
+
+            <ImageButton
+                android:id="@+id/flow_tree_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/show_password"
+                android:src="@drawable/ic_file_tree" />
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/adding_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/adding_auto_complete"
+            android:layout_below="@id/auto_complete_layout"
             android:hint="@string/description"
             android:inputType="textMultiLine|textAutoCorrect"
             android:minHeight="48dp" />

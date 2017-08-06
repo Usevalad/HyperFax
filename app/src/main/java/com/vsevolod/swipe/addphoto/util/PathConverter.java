@@ -26,7 +26,11 @@ public final class PathConverter {
 
     public String getFullPath(Uri uri, int photoResource) {
         Log.e(TAG, "getFullPath");
-        return getFullPathElse(uri);
+        String result = getFullPathElse(uri);
+        if (TextUtils.isEmpty(result)) {
+            result = getFulPathLollipop(uri);
+        }
+        return result;
     }
 
     private String getFullPathElse(@NonNull Uri uri) {
@@ -53,10 +57,6 @@ public final class PathConverter {
             }
         }
         mContext = null;
-
-        if (TextUtils.isEmpty(result)) {
-            result = getFulPathLollipop(uri);
-        }
 
         Log.e(TAG, "getFullPath: " + result);
         return result;
