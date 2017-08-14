@@ -20,8 +20,6 @@ import io.realm.Sort;
 /**
  * Created by vsevolod on 26.03.17.
  */
-// TODO: 13.07.17 add final strings to enum (kotlin) 
-// TODO: 13.07.17 create kotlin enums instead of Constants.java
 
 public class RealmHelper {
     private final String TAG = this.getClass().getSimpleName();
@@ -42,7 +40,7 @@ public class RealmHelper {
 
     public void open() {
         Log.d(TAG, "open");
-        Realm.init(MyApplication.getAppContext());
+        Realm.init(MyApplication.getContext());
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
         Realm.setDefaultConfiguration(realmConfiguration);
         this.mRealm = Realm.getDefaultInstance();
@@ -142,7 +140,7 @@ public class RealmHelper {
     public void save(FlowsTreeModel model) {
         Log.d(TAG, "saveTreeListModel");
         this.mRealm.beginTransaction();
-        // Create an object
+        // Create an object// FIXME: 8/11/1 mRealm.copyToRealmOrUpdate(model);
         FlowsTreeModel newModel = this.mRealm.createObject(FlowsTreeModel.class);
         // Set its fields
         newModel.setId(model.getId());
@@ -154,7 +152,7 @@ public class RealmHelper {
         this.mRealm.commitTransaction();
     }
 
-    public void save(DataModel model) {
+    public void save(DataModel model) {//// FIXME: 8/11/1 mRealm.copyToRealmOrUpdate(model);
         Log.d(TAG, "saveDataModel");
         this.mRealm.beginTransaction();
         // Create an object
@@ -202,7 +200,7 @@ public class RealmHelper {
 
     public void setField(String id, String fieldName, String value, boolean isSynced) {
         Log.d(TAG, "setField");
-
+// FIXME: 8/11/17 refactor
         RealmQuery dataQuery = this.mRealm.where(DataModel.class);
         dataQuery.equalTo(UID, id);
         DataModel model;

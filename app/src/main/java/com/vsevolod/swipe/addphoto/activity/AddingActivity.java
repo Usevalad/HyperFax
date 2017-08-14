@@ -57,7 +57,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private String mText;
     private long mLastClickTime = 0;
     private Location mLocation = null;
-    private Context mContext = MyApplication.getAppContext();
+    private Context mContext = MyApplication.getContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -256,7 +256,8 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         switch (v.getId()) {
             case R.id.flow_tree_button:
                 // TODO: 8/6/17 start lows tree fragment
-                Toast.makeText(mContext, "boom", Toast.LENGTH_SHORT).show();
+                mAutoCompleteTextView.setText("Тест 6700");
+                mEditText.requestFocus();
                 break;
             default:
                 break;

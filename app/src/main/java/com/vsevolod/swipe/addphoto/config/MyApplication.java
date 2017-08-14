@@ -73,7 +73,7 @@ public class MyApplication extends Application {
         mBuildVersion = Build.VERSION.SDK_INT;
 
 
-        DeviceName.with(MyApplication.getAppContext()).request(new DeviceName.Callback() {
+        DeviceName.with(MyApplication.getContext()).request(new DeviceName.Callback() {
 
             @Override
             public void onFinished(DeviceName.DeviceInfo info, Exception error) {
@@ -92,7 +92,7 @@ public class MyApplication extends Application {
         return mMyasoApi;
     }
 
-    public static Context getAppContext() {
+    public static Context getContext() {
         return MyApplication.mContext;
     }
 

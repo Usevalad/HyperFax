@@ -55,7 +55,7 @@ public class TreeConverterTask extends AsyncTask<Void, String, List<FlowsTreeMod
     @Override
     protected void onPreExecute() {
         Log.e(TAG, "onPreExecute");
-        mContext = MyApplication.getAppContext();
+        mContext = MyApplication.getContext();
         mAccountManager = AccountManager.get(mContext);
         mRealmHelper = new RealmHelper();
         mPreferenceHelper = new PreferenceHelper();

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="choose_tag">Обери тег із випадаючого списку</string>
+    <string name="updated">Оновлено</string>
+    <string name="already_have_last_version">Остання версія актуальна</string>
+    <string name="really_want_to_quit">Ви дісно хочете вийти?</string>
+    <string name="ok">Так</string>
+    <string name="cancel">Ні</string>
+    <string name="no_internet_connection">Немає інтернету</string>
+    <string name="no_internet_data_later">Немає інтернету. Дані будуть відпралені пізніше</string>
+    <string name="notifications">Ввімкнути сповіщення</string>
+    <string name="update_tree">Оновити дерево</string>
+    <string name="quit">Вийти</string>
+    <string name="search">Пошук</string>
+    <string name="clear_cache">Видалити усі фото</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Увійти</string>
+    <string name="phone_example">+380111111111</string>
+    <string name="show_password">Показати пароль</string>
+    <string name="photo_description">Фотографії</string>
+    <string name="gallery">Галерея</string>
+    <string name="camera">Камера</string>
+    <string name="add_new_photo">Додати нове фото</string>
+    <string name="appointment">Стаття</string>
+    <string name="telegraf_hint">Підказка</string>
+    <string name="description">Опис</string>
+    <string name="recommendations">
+        - Переконайтеся, що всі слова написані без помилок.\n
+        - Спробуйте використовувати інші ключові слова.\n
+        - Спробуйте використовувати більш популярні ключові слова.\n
+        - Спробуйте зменшити кількість слів у запиті.\n</string>
+    <string name="recommendation">Рекомендації: </string>
+    <string name="realy_want_to_delete_all_data">Ви дійсно хочете видалити усі фото?</string>
+    <string name="fill_field">Заповніть поле</string>
+    <string name="number_format">+380XXXXXXXXX</string>
+    <string name="number_to_long">Номер занадто довгий</string>
+    <string name="number_to_short">Номер занадто короткий</string>
+    <string name="ukraine_code">+380</string>
+</resources>

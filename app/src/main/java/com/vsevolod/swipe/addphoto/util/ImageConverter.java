@@ -42,7 +42,7 @@ public final class ImageConverter {
             }
         } else {
             Log.e(TAG, "addImage: file is not exist");
-            Toast.makeText(MyApplication.getAppContext(), "Не правильный путь к файлу", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MyApplication.getContext(), "Не правильный путь к файлу", Toast.LENGTH_SHORT).show();
         }
 
         return byteArray;

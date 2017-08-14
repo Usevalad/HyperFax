@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri mFileUri = null;
     private RealmHelper mRealmHelper;
-    private Context mContext = MyApplication.getAppContext();
+    private Context mContext = MyApplication.getContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABCamera.setOnClickListener(null);
         mFABGallery.setOnClickListener(null);
         swipeRefreshLayout.setOnRefreshListener(null);
+        mRecyclerView.setOnClickListener(null);
         super.onDestroy();
     }
 
@@ -157,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABGallery.setOnClickListener(null);
         swipeRefreshLayout.setOnRefreshListener(null);
         mRealmHelper.getRealm().removeAllChangeListeners();
+        mRecyclerView.setOnClickListener(null);
         super.onPause();
     }
 
@@ -171,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFABGallery.setOnClickListener(this);
         mRealmHelper.getRealm().addChangeListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
+        mRecyclerView.setOnClickListener(this);
         animateFAB();
         setRecyclerViewAdapter();
         AccountGeneral.sync();

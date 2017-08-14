@@ -37,7 +37,7 @@ public class ServerSyncTask extends AsyncTask<Void, Void, Void> {
     protected void onPreExecute() {
         Log.e(TAG, "onPreExecute");
         MainActivity.swipeRefreshLayout.setRefreshing(true);
-        mContext = MyApplication.getAppContext();
+        mContext = MyApplication.getContext();
         mAccountManager = AccountManager.get(mContext);
     }
 

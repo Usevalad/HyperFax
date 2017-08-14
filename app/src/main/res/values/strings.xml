@@ -1,60 +1,47 @@
 <resources>
-    <string name="app_name">HyperFax</string>
-    <string name="account_type">com.vsevolod.swipe.addphoto</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="token">get token string</string>
-    <string name="title_activity_account_authenticator">AccountAuthenticatorActivity</string>
-    <string name="account_already_exists">Account already exists</string>
-    <string name="phone_number_invalid">Номер не валидный</string>
-    <string name="general_settings">general_settings</string>
-    <string name="sync_settings_summary">sync_settings_summary</string>
-    <string name="sync">sync</string>
-    <string name="content_authority">com.vsevolod.swipe.addphoto.provider.StubProvider</string>
-    <string name="choose_tag">Выбери тег из выпадающего списка</string>
-    <string name="updated">Обновлено</string>
-    <string name="already_have_last_version">Последняя версия актуальна</string>
-    <string name="really_want_to_quit">Вы действительно хотите выйти?</string>
-    <string name="ok">Да</string>
-    <string name="cancel">Отмена</string>
-    <string name="no_internet_connection">Нет интернет соединения</string>
-    <string name="no_internet_data_later">Нет интернет соединения. Данные будут отправлены позже</string>
-    <string name="notifications">Включить уведомления</string>
-    <string name="synchronize">Синхронизация</string>
-    <string name="update_tree">Обновить дерево</string>
-    <string name="quit">Выйти</string>
-    <string name="search">Поиск</string>
-    <string name="clear_cache">Удалить все фото</string>
-    <string name="password">Пароль</string>
-    <string name="enter">Войти</string>
+    <string name="app_name" translatable="false">HyperFax</string>
+    <string name="account_type" translatable="false">com.vsevolod.swipe.addphoto</string>
+    <string name="title_activity_login" translatable="false">Sign in</string>
+    <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
+    <string name="token" translatable="false">get token string</string>
+    <string name="title_activity_account_authenticator" translatable="false">AccountAuthenticatorActivity</string>
+    <string name="account_already_exists" translatable="false">Account already exists</string>
+    <string name="general_settings" translatable="false">general_settings</string>
+    <string name="content_authority" translatable="false">com.vsevolod.swipe.addphoto.provider.StubProvider</string>
+    <string name="choose_tag">Choose tag from drop down list</string>
+    <string name="updated">Updated</string>
+    <string name="already_have_last_version">The latest version is current</string>
+    <string name="really_want_to_quit">Do you really want to leave?</string>
+    <string name="ok">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="no_internet_data_later">No internet connection. Data will be sent later</string>
+    <string name="notifications">Enable notifications</string>
+    <string name="update_tree">Update tree</string>
+    <string name="quit">Quit</string>
+    <string name="search">Search</string>
+    <string name="clear_cache">Remove all photos</string>
+    <string name="password">Password</string>
+    <string name="enter">Enter</string>
     <string name="phone_example">+380111111111</string>
-    <string name="show_password">Показать пароль</string>
-    <string name="photo_description">Фотография</string>
-    <string name="gallery">Галерея</string>
-    <string name="camera">Камера</string>
-    <string name="add_new_photo">Добавить новое фото</string>
-    <string name="appointment">Статья</string>
-    <string name="telegraf_hint">Подсказка</string>
-    <string name="description">Описание</string>
+    <string name="show_password">Show password</string>
+    <string name="photo_description">Photo</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="add_new_photo">Add new photo</string>
+    <string name="appointment">Article</string>
+    <string name="telegraf_hint">Hint</string>
+    <string name="description">Description</string>
     <string name="recommendations">
-        - Убедитесь, что все слова написаны без ошибок.\n
-        - Попробуйте использовать другие ключевые слова.\n
-        - Попробуйте использовать более популярные ключевые слова.\n
-        - Попробуйте уменьшить количество слов в запросе.\n</string>
-    <string name="recommendation">Рекомендации: </string>
-    <string name="realy_want_to_delete_all_data">Вы действительно хотите удалить все фото?</string>
-
+        - Make sure that all words are spelled correctly.\n
+        - Try using different keywords.\n
+        - Try using more popular keywords.\n
+        - Try reducing the number of words in the query.\n</string>
+    <string name="recommendation">Recommendations: </string>
+    <string name="realy_want_to_delete_all_data">Are you really want tot delete all photos?</string>
+    <string name="fill_field">Fill in the field</string>
+    <string name="number_format">+380XXXXXXXXX</string>
+    <string name="number_to_long">Number is too long</string>
+    <string name="number_to_short">Number is too short</string>
+    <string name="ukraine_code">+380</string>
 </resources>

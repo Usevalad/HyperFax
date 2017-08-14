@@ -64,7 +64,6 @@
                     android:background="@drawable/rounded_transparent_input_shape"
                     android:hint="@string/password"
                     android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"

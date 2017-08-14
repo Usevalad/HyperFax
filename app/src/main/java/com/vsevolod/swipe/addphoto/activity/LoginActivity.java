@@ -167,7 +167,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         password = mPasswordEditText.getText().toString();
         mPasswordEditText.setError(passwordError(password));
         mPhoneEditText.setError(phoneError(phoneNumber));
-
+        // FIXME: 8/11/17 mPhoneEditText.getError == null
+        // FIXME: 8/11/17 add validation to utils
         if (passwordError(password) == null && phoneError(phoneNumber) == null) {
             if (isOnline()) {
                 showProgress(true);
@@ -322,7 +323,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         private String resultCode;
         private String manufacturer;
         private String name;
-        private Context mContext = MyApplication.getAppContext();
+        private Context mContext = MyApplication.getContext();
 
         @Override
         protected Intent doInBackground(Void... params) {

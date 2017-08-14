@@ -20,7 +20,7 @@ public final class PreferenceHelper {
     public PreferenceHelper() {
         Log.d(TAG, "PreferenceHelper");
         this.mUserSettings = MyApplication
-                .getAppContext()
+                .getContext()
                 .getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
