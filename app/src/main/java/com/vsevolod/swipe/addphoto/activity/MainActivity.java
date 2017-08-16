@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (data != null) {
             Log.e(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(mContext, data, this));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, this));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,6 @@
 package com.vsevolod.swipe.addphoto.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,13 +40,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     public List<DataModel> data;
     private String mSearchString;
     private DeletePostCallback mDeletePostCallback;
+    private Activity mActivity;
 
     public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data,
-                             DeletePostCallback callback) {
+                             Activity activity) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
-        this.mDeletePostCallback = callback;
+        this.mDeletePostCallback = (DeletePostCallback) context;
+        this.mActivity = activity;
     }
 
     public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data, String searchString,
@@ -66,7 +70,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     @Override
     public void onBindViewHolder(MyRecyclerViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder");
+        Log.d(TAG, "onBindViewHolder");// FIXME: 16.08.17 hardcode
         DataModel model = data.get(position);
         byte[] photoByteArray = model.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
@@ -103,6 +107,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     public void onViewRecycled(MyRecyclerViewHolder holder) {
         holder.itemView.setOnCreateContextMenuListener(null);
         holder.itemView.setOnClickListener(null);
+        holder.mContextMenuImageButton.setOnClickListener(null);
         super.onViewRecycled(holder);
 
     }
@@ -114,25 +119,31 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
             View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-        TextView mDateTextView;
-        TextView mPathTextView;
-        TextView mDescriptionTextView;
-        TextView mCommentTextView;
-        ImageView mPhotoImageView;
-        ImageView mStateIconImageView;
-        Context context;
+
+        private TextView mDateTextView;
+        private TextView mPathTextView;
+        private TextView mDescriptionTextView;
+        private TextView mCommentTextView;
+        private ImageView mPhotoImageView;
+        private ImageView mStateIconImageView;
+        private ImageButton mContextMenuImageButton;
+        private Context context;
 
         private MyRecyclerViewHolder(final Context context, View itemView) {
             super(itemView);
             this.context = context;
+            //init views
             mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo_image_view);
             mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state_image_view);
             mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             mCommentTextView = (TextView) itemView.findViewById(R.id.comment_text_view);
+            mContextMenuImageButton = (ImageButton) itemView.findViewById(R.id.context_menu_image_button);
+            //set listeners
             itemView.setOnCreateContextMenuListener(this);
             itemView.setOnClickListener(this);
+            mContextMenuImageButton.setOnClickListener(this);
         }
 
         @Override
@@ -145,9 +156,16 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             Delete.setOnMenuItemClickListener(this);
         }
 
-
         @Override
         public void onClick(View v) {
+            if (v.getId() == R.id.context_menu_image_button) {
+                mActivity.openContextMenu(v);
+            } else {
+                startFullScreenActivity();
+            }
+        }
+
+        private void startFullScreenActivity() {
             String serverPhotoURL = data.get(getAdapterPosition()).getServerPhotoURL();
             String storagePhotoURL = data.get(getAdapterPosition()).getStoragePhotoURL();
             Intent intent = new Intent(context, FullscreenActivity.class);
