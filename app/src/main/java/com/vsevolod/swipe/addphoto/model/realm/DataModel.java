@@ -30,13 +30,12 @@ public class DataModel extends RealmObject {
     private Date date;
     private double latitude;
     private double longitude;
-    private String stateCode = DataState.NEED_SYNC;
-    private byte[] photo;
+    private String stateCode;
     private String prefixID;
     private boolean isSynced = false;
 
     public DataModel(String prefix, String viewArticle, String viewDescription,
-                     String storagePhotoURL, byte[] photo, double latitude, double longitude,
+                     String storagePhotoURL, double latitude, double longitude,
                      String prefixID) {
         this.uid = UUID.randomUUID().toString();
         this.viewDescription = viewDescription;
@@ -47,12 +46,12 @@ public class DataModel extends RealmObject {
         this.prefix = prefix;
         this.serverPhotoURL = null;
         this.storagePhotoURL = storagePhotoURL;
-        this.photo = photo;
         this.viewArticle = viewArticle;
         this.searchArticle = viewArticle.toLowerCase();
         this.prefixID = prefixID;
         this.date = new Date();
         this.viewDate = MyDateUtil.getViewDate();
+        this.stateCode = DataState.NEED_SYNC;
     }
 
     public DataModel() {
@@ -63,10 +62,6 @@ public class DataModel extends RealmObject {
         return searchDate;
     }
 
-    public void setSearchDate(String searchDate) {
-        this.searchDate = searchDate;
-    }
-
     public String getStateCode() {
         return stateCode;
     }
@@ -75,28 +70,8 @@ public class DataModel extends RealmObject {
         this.stateCode = stateCode;
     }
 
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
-    }
-
     public String getViewDescription() {
         return viewDescription;
-    }
-
-    public void setViewDescription(String viewDescription) {
-        this.viewDescription = viewDescription;
-    }
-
-    public String getSearchDescription() {
-        return searchDescription;
-    }
-
-    public void setSearchDescription(String searchDescription) {
-        this.searchDescription = searchDescription;
     }
 
     public String getViewComment() {
@@ -107,28 +82,12 @@ public class DataModel extends RealmObject {
         this.viewComment = viewComment;
     }
 
-    public String getSearchComment() {
-        return searchComment;
-    }
-
-    public void setSearchComment(String searchComment) {
-        this.searchComment = searchComment;
-    }
-
     public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
     public double getLongitude() {
         return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 
     public String getPrefix() {
@@ -143,28 +102,12 @@ public class DataModel extends RealmObject {
         return viewArticle;
     }
 
-    public void setViewArticle(String viewArticle) {
-        this.viewArticle = viewArticle;
-    }
-
-    public String getSearchArticle() {
-        return searchArticle;
-    }
-
-    public void setSearchArticle(String searchArticle) {
-        this.searchArticle = searchArticle;
-    }
-
     public String getUid() {
         return uid;
     }
 
     public String getPrefixID() {
         return prefixID;
-    }
-
-    public void setPrefixID(String prefixID) {
-        this.prefixID = prefixID;
     }
 
     public Date getDate() {
@@ -187,10 +130,6 @@ public class DataModel extends RealmObject {
         return viewDate;
     }
 
-    public void setViewDate(String viewDate) {
-        this.viewDate = viewDate;
-    }
-
     public String getServerPhotoURL() {
         return serverPhotoURL;
     }
@@ -201,10 +140,6 @@ public class DataModel extends RealmObject {
 
     public String getStoragePhotoURL() {
         return storagePhotoURL;
-    }
-
-    public void setStoragePhotoURL(String storagePhotoURL) {
-        this.storagePhotoURL = storagePhotoURL;
     }
 
     public int getStateIconImage() {

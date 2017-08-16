@@ -24,8 +24,11 @@ import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
 import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
+import com.vsevolod.swipe.addphoto.util.PicassoClient;
 
 import java.util.List;
+
+import it.sephiroth.android.library.picasso.Picasso;
 
 import static com.vsevolod.swipe.addphoto.util.MyTextUtil.highLightMatches;
 import static com.vsevolod.swipe.addphoto.util.MyTextUtil.toBold;
@@ -70,11 +73,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
 
     @Override
     public void onBindViewHolder(MyRecyclerViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder");// FIXME: 16.08.17 hardcode
+        Log.d(TAG, "onBindViewHolder");// FIXME: 16.08.17
         DataModel model = data.get(position);
-        byte[] photoByteArray = model.getPhoto();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
-        holder.mPhotoImageView.setImageBitmap(bitmap);
+
+        PicassoClient.showResizedImage(holder.mPhotoImageView, model);
+
         holder.mStateIconImageView.setImageResource(model.getStateIconImage());
         holder.mDateTextView.setText(highLightMatches(model.getViewDate(), mSearchString));
         holder.mDateTextView.setContentDescription(model.getViewDate());
@@ -101,15 +104,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
                     highLightMatches(model.getViewComment(), mSearchString)));
             holder.mCommentTextView.setContentDescription("комментарий: " + model.getViewComment());
         }
-    }
-
-    @Override
-    public void onViewRecycled(MyRecyclerViewHolder holder) {
-        holder.itemView.setOnCreateContextMenuListener(null);
-        holder.itemView.setOnClickListener(null);
-        holder.mContextMenuImageButton.setOnClickListener(null);
-        super.onViewRecycled(holder);
-
     }
 
     @Override
