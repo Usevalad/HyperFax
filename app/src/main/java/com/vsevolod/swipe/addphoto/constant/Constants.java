@@ -14,4 +14,5 @@ public class Constants {
     public static final int THUMB_SIZE = 500;
     public static final int PHONE_NUMBER_LENGTH = 13;
     public static final int MIN_PASSWORD_LENGTH = 3;
+    public static final int DELETE_ID = 565;
 }

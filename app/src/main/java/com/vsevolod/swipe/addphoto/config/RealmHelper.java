@@ -235,6 +235,12 @@ public class RealmHelper {
         return TextUtils.equals(dataModel.getStateCode(), stateCode);
     }
 
+    public void deleteData(DataModel model) {
+        mRealm.beginTransaction();
+        model.deleteFromRealm();
+        mRealm.commitTransaction();
+    }
+
     public void countData() {
         Log.d(TAG, "countData");
         List<DataModel> data = getData();

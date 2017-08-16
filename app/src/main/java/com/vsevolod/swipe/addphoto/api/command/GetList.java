@@ -58,13 +58,11 @@ public class GetList implements Api {
                 Log.e(TAG, "getStateCodesFromServer: comments.size " + comments.size());
                 for (int i = 0; i < states.size(); i++) {
                     if (!mRealmHelper.isStateCodeEqual(ids.get(i), states.get(i))) {
-//                        mRealmHelper.setField(ids.get(i), mRealmHelper.STATE_CODE, states.get(i), false);
                         mRealmHelper.setStateCode(ids.get(i), states.get(i));
                         Log.e(TAG, "onResponse: id = " + ids.get(i));
                         Log.e(TAG, "onResponse: state = " + states.get(i));
                     }
                     if (!TextUtils.isEmpty(comments.get(i))) {
-//                        mRealmHelper.setField(ids.get(i), mRealmHelper.COMMENT, comments.get(i), false);
                         mRealmHelper.setComment(ids.get(i), comments.get(i));
                         Log.e(TAG, "onResponse: comment = " + comments.get(i));
                     }

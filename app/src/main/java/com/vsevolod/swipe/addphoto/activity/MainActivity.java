@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -58,7 +59,7 @@ import java.util.Locale;
 import io.realm.RealmChangeListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, MyRecyclerAdapter.DeletePostCallback {
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 23;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 24;
     private final String TAG = MainActivity.class.getSimpleName();
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
@@ -233,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (data != null) {
             Log.e(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(mContext, data));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(mContext, data, this));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -475,7 +477,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "onRefresh");
         if (isOnline()) {
             new ServerSyncTask().execute();
-        } else             // TODO: 24.05.17 change to a dialog fragment
+        } else
             Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deletePost(DataModel model) {
+        mRealmHelper.deleteData(model);
     }
 }

@@ -44,4 +44,5 @@
     <string name="number_to_long">Number is too long</string>
     <string name="number_to_short">Number is too short</string>
     <string name="ukraine_code">+380</string>
+    <string name="delete">Delete</string>
 </resources>

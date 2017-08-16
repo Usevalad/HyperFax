@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.activity.FullscreenActivity;
+import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 
@@ -34,18 +37,23 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     private Context context;
     public List<DataModel> data;
     private String mSearchString;
+    private DeletePostCallback mDeletePostCallback;
 
-    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data) {
+    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data,
+                             DeletePostCallback callback) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
+        this.mDeletePostCallback = callback;
     }
 
-    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data, String searchString) {
+    public MyRecyclerAdapter(Context context, @NonNull List<DataModel> data, String searchString,
+                             DeletePostCallback callback) {
         Log.d(TAG, "MyRecyclerAdapter: constructor");
         this.context = context;
         this.data = data;
         this.mSearchString = searchString;
+        this.mDeletePostCallback = callback;
     }
 
     @Override
@@ -92,33 +100,51 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
     }
 
     @Override
+    public void onViewRecycled(MyRecyclerViewHolder holder) {
+        holder.itemView.setOnCreateContextMenuListener(null);
+        holder.itemView.setOnClickListener(null);
+        super.onViewRecycled(holder);
+
+    }
+
+    @Override
     public int getItemCount() {
         return data.size();
     }
 
-    class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyRecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+            View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         TextView mDateTextView;
         TextView mPathTextView;
         TextView mDescriptionTextView;
-        TextView mLocation;
         TextView mCommentTextView;
         ImageView mPhotoImageView;
         ImageView mStateIconImageView;
-        CardView mCardView;
         Context context;
 
         private MyRecyclerViewHolder(final Context context, View itemView) {
             super(itemView);
             this.context = context;
-            mCardView = (CardView) itemView.findViewById(R.id.my_card_view);
             mPhotoImageView = (ImageView) itemView.findViewById(R.id.photo_image_view);
-            mPhotoImageView.setOnClickListener(this);
             mStateIconImageView = (ImageView) itemView.findViewById(R.id.icon_state_image_view);
             mPathTextView = (TextView) itemView.findViewById(R.id.path_text_view);
             mDateTextView = (TextView) itemView.findViewById(R.id.date_text_view);
             mDescriptionTextView = (TextView) itemView.findViewById(R.id.description_text_view);
             mCommentTextView = (TextView) itemView.findViewById(R.id.comment_text_view);
+            itemView.setOnCreateContextMenuListener(this);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            //get titles
+            String delete = v.getContext().getString(R.string.delete);
+            //set menu items
+            MenuItem Delete = menu.add(Menu.NONE, Constants.DELETE_ID, 1, delete);
+            //set onClickListener
+            Delete.setOnMenuItemClickListener(this);
+        }
+
 
         @Override
         public void onClick(View v) {
@@ -130,5 +156,23 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
             intent.putExtra(IntentKey.STORAGE_PHOTO_URL, storagePhotoURL);
             context.startActivity(intent);
         }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case Constants.DELETE_ID:
+                    int position = getAdapterPosition();
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, data.size());
+                    mDeletePostCallback.deletePost(data.get(position));
+                    return true;
+                default:
+                    return false;
+            }
+        }
+    }
+
+    public interface DeletePostCallback {
+        void deletePost(DataModel model);
     }
 }
