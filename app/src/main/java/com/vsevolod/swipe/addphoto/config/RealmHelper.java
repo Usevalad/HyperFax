@@ -18,7 +18,8 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 /**
- * Created by vsevolod on 26.03.17.
+ * Created by Student Vsevolod on 26.03.17.
+ * usevalad.uladzimiravich@gmail.com
  */
 
 public class RealmHelper {
@@ -28,10 +29,7 @@ public class RealmHelper {
     private final String TREE_SEARCH_NAME = "searchName";
     private final String PREFIX = "prefix";
     private final String UID = "uid";
-    public final String COMMENT = "searchComment";
-    public final String SERVER_PHOTO_URL = "serverPhotoURL";
-    public final String IS_SYNCED = "isSynced";
-    public final String STATE_CODE = "stateCOde";
+    private final String COMMENT = "searchComment";
     private Realm mRealm;
 
     public RealmHelper() {
@@ -140,39 +138,14 @@ public class RealmHelper {
     public void save(FlowsTreeModel model) {
         Log.d(TAG, "saveTreeListModel");
         this.mRealm.beginTransaction();
-        // Create an object// FIXME: 8/11/1 mRealm.copyToRealmOrUpdate(model);
-        FlowsTreeModel newModel = this.mRealm.createObject(FlowsTreeModel.class);
-        // Set its fields
-        newModel.setId(model.getId());
-        newModel.setViewName(model.getViewName());
-        newModel.setSearchName(model.getSearchName());
-        newModel.setParentId(model.getParentId());
-        newModel.setPrefix(model.getPrefix());
-
+        mRealm.copyToRealmOrUpdate(model);
         this.mRealm.commitTransaction();
     }
 
-    public void save(DataModel model) {//// FIXME: 8/11/1 mRealm.copyToRealmOrUpdate(model);
+    public void save(DataModel model) {
         Log.d(TAG, "saveDataModel");
         this.mRealm.beginTransaction();
-        // Create an object
-        DataModel newModel = this.mRealm.createObject(DataModel.class, UUID.randomUUID().toString());
-        // Set its fields
-        newModel.setSearchDate(model.getSearchDate());
-        newModel.setPrefix(model.getPrefix());
-        newModel.setPhoto(model.getPhoto());
-        newModel.setLatitude(model.getLatitude());
-        newModel.setLongitude(model.getLongitude());
-        newModel.setViewDescription(model.getViewDescription());
-        newModel.setSearchDescription(model.getSearchDescription());
-        newModel.setStateCode(model.getStateCode());
-        newModel.setStoragePhotoURL(model.getStoragePhotoURL());
-        newModel.setViewArticle(model.getViewArticle());
-        newModel.setSearchArticle(model.getSearchArticle());
-        newModel.setPrefixID(model.getPrefixID());
-        newModel.setDate(model.getDate());
-        newModel.setViewDate(model.getViewDate());
-
+        mRealm.copyToRealmOrUpdate(model);
         this.mRealm.commitTransaction();
     }
 
@@ -191,47 +164,46 @@ public class RealmHelper {
         }
     }
 
-    /**
-     * @param id        id of post to update
-     * @param fieldName name of field to update (serverPhotoUrl, isSynced, comment, etc)
-     * @param value     new field value to update (if field name is 'isSynced' - can be null)
-     * @param isSynced  new isSynced value (if field name not 'isSynced' - never used)
-     */
+    public void setServerPhotoURL(String id, String url) {
+        DataModel model = getDataById(id);
+        mRealm.beginTransaction();
+        model.setServerPhotoURL(url);
+        mRealm.commitTransaction();
+    }
 
-    public void setField(String id, String fieldName, String value, boolean isSynced) {
+    public void setStateCode(String id, String stateCode) {
+        DataModel model = getDataById(id);
+        mRealm.beginTransaction();
+        model.setStateCode(stateCode);
+        mRealm.commitTransaction();
+    }
+
+    public void setComment(String id, String comment) {
+        DataModel model = getDataById(id);
+        mRealm.beginTransaction();
+        model.setViewComment(comment);
+        mRealm.commitTransaction();
+    }
+
+    public void setSynced(String id, boolean isSynced) {
+        DataModel model = getDataById(id);
+        mRealm.beginTransaction();
+        model.setSynced(isSynced);
+        mRealm.commitTransaction();
+    }
+
+    private DataModel getDataById(String id) {
         Log.d(TAG, "setField");
-// FIXME: 8/11/17 refactor
         RealmQuery dataQuery = this.mRealm.where(DataModel.class);
         dataQuery.equalTo(UID, id);
-        DataModel model;
+        DataModel model = null;
         try {
             model = (DataModel) dataQuery.findFirst();
         } catch (NullPointerException e) {
             e.printStackTrace();
             Log.d(TAG, "getDataById: no data with such id");
-            return;
         }
-
-        this.mRealm.beginTransaction();
-        switch (fieldName) {
-            case SERVER_PHOTO_URL:
-                model.setServerPhotoURL(value);
-                break;
-            case COMMENT:
-                model.setViewComment(value);
-                model.setSearchComment(value.toLowerCase());
-                break;
-            case IS_SYNCED:
-                model.setSynced(isSynced);
-                break;
-            case STATE_CODE:
-                model.setStateCode(value);
-                break;
-            default:
-                break;
-        }
-        this.mRealm.copyToRealmOrUpdate(model);
-        this.mRealm.commitTransaction();
+        return model;
     }
 
     public RealmResults getNotSyncedData() {

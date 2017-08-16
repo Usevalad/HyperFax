@@ -5,6 +5,7 @@ import com.vsevolod.swipe.addphoto.constant.DataState;
 import com.vsevolod.swipe.addphoto.util.MyDateUtil;
 
 import java.util.Date;
+import java.util.UUID;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -12,7 +13,6 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by vsevolod on 09.04.17.
  */
-// TODO: 13.07.17 add date, viewDate, searchDate, latitude, longitude to constructor
 public class DataModel extends RealmObject {
     @PrimaryKey
     private String uid;
@@ -38,6 +38,7 @@ public class DataModel extends RealmObject {
     public DataModel(String prefix, String viewArticle, String viewDescription,
                      String storagePhotoURL, byte[] photo, double latitude, double longitude,
                      String prefixID) {
+        this.uid = UUID.randomUUID().toString();
         this.viewDescription = viewDescription;
         this.searchDescription = viewDescription.toLowerCase();
         this.latitude = latitude;
