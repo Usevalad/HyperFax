@@ -310,19 +310,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         inflater.inflate(R.menu.context_menu, menu);
     }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Log.e(TAG, "onContextItemSelected");
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.delete:
-                // TODO: 29.03.17 handle this
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
     private Uri getOutputPhotoFile() {
         Log.e(TAG, "getOutputPhotoFile");
         File directory = new File(Environment.getExternalStoragePublicDirectory(
@@ -399,8 +386,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startLoginActivity(boolean accountExists) {
         Log.e(TAG, "startLoginActivity");
-        // TODO: 29.06.17 испровить логику. при нажатии на кнопку выйти можно просто удалять акк,
-        // потом активити пересоздается и заходит в логин активити
         if (accountExists)
             AccountGeneral.removeAccount(this, (AccountManager) this.getSystemService(ACCOUNT_SERVICE));
         Intent intent = new Intent(this, LoginActivity.class);

@@ -16,7 +16,9 @@ import com.vsevolod.swipe.addphoto.constant.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -46,8 +48,15 @@ public class MyApplication extends Application {
                 .setLenient()
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .build();
+        
         mRetrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .client(okHttpClient)
                 //Конвертер, необходимый для преобразования JSON'а в объекты
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 //Базовая часть адреса
