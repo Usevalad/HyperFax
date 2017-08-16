@@ -220,7 +220,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         switch (actionId) {
             case EditorInfo.IME_ACTION_DONE:
-                hideKeyboard();
                 attemptLogin();
                 return true;
             default:

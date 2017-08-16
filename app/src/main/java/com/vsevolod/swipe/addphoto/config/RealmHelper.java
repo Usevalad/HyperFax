@@ -255,7 +255,6 @@ public class RealmHelper {
                             "comment = " + model.getViewDescription() + "\n" +
                             "storagePhotoURL = " + model.getStoragePhotoURL() + "\n" +
                             "serverPhotoURL = " + model.getServerPhotoURL() + "\n" +
-                            "photoArrayLength = " + model.getPhoto().length + "\n" +
                             "latitude = " + model.getLatitude() + "\n" +
                             "longitude = " + model.getLongitude() + "\n" +
                             "stateCode = " + model.getStateCode() + "\n" +
@@ -266,6 +265,7 @@ public class RealmHelper {
     }
 
     public void countTree() {
+        Log.e(TAG, "countTree");
         List<FlowsTreeModel> treeModels = getTree();
         for (FlowsTreeModel tree : treeModels) {
             Log.e(TAG, "countTree: getName " + tree.getViewName());

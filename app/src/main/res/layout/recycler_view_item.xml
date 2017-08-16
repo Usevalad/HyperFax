@@ -28,7 +28,7 @@
         <ImageView
             android:id="@+id/photo_image_view"
             android:layout_width="match_parent"
-            android:layout_height="370dp"
+            android:layout_height="700px"
             android:layout_below="@+id/date_text_view"
             android:layout_marginTop="10dp"
             android:contentDescription="@string/photo_description"
