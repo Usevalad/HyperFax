@@ -40,6 +40,7 @@ import com.vsevolod.swipe.addphoto.constant.ResponseStatus;
 import com.vsevolod.swipe.addphoto.fragment.QuitFragment;
 import com.vsevolod.swipe.addphoto.model.query.AuthModel;
 import com.vsevolod.swipe.addphoto.model.responce.AuthResponseModel;
+import com.vsevolod.swipe.addphoto.util.Validator;
 
 import java.io.IOException;
 
@@ -163,46 +164,17 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
         if (mAuthTask != null) {
             return;
         }
-        phoneNumber = mPhoneEditText.getText().toString();
-        password = mPasswordEditText.getText().toString();
-        mPasswordEditText.setError(passwordError(password));
-        mPhoneEditText.setError(phoneError(phoneNumber));
-        // FIXME: 8/11/17 mPhoneEditText.getError == null
-        // FIXME: 8/11/17 add validation to utils
-        if (passwordError(password) == null && phoneError(phoneNumber) == null) {
+        phoneNumber = Validator.validatePhone(mPhoneEditText);
+        password = Validator.validateInput(mPasswordEditText);
+
+        if (mPasswordEditText.getError() == null && mPhoneEditText.getError() == null) {
             if (isOnline()) {
                 showProgress(true);
                 new LoginTask().execute();
             } else {
                 Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
             }
-        } else mSubmitButton.setVisibility(View.GONE);
-    }
-
-    private String phoneError(String phoneNumber) {
-        Log.e(TAG, "isPhoneNumberValid");
-        if (TextUtils.isEmpty(phoneNumber)) {
-            mPhoneEditText.requestFocus();
-            return "Заполните поле";
-        } else if (!phoneNumber.startsWith("+380")) {
-            mPhoneEditText.requestFocus();
-            return "+380XXXXXXXXX";
-        } else if (phoneNumber.length() > Constants.PHONE_NUMBER_LENGTH) {
-            mPhoneEditText.requestFocus();
-            return "Номер слишком длинный";
-        } else if (phoneNumber.length() < Constants.PHONE_NUMBER_LENGTH) {
-            mPhoneEditText.requestFocus();
-            return "Номер слишком короткий";
-        } else
-            return null;
-    }
-
-    private String passwordError(String password) {
-        Log.e(TAG, "isPasswordValid");
-        if (TextUtils.isEmpty(password)) {
-            return "Заполните поле";
-        } else
-            return null;
+        }
     }
 
     /**
@@ -247,28 +219,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements TextV
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         switch (actionId) {
-            case EditorInfo.IME_ACTION_NEXT:
-                mPhoneEditText.setError(phoneError(mPhoneEditText.getText().toString()));
-                if (phoneError(mPhoneEditText.getText().toString()) == null &&
-                        passwordError(mPasswordEditText.getText().toString()) == null) {
-                    hideKeyboard();
-                    mSubmitButton.setVisibility(View.VISIBLE);
-                } else if (phoneError(mPhoneEditText.getText().toString()) == null &&
-                        passwordError(mPasswordEditText.getText().toString()) != null)
-                    mPasswordEditText.requestFocus();
-                else {
-                    mSubmitButton.setVisibility(View.GONE);
-                }
-                return true;
             case EditorInfo.IME_ACTION_DONE:
-                mPasswordEditText.setError(passwordError(mPasswordEditText.getText().toString()));
-                if (passwordError(mPasswordEditText.getText().toString()) == null &&
-                        phoneError(mPhoneEditText.getText().toString()) == null) {
-                    hideKeyboard();
-                    mSubmitButton.setVisibility(View.VISIBLE);
-                } else {
-                    mSubmitButton.setVisibility(View.GONE);
-                }
+                hideKeyboard();
+                attemptLogin();
                 return true;
             default:
                 return false;

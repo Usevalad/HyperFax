@@ -96,7 +96,7 @@
                 android:contentDescription="@string/enter"
                 android:text="@string/enter"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

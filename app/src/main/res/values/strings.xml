@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">HyperFax</string>
+    <string name="app_name">HyperFax</string>
     <string name="account_type" translatable="false">com.vsevolod.swipe.addphoto</string>
     <string name="title_activity_login" translatable="false">Sign in</string>
     <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
