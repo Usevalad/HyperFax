@@ -57,7 +57,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private String mText;
     private long mLastClickTime = 0;
     private Location mLocation = null;
-    private Context mContext = MyApplication.getContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +94,14 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void setViews() {
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
-        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(mContext));
+        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(this));
         mAutoCompleteTextView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         mAutoCompleteTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText = (EditText) findViewById(R.id.adding_edit_text);
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-        findViewById(R.id.flow_tree_button).setOnClickListener(this);
+//        findViewById(R.id.flow_tree_button).setOnClickListener(this);
     }
 
     private void getLocation() {
@@ -119,6 +118,9 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                             Log.e(TAG, "call: " + location.getLatitude() + " " + location.getLongitude());
                         }
                     });
+            subscribe.unsubscribe();
+            subscribe = null;
+            locationProvider = null;
         }
     }
 
@@ -137,17 +139,16 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         super.onResume();
     }
 
-    private void decodeImage() {
+    private void convertPath() {
         Log.e(TAG, "decodeImage");
         if (mPhotoUri != null) {
             int photoResource = getIntent().getIntExtra(IntentKey.PHOTO_RES, 0);
             String path = new PathConverter(this).getFullPath(mPhotoUri, photoResource);
             if (isPrefixValid()) {
-                byte[] image = ImageConverter.imageToByte(path);
-                saveDataToRealm(image, path);
+                saveDataToRealm(path);
             }
         } else {
-            Toast.makeText(mContext, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -162,12 +163,12 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         return true;
     }
 
-    private void saveDataToRealm(@NonNull byte[] byteArray, @NonNull String photoUri) {
+    private void saveDataToRealm(String path) {
         Log.e(TAG, "saveDataToRealm");
 
         String prefix = mText.substring(mText.length() - 4); //4 is a prefix length
 
-        GeoDegree geoDegree = new GeoDegree(photoUri);
+        GeoDegree geoDegree = new GeoDegree(path);
         double latitude = 0.0, longitude = 0.0;
 
         if (geoDegree.isValid()) {
@@ -182,8 +183,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 prefix,
                 mText.substring(0, mText.length() - 5),//5 is a prefix length + space
                 mEditText.getText().toString(),
-                photoUri,
-                byteArray,
+                path,
                 latitude,
                 longitude,
                 mRealmHelper.getPrefixID(prefix)
@@ -198,7 +198,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         }
         if (!isOnline()) {
             // TODO: 24.05.17 change to a dialog fragment
-            Toast.makeText(mContext, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
         }
         finish();
     }
@@ -230,7 +230,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
-        decodeImage();
+        convertPath();
     }
 
     @Override

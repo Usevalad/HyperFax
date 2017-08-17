@@ -1,12 +1,17 @@
 package com.vsevolod.swipe.addphoto.model.realm;
 
+import java.util.UUID;
+
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by vsevolod on 08.04.17.
  */
 
 public class FlowsTreeModel extends RealmObject {
+    @PrimaryKey
+    private String uid;
     private String id;
     private String viewName;
     private String searchName;
@@ -19,6 +24,7 @@ public class FlowsTreeModel extends RealmObject {
         this.searchName = searchName;
         this.prefix = prefix;
         this.parentId = parentId;
+        this.uid = UUID.randomUUID().toString();
     }
 
     public FlowsTreeModel() {

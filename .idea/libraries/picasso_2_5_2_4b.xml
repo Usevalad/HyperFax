@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="picasso-2.5.2.4b">
     <CLASSES>
-      <root url="file://$USER_HOME$/.android/build-cache/168dd6f3f54b14c342a5eba0b624cdaba6d29326/output/res" />
-      <root url="jar://$USER_HOME$/.android/build-cache/168dd6f3f54b14c342a5eba0b624cdaba6d29326/output/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/d669da2e5d80571f4e6551e49176a1690ab72655/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/d669da2e5d80571f4e6551e49176a1690ab72655/output/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,5 +1,6 @@
 package com.vsevolod.swipe.addphoto.util;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.widget.EditText;
 
@@ -24,22 +25,24 @@ public class Validator {
      * @return string from editText
      */
     public static String validatePhone(EditText editText) {
+        Context context = editText.getContext();
         String phoneNumber = editText.getText().toString();
-        String ukraineCode = MyApplication.getContext().getString(R.string.ukraine_code);
+        String ukraineCode = context.getString(R.string.ukraine_code);
+
         if (TextUtils.isEmpty(phoneNumber)) {
             editText.requestFocus();
-            String error = MyApplication.getContext().getString(R.string.fill_field);
+            String error = context.getString(R.string.fill_field);
             editText.setError(error);
         } else if (!phoneNumber.startsWith(ukraineCode)) {
-            String error = MyApplication.getContext().getString(R.string.number_format);
+            String error = context.getString(R.string.number_format);
             editText.requestFocus();
             editText.setError(error);
         } else if (phoneNumber.length() > Constants.PHONE_NUMBER_LENGTH) {
-            String error = MyApplication.getContext().getString(R.string.number_to_long);
+            String error = context.getString(R.string.number_to_long);
             editText.requestFocus();
             editText.setError(error);
         } else if (phoneNumber.length() < Constants.PHONE_NUMBER_LENGTH) {
-            String error = MyApplication.getContext().getString(R.string.number_to_short);
+            String error = context.getString(R.string.number_to_short);
             editText.requestFocus();
             editText.setError(error);
         } else
@@ -56,8 +59,10 @@ public class Validator {
      */
     public static String validateInput(EditText editText) {
         String text = editText.getText().toString();
+        Context context = editText.getContext();
+
         if (TextUtils.isEmpty(text)) {
-            String error = MyApplication.getContext().getString(R.string.fill_field);
+            String error = context.getString(R.string.fill_field);
             editText.setError(error);
             editText.requestFocus();
         }

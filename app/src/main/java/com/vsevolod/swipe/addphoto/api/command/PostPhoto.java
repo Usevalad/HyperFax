@@ -79,13 +79,13 @@ public class PostPhoto implements Api {
                 Log.e(TAG, "commit : commitResponse.log() " + commitResponse.body().getLog());
                 switch (commitResponse.body().getStatus()) {
                     case ResponseStatus.PARAM:
-                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, DataState.PARAM, false);
-                        mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
+                        mRealmHelper.setStateCode(id, DataState.PARAM);
+                        mRealmHelper.setSynced(id, true);
                         break;
                     case ResponseStatus.OK:
-                        mRealmHelper.setField(id, mRealmHelper.SERVER_PHOTO_URL, link, false);
-                        mRealmHelper.setField(id, mRealmHelper.IS_SYNCED, null, true);
-                        mRealmHelper.setField(id, mRealmHelper.STATE_CODE, DataState.CREATED, false);
+                        mRealmHelper.setSynced(id, true);
+                        mRealmHelper.setServerPhotoURL(id, link);
+                        mRealmHelper.setStateCode(id, DataState.CREATED);
                         break;
                     case ResponseStatus.AUTH:
                         AccountGeneral.cancelPeriodicSync(mContext);

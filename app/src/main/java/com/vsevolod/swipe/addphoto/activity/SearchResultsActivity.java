@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -30,7 +31,7 @@ import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultsActivity extends AppCompatActivity {
+public class SearchResultsActivity extends AppCompatActivity implements MyRecyclerAdapter.DeletePostCallback {
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper;
     private List<DataModel> data = new ArrayList<>();
@@ -61,7 +62,8 @@ public class SearchResultsActivity extends AppCompatActivity {
             RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.search_result_recycler);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerView.setHasFixedSize(true);
-            mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, searchString));
+            mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, searchString, this));
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
         mContext = getApplicationContext();
     }
@@ -152,5 +154,10 @@ public class SearchResultsActivity extends AppCompatActivity {
             searchString = intent.getStringExtra(SearchManager.QUERY).toLowerCase();
             data = mRealmHelper.search(searchString);
         }
+    }
+
+    @Override
+    public void deletePost(DataModel model) {
+        mRealmHelper.deleteData(model);
     }
 }

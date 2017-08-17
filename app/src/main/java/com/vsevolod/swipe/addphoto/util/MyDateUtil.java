@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 public final class MyDateUtil {
     private static SimpleDateFormat viewDateFormat = new SimpleDateFormat("HH:mm  dd.MM.yyyy EEEE");
-    private static SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static SimpleDateFormat searchDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String getViewDate() {
         return viewDateFormat.format(new Date());

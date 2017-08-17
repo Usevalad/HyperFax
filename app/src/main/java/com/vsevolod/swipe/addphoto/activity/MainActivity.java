@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -58,7 +59,7 @@ import java.util.Locale;
 import io.realm.RealmChangeListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RealmChangeListener,
-        SwipeRefreshLayout.OnRefreshListener {
+        SwipeRefreshLayout.OnRefreshListener, MyRecyclerAdapter.DeletePostCallback {
     private static final int GALLERY_PERMISSION_REQUEST_CODE = 23;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 24;
     private final String TAG = MainActivity.class.getSimpleName();
@@ -77,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isChecked = false;
     private Uri mFileUri = null;
     private RealmHelper mRealmHelper;
-    private Context mContext = MyApplication.getContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         setFABAnimation();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);
         setRecyclerViewAdapter();
         setFabHidingAbility();
@@ -216,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.main_menu_request_flow:
                 new TreeConverterTask().execute();
-//                mRealmHelper.countTree();
+                mRealmHelper.countTree();
 //                mRealmHelper.countData();
                 break;
             case R.id.main_menu_log_out:
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (data != null) {
             Log.e(TAG, "setRecyclerViewAdapter: true");
             try {
-                mRecyclerView.setAdapter(new MyRecyclerAdapter(mContext, data));
+                mRecyclerView.setAdapter(new MyRecyclerAdapter(this, data, this));
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -306,19 +307,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        Log.e(TAG, "onContextItemSelected");
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.delete:
-                // TODO: 29.03.17 handle this
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
     }
 
     private Uri getOutputPhotoFile() {
@@ -397,8 +385,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void startLoginActivity(boolean accountExists) {
         Log.e(TAG, "startLoginActivity");
-        // TODO: 29.06.17 испровить логику. при нажатии на кнопку выйти можно просто удалять акк,
-        // потом активити пересоздается и заходит в логин активити
         if (accountExists)
             AccountGeneral.removeAccount(this, (AccountManager) this.getSystemService(ACCOUNT_SERVICE));
         Intent intent = new Intent(this, LoginActivity.class);
@@ -475,7 +461,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "onRefresh");
         if (isOnline()) {
             new ServerSyncTask().execute();
-        } else             // TODO: 24.05.17 change to a dialog fragment
+        } else
             Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deletePost(DataModel model) {
+        mRealmHelper.deleteData(model);
     }
 }
