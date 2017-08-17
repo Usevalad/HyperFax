@@ -64,7 +64,8 @@
                     android:layout_marginRight="5dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/show_password"
-                    android:src="@drawable/ic_file_tree" />
+                    android:src="@drawable/ic_file_tree"
+                    android:visibility="gone"/>
             </RelativeLayout>
 
             <EditText

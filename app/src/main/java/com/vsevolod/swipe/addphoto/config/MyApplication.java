@@ -13,6 +13,7 @@ import com.jaredrummler.android.device.DeviceName;
 import com.vsevolod.swipe.addphoto.BuildConfig;
 import com.vsevolod.swipe.addphoto.api.MyasoApi;
 import com.vsevolod.swipe.addphoto.constant.Constants;
+import com.vsevolod.swipe.addphoto.util.MyDateUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +32,6 @@ public class MyApplication extends Application {
     private final static String TAG = "MyApplication";
     private static Context mContext;
     private static MyasoApi mMyasoApi;
-    private Retrofit mRetrofit;
     private static String mAppVersionName;
     private static int mAppVersionCode;
     private static String mBuildDate;
@@ -53,8 +53,8 @@ public class MyApplication extends Application {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .build();
-        
-        mRetrofit = new Retrofit.Builder()
+
+        Retrofit mRetrofit = new Retrofit.Builder()
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .client(okHttpClient)
                 //Конвертер, необходимый для преобразования JSON'а в объекты
@@ -74,9 +74,8 @@ public class MyApplication extends Application {
             e.printStackTrace();
         }
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        mBuildDate = format.format(buildDate);
+        mBuildDate = MyDateUtil.searchDateFormat.format(buildDate);
         mAppVersionName = pInfo.versionName;
         mAppVersionCode = pInfo.versionCode;
         mBuildVersion = Build.VERSION.SDK_INT;
@@ -124,4 +123,5 @@ public class MyApplication extends Application {
     public static String getAppVersionName() {
         return mAppVersionName;
     }
+
 }

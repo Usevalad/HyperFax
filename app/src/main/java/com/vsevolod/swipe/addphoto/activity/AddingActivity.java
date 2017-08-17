@@ -57,7 +57,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private String mText;
     private long mLastClickTime = 0;
     private Location mLocation = null;
-    private Context mContext = MyApplication.getContext();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +94,14 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     private void setViews() {
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
-        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(mContext));
+        mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(this));
         mAutoCompleteTextView.setImeOptions(EditorInfo.IME_ACTION_NEXT);
         mAutoCompleteTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText = (EditText) findViewById(R.id.adding_edit_text);
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-        findViewById(R.id.flow_tree_button).setOnClickListener(this);
+//        findViewById(R.id.flow_tree_button).setOnClickListener(this);
     }
 
     private void getLocation() {
@@ -149,7 +148,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                 saveDataToRealm(path);
             }
         } else {
-            Toast.makeText(mContext, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -199,7 +198,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         }
         if (!isOnline()) {
             // TODO: 24.05.17 change to a dialog fragment
-            Toast.makeText(mContext, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
         }
         finish();
     }
