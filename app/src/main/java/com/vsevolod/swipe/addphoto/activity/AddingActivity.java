@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,14 +32,12 @@ import android.widget.Toast;
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
-import com.vsevolod.swipe.addphoto.config.MyApplication;
 import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.constant.IntentKey;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.util.GeoDegree;
-import com.vsevolod.swipe.addphoto.util.ImageConverter;
 import com.vsevolod.swipe.addphoto.util.PathConverter;
 
 import pl.charmas.android.reactivelocation.ReactiveLocationProvider;
@@ -135,7 +132,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     @Override
     protected void onResume() {
         Log.e(TAG, "onResume");
-        mEditText.setOnEditorActionListener(this);
         super.onResume();
     }
 
@@ -143,7 +139,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         Log.e(TAG, "decodeImage");
         if (mPhotoUri != null) {
             int photoResource = getIntent().getIntExtra(IntentKey.PHOTO_RES, 0);
-            String path = new PathConverter(this).getFullPath(mPhotoUri, photoResource);
+            String path = new PathConverter().getFullPath(mPhotoUri, photoResource);
             if (isPrefixValid()) {
                 saveDataToRealm(path);
             }

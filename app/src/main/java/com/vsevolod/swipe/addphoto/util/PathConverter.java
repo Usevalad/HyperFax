@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.vsevolod.swipe.addphoto.config.MyApplication;
+
 /**
  * Created by vsevolod on 21.04.17.
  * getting full path instead of short android absolute path
@@ -19,9 +21,9 @@ public final class PathConverter {
     private final String TAG = this.getClass().getSimpleName();
     private Context mContext;
 
-    public PathConverter(Context context) {
+    public PathConverter() {
         Log.e(TAG, "PathConverter: constructor");
-        this.mContext = context;
+        this.mContext = MyApplication.getContext();
     }
 
     public String getFullPath(Uri uri, int photoResource) {
