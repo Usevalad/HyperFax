@@ -18,7 +18,7 @@ public class RemovePhotoFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle(getString(R.string.app_name));
-        alertDialogBuilder.setMessage(getString(R.string.realy_want_to_delete_all_data));
+        alertDialogBuilder.setMessage(getString(R.string.really_want_to_delete_all_data));
         alertDialogBuilder.setNegativeButton(getResources().getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
 

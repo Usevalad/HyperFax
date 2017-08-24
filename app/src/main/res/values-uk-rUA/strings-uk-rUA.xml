@@ -30,7 +30,7 @@
         - Спробуйте використовувати більш популярні ключові слова.\n
         - Спробуйте зменшити кількість слів у запиті.\n</string>
     <string name="recommendation">Рекомендації: </string>
-    <string name="realy_want_to_delete_all_data">Ви дійсно хочете видалити усі фото?</string>
+    <string name="really_want_to_delete_all_data">Ви дійсно хочете видалити усі фото?</string>
     <string name="fill_field">Заповніть поле</string>
     <string name="number_format">+380XXXXXXXXX</string>
     <string name="number_to_long">Номер занадто довгий</string>

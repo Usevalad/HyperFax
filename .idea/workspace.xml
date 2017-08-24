@@ -40,13 +40,40 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="AddingActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="AddingActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="150" column="16" selection-start-line="150" selection-start-column="16" selection-end-line="150" selection-end-column="16" />
+            <state relative-caret-position="283">
+              <caret line="58" column="25" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="activity_adding2.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_adding2.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-84">
+              <caret line="49" column="27" selection-start-line="49" selection-start-column="27" selection-end-line="49" selection-end-column="27" />
+              <folding />
+            </state>
+          </provider>
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MyRecyclerAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="364">
+              <caret line="96" column="39" selection-start-line="96" selection-start-column="39" selection-end-line="96" selection-end-column="39" />
+              <folding>
+                <element signature="e#3215#3256#0" expanded="true" />
+                <element signature="e#3667#3712#0" expanded="true" />
+                <element signature="e#4098#4139#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -62,10 +89,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FlowsTreeFragment.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FlowsTreeFragment.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/fragment/FlowsTreeFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2574">
+            <state relative-caret-position="1980">
               <caret line="164" column="30" selection-start-line="164" selection-start-column="30" selection-end-line="164" selection-end-column="30" />
               <folding>
                 <element signature="e#3569#3899#0" expanded="true" />
@@ -3720,7 +3747,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/model/realm/DataModel.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/model/realm/FlowsTreeModel.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/recycler_view_item.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/activity/LoginActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml" />
         <option value="$PROJECT_DIR$/app/build.gradle" />
@@ -3736,9 +3762,11 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_flows_tree.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/holder/IconTreeItemHolder.java" />
         <option value="$PROJECT_DIR$/flowstreelibrary/src/main/java/com/vsevolod/flowstreelibrary/model/TreeNode.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/fragment/FlowsTreeFragment.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_adding2.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/fragment/FlowsTreeFragment.java" />
       </list>
     </option>
   </component>
@@ -4037,7 +4065,7 @@
     <property name="ExportApk.SignV1" value="true" />
     <property name="ExportApk.SignV2" value="true" />
     <property name="full.screen.before.presentation.mode" value="false" />
-    <property name="SearchEverywhereHistoryKey" value="login&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/LoginActivity.java&#10;rea&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/config/RealmHelper.java&#10;addi&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java&#10;strings&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/res/values/strings.xml&#10;myad&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java&#10;pi&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/util/PicassoClient.java&#10;data&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/model/realm/DataModel.java&#10;tremo&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel&#10;main&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/MainActivity.java&#10;fu&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.activity.FullscreenActivity&#10;searc&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/SearchResultsActivity.java&#10;ma&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.activity.MainActivity&#10;val&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/util/Validator.java&#10;l&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/LoginActivity.java&#10;Da&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.model.realm.DataModel" />
+    <property name="SearchEverywhereHistoryKey" value="strings&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/res/values/strings.xml&#10;adapter&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java&#10;login&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/LoginActivity.java&#10;rea&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/config/RealmHelper.java&#10;addi&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java&#10;myad&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java&#10;pi&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/util/PicassoClient.java&#10;data&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/model/realm/DataModel.java&#10;tremo&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.model.realm.FlowsTreeModel&#10;main&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/MainActivity.java&#10;fu&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.activity.FullscreenActivity&#10;searc&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/SearchResultsActivity.java&#10;ma&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.activity.MainActivity&#10;val&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/util/Validator.java&#10;l&#9;FILE&#9;file:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/src/main/java/com/vsevolod/swipe/addphoto/activity/LoginActivity.java&#10;Da&#9;PSI&#9;JAVA://com.vsevolod.swipe.addphoto.model.realm.DataModel" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="DEBUGGABLE_DEVICE" value="meizu-u10-U10HFCPQ22M2D" />
     <property name="DEBUGGABLE_PROCESS" value="com.vsevolod.swipe.addphoto" />
@@ -4371,7 +4399,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="52" width="1366" height="716" extended-state="0" />
+    <frame x="0" y="52" width="1366" height="716" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293919" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -4629,13 +4657,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1548">
-          <caret line="119" column="42" selection-start-line="119" selection-start-column="42" selection-end-line="119" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="261">
@@ -4644,19 +4665,6 @@
         </state>
       </provider>
       <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="android-dummy:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/Translations Editor">
-      <provider selected="true" editor-type-id="string-resource-editor">
         <state />
       </provider>
     </entry>
@@ -4860,34 +4868,11 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_adding2.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="27" column="20" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
-          <folding>
-            <element signature="e#1247#1287#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/accountAuthenticator/AccountGeneral.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-125">
           <caret line="55" column="31" selection-start-line="55" selection-start-column="28" selection-end-line="55" selection-end-column="31" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="150" column="16" selection-start-line="150" selection-start-column="16" selection-end-line="150" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -4901,13 +4886,59 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/fragment/FlowsTreeFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2574">
+        <state relative-caret-position="1980">
           <caret line="164" column="30" selection-start-line="164" selection-start-column="30" selection-end-line="164" selection-end-column="30" />
           <folding>
             <element signature="e#3569#3899#0" expanded="true" />
             <element signature="e#3898#3899#0" expanded="true" />
             <element signature="e#6813#7036#0" expanded="true" />
             <element signature="e#7035#7036#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="android-dummy:///home/vsevolod/Projects/AndroidStudioProjects/HyperFax/HyperFax/app/Translations Editor">
+      <provider selected="true" editor-type-id="string-resource-editor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="40" column="68" selection-start-line="40" selection-start-column="68" selection-end-line="40" selection-end-column="68" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/adapter/MyRecyclerAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="96" column="39" selection-start-line="96" selection-start-column="39" selection-end-line="96" selection-end-column="39" />
+          <folding>
+            <element signature="e#3215#3256#0" expanded="true" />
+            <element signature="e#3667#3712#0" expanded="true" />
+            <element signature="e#4098#4139#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_adding2.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-84">
+          <caret line="49" column="27" selection-start-line="49" selection-start-column="27" selection-end-line="49" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/vsevolod/swipe/addphoto/activity/AddingActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="58" column="25" selection-start-line="58" selection-start-column="25" selection-end-line="58" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

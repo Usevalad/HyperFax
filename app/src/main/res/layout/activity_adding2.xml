@@ -48,6 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/appointment"
+                android:imeOptions="actionNext"
                 android:inputType="textMultiLine"
                 android:minHeight="48dp"
                 android:scrollHorizontally="false" />
@@ -69,6 +70,7 @@
             android:id="@+id/adding_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
             android:layout_below="@id/auto_complete_form"
             android:hint="@string/description"
             android:inputType="textMultiLine|textAutoCorrect"

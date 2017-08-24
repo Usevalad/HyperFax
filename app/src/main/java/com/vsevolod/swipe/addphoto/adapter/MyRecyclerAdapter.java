@@ -82,27 +82,24 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.My
         holder.mDateTextView.setText(highLightMatches(model.getViewDate(), mSearchString));
         holder.mDateTextView.setContentDescription(model.getViewDate());
         holder.mPathTextView.setText(TextUtils.concat(
-                toBold("статья: "),
+                toBold(context.getString(R.string.article_field)),
                 highLightMatches(model.getViewArticle() + " " + model.getPrefix(), mSearchString)));
-        holder.mPathTextView.setContentDescription("статья: " + model.getViewArticle() + " " + model.getPrefix());
 
         if (TextUtils.isEmpty(model.getViewDescription())) {
             holder.mDescriptionTextView.setVisibility(View.GONE);
         } else {
             holder.mDescriptionTextView.setVisibility(View.VISIBLE);
             holder.mDescriptionTextView.setText(TextUtils.concat(
-                    toBold("описание: "),
+                    toBold(context.getString(R.string.description_field)),
                     highLightMatches(model.getViewDescription(), mSearchString)));
-            holder.mDescriptionTextView.setContentDescription("описание: " + model.getViewDescription());
         }
         if (TextUtils.isEmpty(model.getViewComment())) {
             holder.mCommentTextView.setVisibility(View.GONE);
         } else {
             holder.mCommentTextView.setVisibility(View.VISIBLE);
             holder.mCommentTextView.setText(TextUtils.concat(
-                    toBold("комментарий: "),
+                    toBold(context.getString(R.string.comment_field)),
                     highLightMatches(model.getViewComment(), mSearchString)));
-            holder.mCommentTextView.setContentDescription("комментарий: " + model.getViewComment());
         }
     }
 

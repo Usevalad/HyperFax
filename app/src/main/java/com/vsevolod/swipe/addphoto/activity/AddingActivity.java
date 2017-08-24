@@ -97,7 +97,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         getLocation();
     }
 
-    private void setViews() {// FIXME: 24.08.17 add ime options to xml
+    private void setViews() {
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
         mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(this));
