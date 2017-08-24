@@ -17,11 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-//import com.unnamed.b.atv.R;
-//import com.unnamed.b.atv.view.AndroidTreeView;
-//import com.unnamed.b.atv.view.TreeNodeWrapperView;
-//
-
 public class TreeNode {
     public static final String NODES_ID_SEPARATOR = ":";
 
@@ -145,7 +140,6 @@ public class TreeNode {
         return path.toString();
     }
 
-
     public int getLevel() {
         int level = 0;
         TreeNode root = this;
@@ -165,6 +159,10 @@ public class TreeNode {
             }
         }
         return false;
+    }
+
+    public boolean haveChildren() {
+        return children.size() != 0;
     }
 
     public TreeNode setViewHolder(BaseNodeViewHolder viewHolder) {
@@ -249,7 +247,7 @@ public class TreeNode {
             return mView;
         }
 
-        public void setTreeViev(AndroidTreeView treeViev) {
+        public void setTreeView(AndroidTreeView treeViev) {
             this.tView = treeViev;
         }
 
@@ -276,7 +274,6 @@ public class TreeNode {
         public int getContainerStyle() {
             return containerStyle;
         }
-
 
         public abstract View createNodeView(TreeNode node, E value);
 

@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,19 +24,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vsevolod.swipe.addphoto.R;
 import com.vsevolod.swipe.addphoto.accountAuthenticator.AccountGeneral;
 import com.vsevolod.swipe.addphoto.adapter.AutoCompleteAdapter;
-import com.vsevolod.swipe.addphoto.config.PreferenceHelper;
 import com.vsevolod.swipe.addphoto.config.RealmHelper;
 import com.vsevolod.swipe.addphoto.constant.Constants;
 import com.vsevolod.swipe.addphoto.constant.IntentKey;
+import com.vsevolod.swipe.addphoto.fragment.FlowsTreeFragment;
 import com.vsevolod.swipe.addphoto.model.realm.DataModel;
 import com.vsevolod.swipe.addphoto.util.GeoDegree;
 import com.vsevolod.swipe.addphoto.util.PathConverter;
@@ -45,15 +50,19 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 public class AddingActivity extends AppCompatActivity implements TextView.OnEditorActionListener,
-        View.OnClickListener {
+        View.OnClickListener, FlowsTreeFragment.OnFolderPickedListener {
     private final String TAG = this.getClass().getSimpleName();
     private RealmHelper mRealmHelper;
-    public AutoCompleteTextView mAutoCompleteTextView;
+    private AutoCompleteTextView mAutoCompleteTextView;
     private EditText mEditText;
     private Uri mPhotoUri = null;
     private String mText;
     private long mLastClickTime = 0;
     private Location mLocation = null;
+    private FlowsTreeFragment mFlowsTreeFragment;
+    private RelativeLayout mContainer;
+    private ImageButton mFlowsTreeButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +77,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         getSupportActionBar().setHomeButtonEnabled(true);
         toolbar.setLogo(R.drawable.ic_toolbar_logo);
 
-        final Intent intent = getIntent();
+        Intent intent = getIntent();
 
         if (TextUtils.equals(Intent.ACTION_SEND, intent.getAction()) && intent.getType() != null) {
             if (TextUtils.equals(intent.getType(), Constants.MEDIA_TYPE_IMAGE)) {
@@ -88,7 +97,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         getLocation();
     }
 
-    private void setViews() {
+    private void setViews() {// FIXME: 24.08.17 add ime options to xml
         mAutoCompleteTextView =
                 (AutoCompleteTextView) findViewById(R.id.adding_auto_complete);
         mAutoCompleteTextView.setAdapter(new AutoCompleteAdapter(this));
@@ -98,10 +107,13 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         mEditText.setImeOptions(EditorInfo.IME_ACTION_SEND);
         mEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
         mEditText.setOnEditorActionListener(this);
-//        findViewById(R.id.flow_tree_button).setOnClickListener(this);
+        mContainer = (RelativeLayout) findViewById(R.id.adding_container);
+        mFlowsTreeButton = (ImageButton) findViewById(R.id.flow_tree_button);
+        mFlowsTreeButton.setOnClickListener(this);
     }
 
     private void getLocation() {
+        // FIXME: 24.08.17 create locationUtil
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED &&
@@ -116,8 +128,6 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
                         }
                     });
             subscribe.unsubscribe();
-            subscribe = null;
-            locationProvider = null;
         }
     }
 
@@ -125,14 +135,9 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     protected void onDestroy() {
         Log.e(TAG, "onDestroy");
         mEditText.setOnEditorActionListener(null);
+        mFlowsTreeButton.setOnClickListener(null);
         mRealmHelper.close();
         super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.e(TAG, "onResume");
-        super.onResume();
     }
 
     private void convertPath() {
@@ -143,7 +148,7 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
             if (isPrefixValid()) {
                 saveDataToRealm(path);
             }
-        } else {
+        } else { // FIXME: 24.08.17 hardcode
             Toast.makeText(this, "Не правильный путь к фото", Toast.LENGTH_SHORT).show();
         }
     }
@@ -186,16 +191,13 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
         );
 
         mRealmHelper.save(model);
-        Account account = new Account(new PreferenceHelper().getAccountName(), AccountGeneral.ARG_ACCOUNT_TYPE);
-        Log.e(TAG, "saveDataToRealm: ContentResolver.isSyncActive");
-        if (!ContentResolver.isSyncPending(account, getString(R.string.content_authority))) {
-            Log.e(TAG, "saveDataToRealm: !ContentResolver.isSyncPending ");
-            AccountGeneral.sync();
-        }
+        AccountGeneral.sync();
+
         if (!isOnline()) {
             // TODO: 24.05.17 change to a dialog fragment
             Toast.makeText(this, "Нет соединения. Данные будут отправлены позже", Toast.LENGTH_SHORT).show();
         }
+
         finish();
     }
 
@@ -251,12 +253,58 @@ public class AddingActivity extends AppCompatActivity implements TextView.OnEdit
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.flow_tree_button:
-                // TODO: 8/6/17 start lows tree fragment
-                mAutoCompleteTextView.setText("Тест 6700");
-                mEditText.requestFocus();
+                showFlowsTreeFragment();
                 break;
             default:
                 break;
         }
+    }
+
+    private void showFlowsTreeFragment() {
+        hideKeyboard();
+        mContainer.setVisibility(View.GONE);
+        mFlowsTreeFragment = FlowsTreeFragment.newInstance(mRealmHelper.getTree());
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.activity_adding2, mFlowsTreeFragment)
+                .commit();
+    }
+
+    @Override
+    public void onFolderPicked(String folder) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(mFlowsTreeFragment)
+                .commit();
+
+        mContainer.setVisibility(View.VISIBLE);
+        mAutoCompleteTextView.setText(folder);
+        showKeyboard(mEditText);
+    }
+
+    private void showKeyboard(View view) {
+        view.requestFocus();
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(
+                view.getWindowToken(),
+                InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mFlowsTreeFragment.isVisible()) {
+            getSupportFragmentManager().beginTransaction().hide(mFlowsTreeFragment).commit();
+            mContainer.setVisibility(View.VISIBLE);
+            showKeyboard(mAutoCompleteTextView);
+        } else finish();
     }
 }
