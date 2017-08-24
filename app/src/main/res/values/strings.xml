@@ -38,11 +38,14 @@
         - Try using more popular keywords.\n
         - Try reducing the number of words in the query.\n</string>
     <string name="recommendation">Recommendations: </string>
-    <string name="realy_want_to_delete_all_data">Are you really want tot delete all photos?</string>
+    <string name="really_want_to_delete_all_data">Are you really want tot delete all photos?</string>
     <string name="fill_field">Fill in the field</string>
     <string name="number_format">+380XXXXXXXXX</string>
     <string name="number_to_long">Number is too long</string>
     <string name="number_to_short">Number is too short</string>
     <string name="ukraine_code">+380</string>
     <string name="delete">Delete</string>
+    <string name="article_field">"article: "</string>
+    <string name="description_field">"description: "</string>
+    <string name="comment_field">"comment: "</string>
 </resources>

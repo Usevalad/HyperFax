@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">HyperFax</string>
     <string name="delete">Удалить</string>
+    <string name="article_field">"cтатья: "</string>
+    <string name="comment_field">"комментарий: "</string>
+    <string name="description_field">"описание: "</string>
 </resources>

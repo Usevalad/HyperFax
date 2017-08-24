@@ -407,7 +407,7 @@ public class AndroidTreeView {
             viewHolder.setContainerStyle(containerStyle);
         }
         if (viewHolder.getTreeView() == null) {
-            viewHolder.setTreeViev(this);
+            viewHolder.setTreeView(this);
         }
         return viewHolder;
     }

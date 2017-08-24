@@ -81,7 +81,7 @@ public class RealmHelper {
         return dataQuery.findAllSorted(DATE, Sort.DESCENDING);
     }
 
-    private RealmResults getTree() {
+    public RealmResults getTree() {
         RealmQuery treeQuery = this.mRealm.where(FlowsTreeModel.class);
         return treeQuery.findAll();
     }

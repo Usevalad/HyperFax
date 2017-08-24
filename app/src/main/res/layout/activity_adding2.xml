@@ -2,80 +2,78 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_adding2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF"
     tools:context="com.vsevolod.swipe.addphoto.activity.AddingActivity">
 
-    <RelativeLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/adding_appbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/adding_appbar_layout"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/adding_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/AppToolbar"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/adding_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:elevation="4dp"
-                android:theme="@style/AppToolbar"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+        <include layout="@layout/divider" />
 
-            <include layout="@layout/divider" />
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+    <RelativeLayout
+        android:id="@+id/adding_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_below="@+id/adding_appbar_layout">
+
+        <ImageView
+            android:id="@+id/adding_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop" />
 
         <RelativeLayout
-            android:id="@+id/c"
+            android:id="@+id/auto_complete_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/adding_appbar_layout">
+            android:layout_below="@id/adding_image_view">
 
-            <ImageView
-                android:id="@+id/adding_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop" />
-
-            <RelativeLayout
-                android:id="@+id/auto_complete_form"
+            <AutoCompleteTextView
+                android:id="@+id/adding_auto_complete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/adding_image_view">
+                android:hint="@string/appointment"
+                android:imeOptions="actionNext"
+                android:inputType="textMultiLine"
+                android:minHeight="48dp"
+                android:scrollHorizontally="false" />
 
-                <AutoCompleteTextView
-                    android:id="@+id/adding_auto_complete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/appointment"
-                    android:inputType="textMultiLine"
-                    android:minHeight="48dp"
-                    android:scrollHorizontally="false" />
-
-                <ImageButton
-                    android:id="@+id/flow_tree_button"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"
-                    android:background="@android:color/transparent"
-                    android:contentDescription="@string/show_password"
-                    android:src="@drawable/ic_file_tree"
-                    android:visibility="gone"/>
-            </RelativeLayout>
-
-            <EditText
-                android:id="@+id/adding_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/auto_complete_form"
-                android:hint="@string/description"
-                android:inputType="textMultiLine|textAutoCorrect"
-                android:minHeight="48dp" />
+            <ImageButton
+                android:id="@+id/flow_tree_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/show_password"
+                android:src="@drawable/ic_file_tree"
+                android:visibility="visible" />
         </RelativeLayout>
+
+        <EditText
+            android:id="@+id/adding_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSend"
+            android:layout_below="@id/auto_complete_form"
+            android:hint="@string/description"
+            android:inputType="textMultiLine|textAutoCorrect"
+            android:minHeight="48dp" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>
