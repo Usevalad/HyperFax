@@ -3,16 +3,17 @@ apply plugin: 'realm-android'
 
 android {
     signingConfigs {
-//        config {
-//            keyAlias 'myFirstAndroidKey'
-//            keyPassword 'ubuntu1488'
-//            storeFile file('/home/vsevolod/keystore.jks')
-//            storePassword 'ubuntu1488'
-//        }
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('/home/vsevolod/Projects/AndroidStudioProjects/keyStore/debug.keystore')
+            storeFile file('/home/vsevolod/Projects/Android/keyStore/debug.keystore')
+            storePassword 'ubuntu1488'
+        }
+
+        release {
+            keyAlias 'myafirstandroidkey'
+            keyPassword 'ubuntu1488'
+            storeFile file('/home/vsevolod/Projects/Android/keyStore/keystore.jks')
             storePassword 'ubuntu1488'
         }
     }
@@ -25,13 +26,14 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 24
+        versionCode 25
         versionName "0.0.$versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
         setProperty("archivesBaseName", "Hyperfax $versionName")
         testApplicationId 'HyperFax'
         signingConfig signingConfigs.debug
+        buildConfigField "String", "MYASO_API_BASE_URL", '"https://erp.myaso.net.ua/ext/api/"'
     }
     buildTypes {
         release {
