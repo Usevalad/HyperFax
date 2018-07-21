@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "425516621207",
+    "firebase_url": "https://hyperfax-13b3f.firebaseio.com",
+    "project_id": "hyperfax-13b3f",
+    "storage_bucket": "hyperfax-13b3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425516621207:android:4d436bfe5e1577a3",
+        "android_client_info": {
+          "package_name": "com.vsevolod.swipe.addphoto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425516621207-nhnbqg845pselo3ljg6p275cr34vhesh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vsevolod.swipe.addphoto",
+            "certificate_hash": "74f9c888555067f53e5fa328c9d15de90935f469"
+          }
+        },
+        {
+          "client_id": "425516621207-u5mhavga3k0t75j770qs5c7pbogk5hs6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9-dQRFnJdlhDlx7nPGjVR8qRceT5_7Hs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425516621207-u5mhavga3k0t75j770qs5c7pbogk5hs6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
