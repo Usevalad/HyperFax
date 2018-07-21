@@ -3,13 +3,6 @@ apply plugin: 'realm-android'
 
 android {
     signingConfigs {
-        debug {
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-            storeFile file('/home/vsevolod/Projects/Android/keyStore/debug.keystore')
-            storePassword 'ubuntu1488'
-        }
-
         release {
             keyAlias 'myafirstandroidkey'
             keyPassword 'ubuntu1488'
@@ -40,13 +33,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
         beta {
             //добавляет суффикс с датой билда
             versionNameSuffix "-beta" + "-build" + getDate()
             signingConfig signingConfigs.debug
         }
+
         debug {
-            signingConfig signingConfigs.debug
+            debuggable true
         }
     }
 }
